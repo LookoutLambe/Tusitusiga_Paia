@@ -1,0 +1,20 @@
+(function() {
+var 3jn_ch_1_Verses = [
+  {num:1,words:[["O a'u le toeaina, o la'u tusi lenei ia Kaio,", "The elder unto the wellbeloved Gaius,"], ["o le pele, o le ou te alofa faamaoni i ai.", "whom I love in the truth."]]},
+  {num:2,words:[["Le pele e,", "Beloved,"], ["ia e manuia i mea uma, ma ia e malolo,", "I wish above all things that thou mayest prosper and be in health,"], ["faapei ona manuia o lou agaga.", "even as thy soul prospereth."]]},
+  {num:3,words:[["Auā ua tele lava lo'u fiafia ina ua o mai le au uso,", "For I rejoiced greatly,"], ["ma faailoa mai lou faamaoni,", "when the brethren came and testified of the truth that is in thee,"], ["ina ua e savali i le upu moni.", "even as thou walkest in the truth."]]},
+  {num:4,words:[["E leai so'u fiafia e sili i lenei, pe a ou faalogo ua savavali la'u fanau i le upu moni.", "I have no greater joy than to hear that my children walk in truth."]]},
+  {num:5,words:[["Le pele e,", "Beloved, thou doest faithfully whatsoever thou doest to the brethren,"], ["ua e faamaoni lava i mea uma o faia e oe i le au uso atoa ma tagata ese,", "and to strangers;"]]},
+  {num:6,words:[["o e ua faailoa mai lou alofa i luma o le ekalesia;", "Which have borne witness of thy charity before the church:"], ["afai e te fesoasoani i lo latou moliga e tusa i le Atua,", "whom if thou bring forward on their journey after a godly sort,"], ["e lelei lau mea e fai.", "thou shalt do well:"]]},
+  {num:7,words:[["Auā na latou o atu ona o lona suafa,", "Because that for his name's sake they went forth,"], ["e lei talia sina mea mai nuu ese.", "taking nothing of the Gentiles."]]},
+  {num:8,words:[["O lea e tatau ai ona tatou talia tagata faapea,", "We therefore ought to receive such,"], ["ina ia tatou fai ma fesoasoani i le upu moni.", "that we might be fellowhelpers to the truth."]]},
+  {num:9,words:[["Na ou tusi atu i le ekalesia,", "I wrote unto the church:"], ["a o Tioterifi,", "but Diotrephes,"], ["o lē fia sili ia te i latou,", "who loveth to have the preeminence among them,"], ["e le talia i matou e ia.", "receiveth us not."]]},
+  {num:10,words:[["O le mea lea,", "Wherefore,"], ["pe a a'u alu atu,", "if I come,"], ["ou te faamanatu ai lana amio o loo faia e ia,", "I will remember his deeds which he doeth,"], ["o loo tuaupua mai ia i matou i upu leaga;", "prating against us with malicious words:"], ["e le gata foi i ia mea,", "and not content therewith,"], ["a e le talia lava e ia le au uso,", "neither doth he himself receive the brethren,"], ["e vavao atu foi i e loto i ai,", "and forbiddeth them that would,"], ["na te faateaina foi i latou i le ekalesia.", "and casteth them out of the church."]]},
+  {num:11,words:[["Le pele e,", "Beloved,"], ["aua e te faaa'oa'o i le leaga,", "follow not that which is evil,"], ["na o le lelei.", "but that which is good."], ["O lē amio lelei, mai le Atua lava lea;", "He that doeth good is of God:"], ["peitai o lē amio leaga, e lei iloa atu lava e ia le Atua.", "but he that doeth evil hath not seen God."]]},
+  {num:12,words:[["Ua logoleleia Temetiu e tagata uma lava,", "Demetrius hath good report of all men,"], ["atoa ma le upu moni lava;", "and of the truth itself:"], ["o i matou foi matou te molimau i ai,", "yea, and we also bear record;"], ["ua outou iloa foi e moni la matou mau.", "and ye know that our record is true."]]},
+  {num:13,words:[["Ua ia te au mea e tele e tusi atu ai,", "I had many things to write,"], ["a ou te le fia tusi atu ia te oe i le vaitusi ma le fulu tusi.", "but I will not with ink and pen write unto thee:"]]},
+  {num:14,words:[["Auā ou te faamoemoe o le a vave feiloai i taua, ina ia ta fetautalatalai. Ia ia te oe le manuia. O loo alolofa atu le aumea mamae ia te oe;", "But I trust I shall shortly see thee,"], ["ua ou alofa i le aumea mamae uma lava.", "and we shall speak face to face. Peace be to thee. Our friends salute thee. Greet the friends by name."]]},
+];
+renderVerseSet(3jn_ch_1_Verses, '3jn-ch1-verses');
+
+})();

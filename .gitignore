@@ -1,0 +1,37 @@
+# Node
+node_modules/
+package-lock.json
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Source/build files (not needed for the app)
+*.docx
+*.epub
+*.pdf
+*.txt
+_bom_extract/
+_dc_extract/
+_eng_dc_extract/
+_eng_pgp_extract/
+_eng_dc.epub
+_eng_pgp.epub
+_genesis1_clean.txt
+_unknown_words.txt
+_hebrew_samoan_dilution_report.*
+_kjv_bible.json
+wiktionary_samoan.jsonl
+pratt_dictionary.txt
+samoan_grammar_reference.md
+
+# Build/extract scripts (keep auto_phrase.py and build_all.py)
+extract_bible.py
+extract_verses.py
+fetch_bible_com.py
+parse_bible_clean.py
+parse_bom_docx.py
+_fix_scribal.py
+_revert_scribal.py
+_show_corrections.py
+hebrew_cross_ref.py

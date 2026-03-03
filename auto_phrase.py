@@ -1,0 +1,1775 @@
+"""
+Automated Samoan phrase chunker and English gloss generator.
+Groups Samoan words into grammatical phrases and generates English glosses
+from dictionary lookups + grammatical pattern translations.
+"""
+import os, re, json, sys
+
+base = os.path.expanduser(r'~\Desktop\O le Tusi Paia')
+
+# ============================================================
+# Load resources
+# ============================================================
+with open(os.path.join(base, 'samoan_dictionary.json'), 'r', encoding='utf-8') as f:
+    dictionary = json.load(f)
+
+with open(os.path.join(base, '_all_samoan_verses.json'), 'r', encoding='utf-8') as f:
+    samoan_verses = json.load(f)
+
+with open(os.path.join(base, '_kjv_bible.json'), 'r', encoding='utf-8') as f:
+    kjv = json.load(f)
+
+# Load existing English verses (BOM/D&C/PGP)
+eng_verses_path = os.path.join(base, 'english_verses.js')
+english_verses = {}
+if os.path.exists(eng_verses_path):
+    with open(eng_verses_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    match = re.search(r'window\._englishVersesData\s*=\s*(\{.*?\});\s*$', content, re.DOTALL)
+    if match:
+        english_verses = json.loads(match.group(1))
+
+# Merge KJV into english_verses
+for k, v in kjv.items():
+    english_verses[k] = v
+
+# ============================================================
+# Samoan function word glossary
+# ============================================================
+FUNC_WORDS = {
+    # Articles
+    'le': 'the',
+    'se': 'a',
+    'ni': 'some',
+    # Prepositions / particles
+    'i': 'in',
+    'e': 'by',
+    'ma': 'and',
+    'mo': 'for',
+    'mai': 'from',
+    'nai': 'from',
+    'ia': 'to',
+    'ai': 'thereof',
+    # Tense/aspect markers
+    'na': '(past)',
+    'ua': '(perf)',
+    'sa': '(past)',
+    "ole'a": '(fut)',
+    "ole\u02bba": '(fut)',
+    "o le a": '(fut)',
+    "olo'o": '(prog)',
+    "olo\u02bbo": '(prog)',
+    'o': '',
+    'ona': 'then',
+    'lea': '',
+    # Negation
+    "le\u0304": 'not',
+    # Directional particles (absorbed into verb, suppressed in gloss)
+    'atu': '(dir)',
+    'ifo': '(dir)',
+    'ane': '(dir)',
+    'maia': '(dir)',
+    # Common words
+    'foi': 'also',
+    'lava': 'indeed',
+    'uma': 'all',
+    'atoa': 'together with',
+    'a': 'but',
+    'ae': 'but',
+    'pe': 'or',
+    'ina': 'let',
+    'tatou': 'us',
+    'te': '',
+    'lo': '',
+    'la': '',
+    'latou': 'them/their',
+    'lona': 'his/its',
+    'ana': 'his',
+    'lau': 'your/my',
+    'laua': 'them two',
+    'oulua': 'you two',
+    'outou': 'ye/you all',
+    'matou': 'we',
+    'taitasi': 'each',
+    'faauta': 'behold',
+    'faapea': 'thus/so',
+    'nei': 'this/these',
+    'isi': 'other/some',
+    'lenei': 'this',
+    'lena': 'that',
+    'lela': 'that yonder',
+    'iinei': 'here',
+    'iina': 'there',
+    # Numbers
+    'tasi': 'one',
+    'lua': 'two',
+    'tolu': 'three',
+    'fa': 'four',
+    'lima': 'five',
+    'ono': 'six',
+    'fitu': 'seven',
+    'valu': 'eight',
+    'iva': 'nine',
+    'sefulu': 'ten',
+    'selau': 'hundred',
+    'afe': 'thousand',
+}
+
+# ============================================================
+# Extended Samoan vocabulary for scripture
+# ============================================================
+EXTENDED_VOCAB = {
+    # Creation / nature
+    'atua': 'God',
+    'lagi': 'heaven',
+    'lalolagi': 'earth',
+    'eleele': 'earth',
+    'laueleele': 'ground',
+    'sami': 'sea',
+    'vai': 'water',
+    'moana': 'deep',
+    'vanimonimo': 'firmament',
+    'pouliuli': 'darkness',
+    'malamalama': 'light',
+    'ao': 'day',
+    'po': 'night',
+    'aso': 'day',
+    'afiafi': 'evening',
+    'taeao': 'morning',
+    'masina': 'moon',
+    'la': 'sun',
+    'fetu': 'star',
+    'amataga': 'beginning',
+    'fogaeleele': 'face of the earth',
+    'fog\u0101eleele': 'face of the earth',
+    'fog\u0101tai': 'face of the waters',
+    'mauga': 'mountain',
+    'vao': 'vegetation',
+    'laau': 'tree',
+    'fua': 'fruit',
+    'fatu': 'seed',
+    'timu': 'rain',
+    'matagi': 'wind',
+    'afi': 'fire',
+    'maa': 'stone',
+    # Override bad dictionary entries
+    'afu': 'herb',
+    "mu'a": 'grass',
+    'mua': 'grass',
+
+    # Creation-specific vocabulary
+    'faapotopotoga': 'gathering',
+    'potopotoga': 'gathering',
+    'uiga': 'kind',
+    'iai': 'there',
+    'meaola': 'living creature',
+    'foliga': 'likeness',
+    'faatusa': 'image',
+    'faailoga': 'sign',
+    'tau': 'season',
+    'tausaga': 'year',
+    'va': 'space',
+    'nimonimo': 'firmament',
+    'vaefa': 'four-footed',
+    'fanua': 'land',
+    'lauolaola': 'green',
+    'soona': 'without form',
+
+    # People / body
+    'alo': 'Son',
+    'tagata': 'man',
+    'tane': 'man',
+    'fafine': 'woman',
+    'tama': 'child',
+    'atalii': 'son',
+    'afafine': 'daughter',
+    'tamaitiiti': 'child',
+    'tamaitai': 'woman',
+    'tupuga': 'descendant',
+    'aiga': 'family',
+    'nuu': 'nation',
+    'tupu': 'king',
+    'alii': 'lord',
+    'matai': 'chief',
+    'auauna': 'servant',
+    'perofeta': 'prophet',
+    'aposetolo': 'apostle',
+    'agaga': 'spirit/soul',
+    'tino': 'body',
+    'ulu': 'head',
+    'lima': 'hand',
+    'vae': 'foot',
+    'mata': 'eye',
+    'fofoga': 'face',
+    'gutu': 'mouth',
+    'taliga': 'ear',
+    'loto': 'heart',
+    'manatu': 'thought',
+
+    # Actions / verbs
+    'muai': 'first',
+    "ta'uina": 'was told',
+    'tauina': 'was told',
+    'faia': 'made',
+    'fai': 'make',
+    'fetalai': 'said',
+    'faaigoa': 'called',
+    'silasila': 'saw',
+    'iloa': 'known',
+    'faalogo': 'hearken',
+    'tuu': 'put',
+    'ave': 'take',
+    'sau': 'come',
+    'alu': 'go',
+    'nofo': 'dwell',
+    'tu': 'stand',
+    'savali': 'walk',
+    'taofi': 'hold',
+    'tago': 'reach',
+    'tuli': 'drive',
+    'faatoilalo': 'subdue',
+    'iu': 'attain',
+    "i'u": 'attain',
+    'anaana': 'his own',
+    'valaauina': 'called',
+    'valaau': 'call',
+    'tofia': 'chosen',
+    "tala'i": 'preach',
+    'talai': 'preach',
+    'pule': 'rule',
+    'fanafanau': 'be fruitful',
+    'uluola': 'multiply',
+    'tumu': 'fill',
+    'faamanuia': 'blessed',
+    'tupu': 'grow',
+    'fanau': 'born',
+    'oti': 'die',
+    'ola': 'life/live',
+    'alofa': 'love',
+    'alofaina': 'beloved',
+    'faamagalo': 'forgive',
+    'tatalo': 'pray',
+    'ifo': 'bow down',
+    'galue': 'work',
+    'tofi': 'appoint',
+    'filifili': 'choose',
+    'alualu': 'pursue',
+    'sola': 'flee',
+    'taua': 'war',
+    'fasi': 'kill',
+    'fasiotia': 'slain',
+    'lavea\u02bbi': 'delivered',
+    'laveai': 'deliver',
+    'togafiti': 'heal',
+    'maliu': 'die',
+    'soifua': 'live',
+    'toe': 'again',
+    'potopoto': 'gather',
+    'faapotopoto': 'gather together',
+    'foai': 'give',
+    'maua': 'received',
+    'tali': 'answer',
+    'aai': 'eat',
+    "'aina": 'edible',
+    "'ai": 'eat',
+    'inu': 'drink',
+    'moe': 'sleep',
+    'ala': 'arise',
+    'fetolofi': 'creep',
+    'lele': 'fly',
+    'fegaoioiai': 'moved',
+    'nunumi': 'without form',
+    'gaogao': 'void',
+    'ufitia': 'covered',
+    'eseese': 'divided',
+    'iloga': 'divided',
+    'tutupu': 'bring forth',
+    'faamalamalama': 'give light',
+    "ta'u": 'tell',
+    'faailoa': 'declared',
+    'tumau': 'endure',
+    "fa'atonuga": 'decree',
+    "fa\u02bbatonuga": 'decree',
+    'tulaga': 'standing',
+    "fa'amatala": 'explained',
+    "fa\u02bbamatala": 'explained',
+    "va'ai": 'see',
+    "va\u02bbai": 'see',
+    'tali': 'respond',
+    # Additional verbs for scripture
+    'faapea': 'so',
+    'manao': 'desire',
+    'tigaina': 'afflicted',
+    'faamalieina': 'satisfied',
+    'tausia': 'kept',
+    'tausi': 'keep',
+    'lavea': 'saved',
+    'faaola': 'save',
+    'faatali': 'wait',
+    'manumalo': 'overcome',
+    'faasino': 'declare',
+    'faasinotonuina': 'declared',
+    'matamata': 'observe',
+    'silafia': 'seen',
+    'mafai': 'able',
+    'tatala': 'open',
+    'pupuni': 'shut',
+    'tapena': 'prepare',
+    'saunia': 'prepared',
+
+    # Qualities / adjectives
+    'lelei': 'good',
+    'leaga': 'evil',
+    'tele': 'great',
+    'itiiti': 'small',
+    'tetele': 'great',
+    'malosi': 'strong',
+    'vaivai': 'weak',
+    'poto': 'wise',
+    'vale': 'foolish',
+    'amiotonu': 'righteous',
+    'agasala': 'sin',
+    'mamalu': 'glory',
+    'paia': 'holy',
+    'matutu': 'dry',
+    'uluai': 'first',
+    'matua': 'very',
+    'matu\u0101': 'very',
+    'sili': 'most',
+    'ogaoga': 'fierce',
+    'malolo': 'rest',
+    'saogalemu': 'safe',
+
+    # Animals
+    'manu': 'animal',
+    'manulele': 'bird',
+    'i\'a': 'fish',
+    'tanimo': 'whale',
+    'mea': 'thing',
+
+    # Categories
+    'felelei': 'flying',
+
+    # Preposition phrases
+    'lalo': 'under',
+    'luga': 'above',
+    'tala': 'side',
+    'tua': 'behind',
+    'luma': 'before',
+    'totonu': 'inside',
+    'fafo': 'outside',
+
+    # Religious
+    'iesu': 'Jesus',
+    'keriso': 'Christ',
+    'ieova': 'Jehovah',
+    'alii': 'Lord',
+    "ali'i": 'Lord',
+    'tusi': 'book/write',
+    'upu': 'word',
+    'tulafono': 'law/commandment',
+    'feagaiga': 'covenant',
+    'papatisoga': 'baptism',
+    'salamo': 'repent',
+    'faatuatua': 'faith',
+    'ekalesia': 'church',
+    'atoniga': 'atonement',
+    'siufofoga': 'voice',
+    'fofoga': 'face/mouth',
+    'afio': 'dwell (respectful)',
+    'faafofoga': 'listen/hearken',
+    'motu': 'island',
+    'moni': 'true/truth',
+    'la\u02bcu': 'my',
+    "la'u": 'my',
+    'lau': 'your/my',
+    'lona': 'his/her',
+    'lo\u02bbu': 'my',
+    "lo'u": 'my',
+    'lou': 'your',
+    'ona': 'his/her',
+    'tunoa': 'grace/free',
+    'faiva': 'ministry/calling',
+    'suafa': 'name',
+    'manuia': 'peace/blessing',
+    'faatusa': 'image/likeness',
+    'foliga': 'likeness/form',
+    'faailoga': 'sign/token',
+    'tau': 'season/count/fight',
+    'tausaga': 'year',
+    'gafa': 'genealogy',
+
+    # Pronouns (full forms)
+    "a\u02bbu": 'I/me',
+    "a'u": 'I/me',
+    'au': 'I/me',
+    'oe': 'you',
+    "'oe": 'you',
+    'ia': 'he/she/him/her',
+    'ita': 'we (excl)',
+    'tatou': 'we (incl)',
+    'outou': 'you (pl)',
+    # Short pronoun forms (used with tense markers)
+    "'ou": 'I',
+    "o\u02bbu": 'I',
+    "'e": 'you',
+
+    # BOM names
+    'nifae': 'Nephi',
+    'lamana': 'Laman',
+    'lemuelu': 'Lemuel',
+    'saama': 'Sam',
+    'lihai': 'Lehi',
+    'mamona': 'Mormon',
+    'moronae': 'Moroni',
+    'alema': 'Alma',
+    'helamana': 'Helaman',
+    'mosaea': 'Mosiah',
+    'iakopo': 'Jacob',
+    'enosa': 'Enos',
+    'iaromo': 'Jarom',
+    'amuleki': 'Amulek',
+    'aminetapo': 'Aminadab',
+    'korianeta': 'Coriantumr',
+    'sapeli': 'Sariah',
+    'isemaeli': 'Ishmael',
+    'amalekae': 'Amalickiah',
+    'moronihaa': 'Moroniha',
+    'pahora': 'Pahoran',
+    'tiankamo': 'Teancum',
+    'seesaramu': 'Zeezrom',
+    'kapeteni': 'Captain',
+
+    # Bible OT names (Samoan → English)
+    'atamu': 'Adam',
+    'eva': 'Eve',
+    'kaino': 'Cain',
+    'apelu': 'Abel',
+    'noa': 'Noah',
+    'aperaamo': 'Abraham',
+    'isaako': 'Isaac',
+    'esau': 'Esau',
+    'iakopo': 'Jacob',
+    'iosefa': 'Joseph',
+    'mose': 'Moses',
+    'arona': 'Aaron',
+    'iosua': 'Joshua',
+    'samuelu': 'Samuel',
+    'tavita': 'David',
+    'solomona': 'Solomon',
+    'elia': 'Elijah',
+    'elisaia': 'Elisha',
+    'isaia': 'Isaiah',
+    'ieremia': 'Jeremiah',
+    'esekielu': 'Ezekiel',
+    'tanielu': 'Daniel',
+    'ruta': 'Ruth',
+    'eseta': 'Esther',
+    'iopa': 'Job',
+    'iona': 'Jonah',
+    'saulo': 'Saul',
+    'setefano': 'Stephen',
+    'pilatoi': 'Pilate',
+    'herota': 'Herod',
+    'farao': 'Pharaoh',
+    'etoma': 'Edom',
+    'filisitia': 'Philistine',
+    'kanana': 'Canaan',
+    'isaraelu': 'Israel',
+    'aikupito': 'Egypt',
+    'papelonia': 'Babylon',
+    'ierusalema': 'Jerusalem',
+    'ioroni': 'Jordan',
+    'siona': 'Zion',
+    'kalilaia': 'Galilee',
+    'samaria': 'Samaria',
+    'setena': 'Satan',
+    'etena': 'Eden',
+
+    # Bible NT names (Samoan → English)
+    'iesu': 'Jesus',
+    'keriso': 'Christ',
+    'ieova': 'Jehovah',
+    'paulo': 'Paul',
+    'peteru': 'Peter',
+    'ioane': 'John',
+    'mataio': 'Matthew',
+    'mareko': 'Mark',
+    'luka': 'Luke',
+    'iakopo': 'James',
+    'tomas': 'Thomas',
+    'aneteriu': 'Andrew',
+    'filipo': 'Philip',
+    'patalameo': 'Bartholomew',
+    'simona': 'Simon',
+    'iuta': 'Judas',
+    'iutasi': 'Judas',
+    'timoteo': 'Timothy',
+    'tito': 'Titus',
+    'pilemoni': 'Philemon',
+    'epafura': 'Epaphras',
+    'persila': 'Priscilla',
+    'akuila': 'Aquila',
+    'maria': 'Mary',
+    'mareta': 'Martha',
+    'lasaro': 'Lazarus',
+    'nikotimo': 'Nicodemus',
+    'paapasa': 'Barabbas',
+    'kailafa': 'Caiaphas',
+
+    # Places
+    'roma': 'Rome',
+    'korinito': 'Corinth',
+    'kalatia': 'Galatia',
+    'efeso': 'Ephesus',
+    'filipoi': 'Philippi',
+    'kolose': 'Colossae',
+    'tesalonika': 'Thessalonica',
+    'atioka': 'Antioch',
+    'sinai': 'Sinai',
+    'masitonia': 'Macedonia',
+    'akaia': 'Achaia',
+    'siria': 'Syria',
+    'peresia': 'Persia',
+    'asuria': 'Assyria',
+    'napoli': 'Naples',
+
+    # ============================================================
+    # Common biblical words (top untranslated - bulk add)
+    # ============================================================
+    # Particles / connectors
+    'auā': 'for/because',
+    'aua': 'for/because',
+    'loo': '(progressive)',
+    'lana': 'his/her',
+    'tusa': 'according to',
+    'pea': 'continually',
+    'nisi': 'some/others',
+    'peiseai': 'as if',
+    'taitoatasi': 'each one',
+    'atoatoa': 'completely',
+    'aunoa': 'without',
+
+    # Family / people
+    'fanauga': 'children',
+    'toatele': 'many',
+    'toalua': 'companion/spouse',
+    'tupulaga': 'generation',
+    'avā': 'wife',
+
+    # Religious / temple
+    'taulaga': 'offering/sacrifice',
+    'faitaulaga': 'priest',
+    'ositaulaga': 'high priest',
+    'togiola': 'atonement/redemption',
+    'fata': 'altar',
+    'faitotoa': 'gate/door',
+    'poloaiga': 'commandment',
+    'poloai': 'command',
+    'poloaiina': 'commanded',
+
+    # Actions - giving / taking
+    'tuuina': 'given',
+    'avatu': 'give away',
+    'aumaia': 'bring here',
+    'avatua': 'given away',
+    'auina': 'sent',
+    'aauina': 'sent',
+    'foaiina': 'given/bestowed',
+    'talia': 'received/accepted',
+
+    # Actions - movement / state
+    'avea': 'become',
+    'nonofo': 'dwelling',
+    'tulai': 'arose/stood up',
+    'liliu': 'turned',
+    'sosola': 'fled',
+    'savavali': 'walked',
+    'pauu': 'fell',
+    'amata': 'began',
+    'latalata': 'near/approached',
+
+    # Actions - destruction / conflict
+    'fasioti': 'killed',
+    'fasia': 'struck/slain',
+    'autau': 'fought/army',
+    'fano': 'perish',
+
+    # Actions - communication / thought
+    'tusia': 'written',
+    'mafaufau': 'think/mind',
+    'manatua': 'remember',
+    'saili': 'seek',
+    'faalogologo': 'listen',
+    'pepelo': 'false/lie',
+    'olioli': 'rejoice',
+
+    # Actions - building / doing
+    'faatuina': 'built/established',
+    'faataunuuina': 'fulfilled',
+    'faaolaina': 'saved/delivered',
+    'faasaoina': 'saved/preserved',
+    'laveaiina': 'delivered',
+    'filifilia': 'chosen',
+    'mafaia': 'able/possible',
+    'vaaia': 'seen/appeared',
+
+    # Qualities
+    'malolosi': 'mighty/strong',
+    'filemu': 'peace/peaceful',
+    'mamā': 'clean/pure',
+    'inosia': 'abominable',
+    'matagofie': 'beautiful',
+    'matatau': 'fear/afraid',
+    'toasa': 'wrath/angry',
+
+    # Objects / places
+    'ofu': 'garment/clothing',
+    'vaega': 'portion/part',
+    'auro': 'gold',
+    'ario': 'silver',
+    'saito': 'wheat',
+    'areto': 'bread',
+    'uaina': 'wine',
+    'kupita': 'cubit',
+    'ipu': 'cup/vessel',
+    'aao': 'hand (extended)',
+    'vaitafe': 'river',
+    'nofoaga': 'place/dwelling',
+    'tupua': 'idol',
+    'poa': 'captive/prisoner',
+    'manogi': 'fragrant/incense',
+    'olo': 'fortress',
+    'tuaoi': 'border/boundary',
+
+    # Body actions
+    'sii': 'lift up',
+    'ole': 'entreat/plead',
+    'tuua': 'left/forsaken',
+    'ita': 'angry',
+    'ino': 'evil/harm',
+
+    # Specific biblical terms
+    'amio': 'conduct/behavior',
+    'amioletonu': 'wickedness',
+    'faasaga': 'toward/facing',
+    'taimi': 'time/period',
+    'taumatau': 'right hand',
+    'levī': 'Levi',
+    'atunuu': 'nations/people',
+
+    # Leviticus / sacrifice vocabulary
+    'sausauina': 'sprinkle',
+    'sausau': 'sprinkle',
+    "ga'o": 'fat',
+    "fatuga'o": 'kidneys',
+    'fetafai': 'tabernacle',
+    'susunu': 'burn',
+    'amuli': 'after/to come',
+    'tupulaga': 'generation/generations',
+    'aitu': 'devils',
+    'mulilulua': 'whoring',
+    'mulilua': 'whoring',
+    'mulimuli': 'follow after',
+}
+
+# ============================================================
+# Dictionary lookup with fallbacks
+# ============================================================
+def lookup_word(word):
+    """Look up a Samoan word, return English gloss or empty string."""
+    w = word.lower().rstrip('.,;:!?\u201c\u201d\u201e()').lstrip('\u201c\u201d()')
+    if not w:
+        return ""
+    # Normalize apostrophe variants for lookups
+    w_norm = w.replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'").replace('\u02bb', "'")
+    # Check normalized form in function words
+    if w_norm in FUNC_WORDS:
+        return FUNC_WORDS[w_norm]
+    if w_norm in EXTENDED_VOCAB:
+        return EXTENDED_VOCAB[w_norm]
+
+    # Check function words first
+    if w in FUNC_WORDS:
+        return FUNC_WORDS[w]
+
+    # Check extended vocabulary
+    if w in EXTENDED_VOCAB:
+        return EXTENDED_VOCAB[w]
+
+    # Direct dictionary lookup
+    if w in dictionary:
+        g = dictionary[w]
+        # Clean up verbose dictionary entries
+        g = re.sub(r'\s*\([^)]*\)', '', g).strip(' ,;.')
+        if g:
+            # Take first meaning before semicolon
+            g = g.split(';')[0].split(',')[0].strip()
+            return g
+        return dictionary[w].split(';')[0].split(',')[0].strip()
+
+    # Try without glottal stops
+    w2 = w.replace('\u02bb', "'").replace('\u02bc', "'")
+    if w2 in EXTENDED_VOCAB:
+        return EXTENDED_VOCAB[w2]
+    if w2 in dictionary:
+        return dictionary[w2].split(';')[0].split(',')[0].strip()
+    w3 = w.replace('\u02bb', '').replace('\u02bc', '').replace("'", '')
+    if w3 in EXTENDED_VOCAB:
+        return EXTENDED_VOCAB[w3]
+    if w3 in dictionary:
+        return dictionary[w3].split(';')[0].split(',')[0].strip()
+
+    return ""
+
+
+# ============================================================
+# Phrase chunking rules
+# ============================================================
+# Words that START a new phrase (phrase boundaries)
+PHRASE_STARTERS = {
+    # Tense/aspect markers (start verb phrases)
+    'ua', 'na', 'sa', 'e', "ole'a", "olo'o",
+    # Conjunctions
+    'ma', 'a', 'ae',
+    # Prepositions (start prepositional phrases)
+    'i', 'mo',
+    # Verbal result pattern
+    'ona',
+    # Discourse markers
+    'faauta', 'ina',
+    # Inclusive
+    'atoa',
+}
+
+# Words that NEVER start a new phrase (always attach to previous)
+CLITICS = {
+    'le', 'o', 'se', 'ni',  # articles (attach forward)
+    'foi', 'lava',  # emphatics (attach backward)
+    'ai', 'lea',  # verbal particles (attach backward)
+}
+
+# Phrase-internal words that bridge between content words
+BRIDGE_WORDS = {
+    'le', 'o', 'se', 'lo', 'te', 'ia', 'i',
+}
+
+
+def _build_phrase_pairs():
+    """Build a set of consecutive word pairs from known WHOLE_PHRASES.
+    Used to prevent the chunker from splitting words that belong together."""
+    pairs = set()
+    for phrase in WHOLE_PHRASES:
+        wds = phrase.split()
+        for idx in range(len(wds) - 1):
+            pairs.add((wds[idx], wds[idx+1]))
+    return pairs
+
+# Will be initialized after WHOLE_PHRASES is defined (see below)
+_PHRASE_PAIRS = set()  # placeholder, built after WHOLE_PHRASES
+
+
+def chunk_verse(text):
+    """
+    Split Samoan verse text into grammatical phrase chunks.
+    Returns list of phrase strings.
+    """
+    if not text:
+        return []
+
+    words = text.split()
+    if not words:
+        return []
+
+    phrases = []
+    current_phrase = [words[0]]
+
+    for i in range(1, len(words)):
+        w = words[i]
+        w_clean = w.lower().strip('.,;:!?\u201c\u201d\u201e()')
+
+        prev = words[i-1] if i > 0 else ''
+        prev_clean = prev.lower().strip('.,;:!?\u201c\u201d\u201e()')
+
+        # Should this word start a new phrase?
+        start_new = False
+        is_punctuation_break = False
+
+        # Rule 1: After comma, semicolon, period, or closing paren, always start new phrase
+        if prev.rstrip(')').endswith(';') or prev.rstrip(')').endswith('.') or prev.rstrip(')').endswith(','):
+            start_new = True
+            is_punctuation_break = True
+
+        # Rule 1b: "o" after a pronoun (a'u, ia, etc.) starts a new phrase (naming pattern)
+        elif w_clean == 'o' and len(current_phrase) >= 2:
+            prev2_raw = current_phrase[-1].lower().rstrip('.,;:!?')
+            # Normalize all apostrophe-like characters for comparison
+            prev2_norm = prev2_raw.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            if prev2_norm in ("a'u", "au", "ia", "oe", "i'a"):
+                start_new = True
+
+        # Rule 2: Phrase starters begin new phrases
+        elif w_clean in PHRASE_STARTERS:
+            if len(current_phrase) >= 2:
+                start_new = True
+            elif w_clean in ('ua', 'na', 'sa', 'ona', 'faauta', 'ina', 'atoa'):
+                start_new = True
+            elif w_clean in ('ma', 'a', 'ae') and len(current_phrase) >= 2:
+                start_new = True
+
+        # Rule 3: "le + content_word" after 2+ word phrase starts new noun phrase
+        elif w_clean == 'le' and len(current_phrase) >= 2:
+            # Check if previous word is NOT a preposition/marker expecting an article
+            # Include 'la' since "la le" is a compound article
+            if prev_clean not in ('o', 'i', 'e', 'ma', 'mo', 'mai', 'la'):
+                start_new = True
+
+        # Rule 4: "o le" / "O le" naming/predicate pattern starts new phrase
+        elif w_clean == 'o' and len(current_phrase) >= 2:
+            if i + 1 < len(words) and words[i+1].lower().rstrip('.,;:') == 'le':
+                start_new = True
+
+        # Rule 5: If current phrase is getting long (6+ words), look for natural break
+        elif len(current_phrase) >= 6:
+            if w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia'):
+                start_new = True
+
+        # Rule 6: (merged into Rule 1 — commas always break phrases)
+
+        # Override: don't split if these words belong to a known phrase
+        # (never override punctuation breaks from Rule 1)
+        if start_new and not is_punctuation_break:
+            # Normalize apostrophes for pair matching
+            pc_norm = prev_clean.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            wc_norm = w_clean.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            if (prev_clean, w_clean) in _PHRASE_PAIRS or (pc_norm, wc_norm) in _PHRASE_PAIRS:
+                start_new = False
+
+        if start_new:
+            phrases.append(' '.join(current_phrase))
+            current_phrase = [w]
+        else:
+            current_phrase.append(w)
+
+    if current_phrase:
+        phrases.append(' '.join(current_phrase))
+
+    return phrases
+
+
+# ============================================================
+# Known whole-phrase patterns (module-level for use by both
+# gloss_phrase and annotate_verse sub-phrase splitting)
+# ============================================================
+WHOLE_PHRASES = {
+    # "O a'u o" = "I am" patterns
+    "o a\u02bbu o": 'I am',
+    # Common scripture phrases
+    "le tala lelei": 'the gospel',
+    "tala lelei": 'gospel',
+    "a le atua": 'of God',
+    "o le atua": 'of God',
+    "le atua": 'God',
+    "le ali\u02bbi sili": 'the Lord Most High',
+
+    # =============================================
+    # Genesis Creation phrases (Ch. 1-3)
+    # =============================================
+    'na faia e le atua le lagi ma le lalolagi i le amataga': 'In the beginning God created the heaven and the earth',
+    'na faia e le atua': 'God created',
+    'ua fetalai mai le atua': 'And God said',
+    'ua fetalai mai foi le atua': 'And God said',
+    'ona fetalai mai lea o le atua': 'And God said',
+    'ona fetalai ane lea o le atua': 'And God said',
+    'ua fetalai atu le atua': 'And God said',
+    'ua fetalai atu foi le atua': 'And God said',
+    'i le ua faapea lava': 'and it was so',
+    'ua faapea lava': 'and it was so',
+    'ua silasila atu le atua': 'And God saw',
+    'ua silasila atu i ai le atua': 'and God saw',
+    'ua lelei': 'that it was good',
+    'ua matua lelei lava': 'it was very good',
+    'ua matu\u0101 lelei lava': 'it was very good',
+    'o le afiafi ma le taeao': 'the evening and the morning',
+    'na faia e ia': 'he made',
+    'ona faia lea e le atua': 'And God made',
+    'ua faia e le atua': 'And God made',
+    'ua faia foi e le atua': 'And God made',
+    'ua faaigoa e le atua': 'And God called',
+    'ua faamanuia e le atua': 'And God blessed',
+    'ua faamanuia foi e le atua': 'And God blessed',
+    'ona faamanuia atu i ai lea': 'And blessed them',
+    'e le atua': 'by God',
+    'le agaga o le atua': 'the Spirit of God',
+    'ia malamalama': 'Let there be light',
+    'ona malamalama ai lea': 'and there was light',
+    'e taitasi ma lona uiga': 'after its kind',
+    # Genesis 1:2
+    'sa soona nunumi le lalolagi ma ua gaogao': 'the earth was without form and void',
+    'sa soona nunumi le lalolagi': 'the earth was without form',
+    'sa ufitia foi le moana i le pouliuli': 'and darkness was upon the face of the deep',
+    'na fegaoioiai foi le agaga o le atua i le fog\u0101tai': 'and the Spirit of God moved upon the face of the waters',
+    'na fegaoioiai foi le agaga o le atua': 'and the Spirit of God moved',
+    'i le fog\u0101tai': 'upon the face of the waters',
+    # Genesis 1:4
+    'ona tuu eseese ai lea e le atua': 'and God divided',
+    'tuu eseese': 'divided',
+    'o le malamalama ma le pouliuli': 'the light from the darkness',
+    'o le malamalama': 'the light',
+    # Genesis 1:5-8
+    'o le ao': 'Day',
+    'o le po': 'Night',
+    'o le lagi': 'Heaven',
+    'o le eleele': 'Earth',
+    'o le sami': 'Sea',
+    'o le uluai aso lea': 'were the first day',
+    'o le aso lua lea': 'were the second day',
+    'o le aso tolu lea': 'were the third day',
+    'o le aso fa lea': 'were the fourth day',
+    'o le aso lima lea': 'were the fifth day',
+    'o le aso ono lea': 'were the sixth day',
+    # Genesis 1:6
+    'ia i le va o vai le vanimonimo': 'Let there be a firmament in the midst of the waters',
+    'e va a\'i isi vai ma isi vai': 'and let it divide the waters from the waters',
+    'va a\'i': 'divided',
+    'i le va o': 'in the midst of',
+    # Genesis 1:7
+    'le va nimonimo': 'the firmament',
+    'ua va a\'i vai i lalo o le vanimonimo': 'divided the waters under the firmament',
+    'ma vai i luga o le vanimonimo': 'from the waters above the firmament',
+    'i lalo o le vanimonimo': 'under the firmament',
+    'i luga o le vanimonimo': 'above the firmament',
+    'i lalo o le lagi': 'under the heaven',
+    'i luga o le laueleele': 'above the earth',
+    'i luga o le eleele': 'upon the earth',
+    # Genesis 1:9
+    'ia potopoto i le mea e tasi': 'Let be gathered together unto one place',
+    'o vai i lalo o le lagi': 'the waters under the heaven',
+    'ia iloa foi le eleele matutu': 'and let the dry land appear',
+    'le eleele matutu': 'the dry land',
+    # Genesis 1:10
+    'le faapotopotoga o vai': 'the gathering together of the waters',
+    # Genesis 1:11
+    'ia tupu le vao mu\'a mai le eleele': 'Let the earth bring forth grass',
+    'le vao mu\'a': 'the grass',
+    'vao mu\'a': 'grass',
+    'mai le eleele': 'from the earth',
+    'le laau afu': 'the herb yielding seed',
+    'ma le laau afu': 'and the herb yielding seed',
+    'laau afu': 'herb yielding seed',
+    'e tupu ma ona fua': 'yielding seed',
+    'le laau e \'aina ona fua': 'the fruit tree yielding fruit',
+    'ma le laau e \'aina ona fua': 'and the fruit tree yielding fruit',
+    'le laau e \'aina': 'the fruit tree',
+    'ma le laau e \'aina': 'and the fruit tree',
+    'e fua mai e taitasi ma lona uiga': 'whose seed was in itself after its kind',
+    'e fua mai': 'yielding fruit',
+    'o ia te ia lava o ona fatu': 'whose seed is in itself',
+    'o ia te ia lava': 'in itself',
+    'ona fatu': 'its seed',
+    'ona fua': 'its fruit',
+    # Genesis 1:14
+    'ia iai': 'Let there be',
+    'i le vanimonimo o le lagi': 'in the firmament of the heaven',
+    'o mea e malamalama a\'i': 'lights',
+    'mea e malamalama a\'i': 'lights',
+    'e malamalama a\'i': 'for lights',
+    'malamalama a\'i': 'lights',
+    'e iloga ai le ao ma le po': 'to divide the day from the night',
+    'e iloga ai': 'to divide',
+    'ia fai foi ma faailoga': 'and let them be for signs',
+    'ma tau': 'and for seasons',
+    'ma aso': 'and for days',
+    'ma tausaga': 'and years',
+    # Genesis 1:15
+    'ma ia fai ma mea e malamalama a\'i': 'and let them be for lights',
+    'e faamalamalama a\'i le lalolagi': 'to give light upon the earth',
+    'e faamalamalama a\'i': 'to give light',
+    # Genesis 1:16
+    'ona faia lea e le atua o malamalama tetele e lua': 'And God made two great lights',
+    'o le malamalama tele': 'the greater light',
+    'e pule i le ao': 'to rule the day',
+    'o le malamalama itiiti': 'the lesser light',
+    'e pule i le po': 'to rule the night',
+    'ua na faia foi fetu': 'he made the stars also',
+    # Genesis 1:17
+    'ua tuu ai e le atua': 'And God set them',
+    # Genesis 1:18
+    'e pule foi i le ao ma le po': 'and to rule over the day and over the night',
+    'ma ia iloga ai le malamalama ma le pouliuli': 'and to divide the light from the darkness',
+    # Genesis 1:20
+    'ia tele ona tutupu mai i le sami o meaola e fetolofi': 'Let the waters bring forth abundantly the moving creature that hath life',
+    'ia lele foi le manulele i luga o le laueleele': 'and fowl that may fly above the earth',
+    'ia lele foi le manulele': 'and let fowl fly',
+    'le manulele': 'the fowl',
+    # Genesis 1:21-25
+    'tanimo tetele': 'great whales',
+    'ua faia e le atua le tagata': 'God created man',
+    'i lona foliga': 'in his image',
+    'i le foliga o le atua': 'in the image of God',
+    'o le tane ma le fafine': 'male and female',
+    'ia fanafanau': 'Be fruitful',
+    'ia uluola': 'and multiply',
+    'ia tumu le lalolagi': 'and fill the earth',
+    # Genesis 1:26
+    'tatou te faia le tagata': 'Let us make man',
+    'i lo tatou foliga': 'in our image',
+    'e tusa ma lo tatou uiga': 'after our likeness',
+    'ia latou pule': 'and let them have dominion',
+    'i\'a o le sami': 'fish of the sea',
+    'manulele o le lagi': 'fowl of the air',
+    # General creation vocabulary
+    'mea uma': 'all things',
+    'mea uma lava': 'all things',
+    'mea ola uma': 'every living thing',
+    # Common "Ona ... lea" narrative patterns
+    'ona tupu mai lea': 'And there grew',
+    'ona fai atu lea': 'And he said',
+    'ona fai mai lea': 'And he said',
+    'ona alu lea': 'And he went',
+    'ona sau lea': 'And he came',
+    'ona faia lea': 'And he made',
+    # Genesis 1:24-26 animal vocabulary
+    'manu vaefa fanua': 'cattle',
+    'manu vaefa o le vao': 'beast of the field',
+    'manu vaefa': 'beast',
+    'mea fetolofi': 'creeping thing',
+    'mea fetolofi uma': 'every creeping thing',
+    'meaola uma': 'every living creature',
+    'manu felelei': 'fowl',
+    # Genesis 1:26 image/likeness
+    'i lo tatou faatusa': 'in our image',
+    'lo tatou faatusa': 'our image',
+    'ia foliga ia i tatou': 'after our likeness',
+    'ia pule foi i latou': 'and let them have dominion',
+    'ina tatou faia': 'Let us make',
+    'tatou faia': 'let us make',
+    'o le tagata': 'man',
+    # Genesis 1:16
+    'o malamalama tetele e lua': 'two great lights',
+    'malamalama tetele e lua': 'two great lights',
+    # Genesis 1:22
+    'ia uluola': 'and multiply',
+    'ia tupu tele': 'and be great',
+    'ma ia tumu ai le sami': 'and fill the sea',
+    'ia tupu tele foi manu felelei': 'and let fowl multiply',
+    # Genesis 1:7 divided the waters
+    'ua va a\'i vai i lalo o le vanimonimo': 'divided the waters under the firmament',
+    # Hebrew דָּבָר (davar) corrections
+    # Esther 3:4: הֲיַעַמְדוּ דִּבְרֵי מׇרְדֳּכַי
+    "na fai atu pea i latou ia te ia i aso uma": 'They kept urging him every day',
+    "ae na l\u0113 tali mai o ia": 'but he did not respond to them',
+    "na l\u0113 tali mai o ia": 'he did not respond to them',
+    "na latou fa'ailoa atu ai ia hamana": 'they reported it to Haman',
+    "e va'ai pe o le a tumau le tulaga a moredekai": "to see whether Mordecai's position would hold",
+    "le tulaga a moredekai": "Mordecai's position",
+    "au\u0101 na ia fa'amatala atu o ia o se tagata iuta": 'because he had explained to them that he was a Jew',
+    "na ia fa'amatala atu o ia": 'he had explained to them',
+    "o se tagata iuta": 'a Jew',
+
+    # Romans / Epistles
+    'na ia muai': 'which was first',
+    "ta'uina mai": 'told',
+    "ta\u02bbuina mai": 'told',
+    "ta\u2018uina mai": 'told',
+    'e ana perofeta': 'by his prophets',
+    'i tusi paia': 'in the scriptures',
+    'tusi paia': 'the scriptures',
+    'i lona alo o iesu keriso lo tatou alii': 'in his Son Jesus Christ our Lord',
+    'lo tatou alii': 'our Lord',
+    # Romans 1:5+
+    'i la le tino': 'according to the flesh',
+    'la le tino': 'the flesh',
+    'ua matou maua': 'we received',
+    'mai ia te ia': 'from him',
+    'mai ia te': 'from',
+    'ia te ia': 'unto him',
+    'ia te': 'unto',
+    'le alofa tunoa': 'grace',
+    'alofa tunoa': 'grace',
+    'na fanau mai': 'was born',
+    'fanau mai': 'born',
+    # Common verb + directional particle patterns
+    'sau mai': 'come',
+    'alu atu': 'go away',
+    'alu mai': 'come',
+    'ave atu': 'take away',
+    'ave mai': 'bring',
+    'fai mai': 'said/told',
+    "ta'u atu": 'told',
+    'faailoa atu': 'declared',
+    'fai atu': 'said to',
+    'fetalai mai': 'said',
+    'fetalai atu': 'said to',
+    'silasila atu': 'looked',
+    'silasila mai': 'looked',
+    'tu mai': 'stood',
+    'tu atu': 'stood',
+    'nofo mai': 'dwelt',
+    'tuu atu': 'placed',
+    'tuu mai': 'placed',
+    'aumai': 'bring',
+    'au mai': 'bring',
+    'au atu': 'take',
+    # "e fai ma" = "to be / to be appointed as"
+    'e fai ma': 'to be',
+    'fai ma': 'to be',
+    # "o lea" = "therefore"
+    'o lea': 'therefore',
+    # "i le aiga o" = "in the family of" (possessive)
+    'i le aiga o': "in the family of",
+    # Romans 1:4+
+    'toe tu mai': 'resurrection',
+    'nai': 'from',
+    'e ua oti': 'the dead',
+    'ma le faiva o le aposetolo': 'and the office of the apostle',
+    # "ina ia" = purpose/intention compound particle
+    'ina ia': 'so that',
+    'ina ia iu ina anaana': 'so that he may attain for his own sake',
+    # Romans 1:3-4 (Hebrew-aligned)
+    'i lona alo': 'concerning his Son',
+    'o le faasinotonuina mai': 'the designation',
+    'faasinotonuina mai': 'declared',
+    'faasinotonuina': 'declared',
+    'ia ma le mana': 'with power',
+    'i la le agaga e paia lea': 'according to the Spirit of holiness',
+    'i la le agaga': 'according to the spirit',
+    'e paia lea': 'of holiness',
+    'agaga paia': 'Holy Spirit',
+    # Romans 1:6
+    'e i ai foi outou': 'among whom are you also',
+    # Romans 1:7
+    "o la'u tusi lenei": 'this letter',
+    "o la\u2018u tusi lenei": 'this letter',
+    'outou uma lava': 'all of you',
+    'le alofa tunoa ma le manuia': 'grace and peace',
+    'ma le manuia': 'and peace',
+    'manuia': 'peace',
+    'alofaina': 'beloved',
+    'ua alofaina': 'beloved',
+    'atoa ma le alii': 'and the Lord',
+    'atoa ma': 'and',
+    "lo tatou tam\u0101": 'our Father',
+    'lo tatou tama': 'our Father',
+    # Romans 1:5 continued
+    'i le faatuatua o nuu uma lava': 'in the faith of all the people',
+    'ona o lona suafa': 'because of his name',
+    'ona o': 'because of',
+    # Scripture terms - KJV aligned
+    'tagata paia': 'saints',
+    "au paia": 'saints',
+    "'au paia": 'saints',
+    # "o e" = relative pronoun "who"
+    'o e': 'who',
+    'o e ua valaauina': 'who were called',
+    # "o le a" / "o le 'a" = future tense marker OR "what"
+    "o le a": 'what',
+    "o le 'a": 'what',
+    "o le \u02bba": 'what',
+    "o le \u2018a": 'what',
+
+    # ============================================================
+    # High-frequency phrases across ALL standard works
+    # ============================================================
+    # Narrative connectors (appear thousands of times)
+    'ua faapea mai': 'saying',
+    'ua faapea atu': 'saying',
+    'ua faapea': 'saying',
+    'sa faapea': 'saying',
+    'o loo faapea': 'thus',
+    'o loo faapea ona fetalai mai o le alii': 'thus saith the Lord',
+    'o loo faapea ona fetalai mai o ieova': 'thus saith the LORD',
+    'o loo faapea ona fetalai mai o le alii o ieova': 'thus saith the Lord GOD',
+    'ua fetalai mai o le alii': 'saith the Lord',
+    'ua fetalai mai ai le alii o ieova': 'saith the Lord GOD',
+    'o le mea lea': 'therefore/wherefore',
+    'ma o lenei': 'and now',
+    'sa oo': 'it came to pass',
+    'sa oo ina': 'it came to pass that',
+    'ua oo': 'it came to pass',
+    'e oo': 'it shall come to pass',
+    'ina ia mafai': 'that it might be',
+    'e moni': 'verily/truly',
+    'e moni lava': 'verily I say',
+
+    # Prophet/God speech patterns
+    'ou te fai atu ia te outou': 'I say unto you',
+    'ua fetalai mai Ieova': 'the LORD said',
+    'ua fetalai mai le Alii': 'the Lord said',
+    'ona fetalai mai lea o Ieova': 'and the LORD said',
+    'ona fetalai mai lea o le Alii': 'and the Lord said',
+    'ua fetalai mai foi Ieova ia Mose': 'and the LORD spake unto Moses',
+    'Ieova e': 'O LORD',
+
+    # Pronouns in context
+    'ia te outou': 'unto you',
+    'ia te au': 'unto me',
+    'ia te oe': 'unto thee',
+    'ia te i latou': 'unto them',
+    'i o outou luma': 'before you',
+    'i ona luma': 'before him',
+    'i ou luma': 'before thee',
+    "i o'u luma": 'before me',
+    'mo outou': 'for you',
+    'mo outou agaga': 'for your souls',
+    'mo i latou': 'for them',
+    'i o latou luma': 'before them',
+
+    # Possessives
+    'a Isaraelu': 'of Israel',
+    'a Ieova': 'of the LORD',
+    'a le Atua': 'of God',
+    'o le Alii': 'of the Lord',
+    'a Ieova lou Atua': 'of the LORD thy God',
+
+    # Common verb phrases
+    'ua uma': 'it was finished',
+    'e tatau': 'it is fitting/ought',
+    'e mafai': 'it is possible/can',
+    'e uiga': 'concerning',
+    'e faavavau': 'forever/everlasting',
+    'e faavavau lava': 'forever and ever',
+
+    # Place/direction
+    'i le vao': 'in the wilderness',
+    'i Ierusalema': 'in Jerusalem',
+    'i le nuu': 'in the land',
+    'i le laueleele': 'in the earth',
+    'i le lalolagi': 'in the world',
+    'i le lagi': 'in heaven',
+    'i le afi': 'in the fire',
+    'i luma o Ieova': 'before the LORD',
+    'i luma o le Alii': 'before the Lord',
+    'i le itu': 'on the side',
+
+    # Religious terms
+    'le fanauga a Isaraelu': 'the children of Israel',
+    'fanauga a Isaraelu': 'children of Israel',
+    'le aiga o Isaraelu': 'the house of Israel',
+    'aiga o Isaraelu': 'house of Israel',
+    'le Agaga Paia': 'the Holy Spirit',
+    'le Alo o le Atua': 'the Son of God',
+    'le Alo o le Tagata': 'the Son of Man',
+    'le malo o le Atua': 'the kingdom of God',
+    'le malo o le lagi': 'the kingdom of heaven',
+    'le fata faitaulaga': 'the altar',
+    'fata faitaulaga': 'altar',
+    'le ositaulaga sili': 'the high priest',
+    'le taulaga mu': 'the burnt offering',
+    'taulaga mu': 'burnt offering',
+
+    # BOM specific
+    'sa nifaē': 'thus Nephi',
+    'sa lamanā': 'thus Laman',
+
+    # Common multi-word expressions (high-impact fixes)
+    'leoleo mamoe': 'shepherd',
+    'lo\'u leoleo mamoe': 'my shepherd',
+    'fata faitaulaga': 'altar',
+    'le fata faitaulaga': 'the altar',
+    'i luga o le fata faitaulaga': 'upon the altar',
+    'taulaga mu': 'burnt offering',
+    'le taulaga mu': 'the burnt offering',
+    'le ola o le tino': 'the life of the flesh',
+    'ola o le tino': 'life of the flesh',
+    'e fai a\'i le togiola': 'to make atonement',
+    'e fai a\'i': 'to make',
+    'fai a\'i': 'thereby',
+    "a'i": 'thereby',
+    'le togiola mo outou agaga': 'atonement for your souls',
+    'togiola mo outou agaga': 'atonement for your souls',
+    'le agaga o le tamā': 'the soul of the father',
+    'le agaga o le atalii': 'the soul of the son',
+    'o le agaga e agasala': 'the soul that sins',
+    'e oti ia': 'shall die',
+    'solitulafono': 'transgressions',
+    'amio leaga': 'iniquity/wickedness',
+    'i luga o': 'upon',
+    'i lalo o': 'under',
+    'i totonu o': 'in the midst of',
+    'i tua o': 'behind',
+    'i luma o': 'before',
+    'i fafo o': 'outside of',
+    'o le ola': 'the life',
+    'le ola': 'the life',
+    'e leai se': 'there is no',
+    'ua leai se': 'there was no',
+    'e leai se mea': 'there is nothing',
+    'ua leai': 'there was not',
+    'e leai': 'there is not',
+
+    # Possessive patterns
+    'o lo\'u': 'my',
+    'o lou': 'your',
+    'o lona': 'his/her',
+    'o lo latou': 'their',
+    'o lo tatou': 'our',
+    'o lo matou': 'our (excl)',
+
+    # Common verbal expressions
+    'ua ou tuuina atu': 'I have given',
+    'ou te tuuina atu': 'I will give',
+    'ua tuuina atu': 'was given',
+    'e tuuina atu': 'shall be given',
+    'ua ia tuuina atu': 'he gave',
+    'na ia tuuina atu': 'he gave',
+    'ua ia faia': 'he made/did',
+    'na ia faia': 'he made/did',
+    'ua latou faia': 'they did',
+    'na latou faia': 'they did',
+    'ua ia fai mai': 'he said',
+    'ua ia fai atu': 'he said to',
+    'o ia te ia lava': 'himself',
+    'ia te ia lava': 'himself',
+
+    # Isaiah 53 specific
+    'ua manua o ia': 'he was wounded',
+    'ua momomo o ia': 'he was crushed',
+    'a tatou solitulafono': 'our transgressions',
+    'a tatou amio leaga': 'our iniquities',
+    'e filemu ai tatou': 'our peace',
+    'ua malolo ai tatou': 'we are healed',
+    'ona faalavalava': 'his stripes',
+
+    # Psalms common
+    'e leai se mea ou te mativa ai': 'I shall not want',
+    'o lo\'u leoleo mamoe o ia': 'he is my shepherd',
+
+    # Leviticus vocabulary (multi-word phrases)
+    'fale fetafai': 'tabernacle',
+    'le fale fetafai o le faapotopotoga': 'the tabernacle of the congregation',
+    'fale fetafai o le faapotopotoga': 'tabernacle of the congregation',
+    'i le faitotoa o le fale fetafai o le faapotopotoga': 'at the entrance of the tabernacle of the congregation',
+    'e fai ma mea manogi lelei': 'for a sweet savour',
+    'mea manogi lelei': 'sweet savour',
+    'e sausauina foi e le faitaulaga': 'also sprinkled by the priest',
+    'e susunu foi le ga\'o': 'also burned up is the fat',
+    'le fata faitaulaga o ieova': 'the altar of Jehovah',
+    'i luga o le fata faitaulaga o ieova': 'upon the altar of Jehovah',
+
+    # Lev 17:7 phrases
+    'sa latou mulimuli atu ai e mulilulua ai': 'after whom they have gone a whoring',
+    'latou te le toe faia foi a latou taulaga i aitu': 'and they shall no more offer their sacrifices unto devils',
+    'o le tulafono lena e faavavau ia i latou': 'this shall be a statute forever unto them',
+
+    # Generation phrases
+    'i o latou tupulaga amuli': 'throughout their generations',
+    'o latou tupulaga amuli': 'their generations to come',
+    'tupulaga amuli': 'generations to come',
+    'i o outou tupulaga amuli': 'throughout your generations',
+
+    # Leviticus 17:11 last phrase
+    "auā o le toto o le mea lava lea e fai a'i le togiola mo outou agaga": 'for it is the blood that makes atonement for your souls',
+
+    # Ezekiel 18:4 phrases
+    'o agaga uma': 'all souls',
+    "o o'u lava": 'are mine',
+    'e pei o le agaga o le tamā': 'as the soul of the father',
+    'e faapea foi le agaga o le atalii': 'so also the soul of the son',
+    "ona fai mo'u": 'is mine',
+}
+
+# Now build the phrase pairs set (must be after WHOLE_PHRASES is defined)
+_PHRASE_PAIRS = _build_phrase_pairs()
+
+
+def gloss_phrase(phrase_text):
+    """
+    Generate an English gloss for a Samoan phrase.
+    Uses dictionary lookups and grammatical patterns.
+    """
+    words = phrase_text.split()
+    clean_words = [w.strip('.,;:!?\u201c\u201d\u201e()') for w in words]
+
+    # Check for common whole-phrase patterns first
+    phrase_lower = phrase_text.lower().strip('.,;:!?() \u201c\u201d')
+
+    # Exact whole-phrase match (with apostrophe normalization)
+    phrase_norm = phrase_lower.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+    if phrase_lower in WHOLE_PHRASES:
+        return WHOLE_PHRASES[phrase_lower]
+    if phrase_norm in WHOLE_PHRASES:
+        return WHOLE_PHRASES[phrase_norm]
+
+    # ---- Greedy sub-phrase matching ----
+    # Try to match known phrases from left to right within the chunk
+    clean_lower = [w.lower() for w in clean_words]
+    i = 0
+    glosses = []
+    while i < len(clean_lower):
+        matched = False
+        # Try longest sub-phrase first (up to 8 words)
+        for length in range(min(8, len(clean_lower) - i), 1, -1):
+            sub = ' '.join(clean_lower[i:i+length])
+            sub_norm = sub.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            match_key = sub if sub in WHOLE_PHRASES else (sub_norm if sub_norm in WHOLE_PHRASES else None)
+            if match_key:
+                glosses.append(WHOLE_PHRASES[match_key])
+                i += length
+                matched = True
+                break
+        if matched:
+            continue
+        # No sub-phrase match — fall through to word-level glossing below
+        break
+
+    # If we consumed all words via sub-phrase matching, return
+    if i >= len(clean_lower):
+        result = ' '.join(glosses)
+        result = re.sub(r'\s+', ' ', result).strip()
+        return result
+
+    # If we partially matched, gloss the rest word-by-word
+    # Reset if we didn't match anything at all
+    if i == 0:
+        glosses = []
+    # Process remaining words starting from index i
+    skip_next = False
+    start_i = i
+
+    for idx in range(start_i, len(clean_words)):
+        raw = words[idx]
+        clean = clean_words[idx]
+        # Adjust relative position for "phrase start" checks
+        pos_in_remainder = idx - start_i
+
+        if skip_next:
+            skip_next = False
+            continue
+
+        cl = clean.lower()
+
+        # Handle multi-word patterns
+        # "la le" → "the" (article compound)
+        if cl == 'la' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'le':
+            glosses.append('the')
+            skip_next = True
+            continue
+
+        # "o le" → "the" (predicate marker + article)
+        if cl == 'o' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'le':
+            glosses.append('the')
+            skip_next = True
+            continue
+
+        # "o le Atua" patterns — "o" as predicate marker before article
+        if cl == 'o' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() in ('le', 'lo', 'la', 'se'):
+            continue  # skip the 'o', will get article next
+
+        # "e" particle — meaning depends on context
+        if cl == 'e':
+            if idx + 1 < len(clean_words):
+                next_cl = clean_words[idx+1].lower()
+                # "e le" → "by the" (agent)
+                if next_cl == 'le':
+                    glosses.append('by the')
+                    skip_next = True
+                    continue
+                # "e ia" → "by him" (agent + pronoun)
+                if next_cl == 'ia':
+                    glosses.append('by him')
+                    skip_next = True
+                    continue
+                # "e ana" → "by his" (agent + possessive)
+                if next_cl == 'ana':
+                    glosses.append('by his')
+                    skip_next = True
+                    continue
+                # "e" before a verb → "to" (purpose/infinitive)
+                next_g = lookup_word(clean_words[idx+1])
+                if next_g and next_g not in FUNC_WORDS.values():
+                    glosses.append('to')
+                    continue
+            glosses.append('by')
+            continue
+
+        # "i le" → "in the"
+        if cl == 'i' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() in ('le', 'lo'):
+            glosses.append('in the')
+            skip_next = True
+            continue
+
+        # "i ai" → "therein"
+        if cl == 'i' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'ai':
+            glosses.append('therein')
+            skip_next = True
+            continue
+
+        # "ma le" → "and the"
+        if cl == 'ma' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() in ('le', 'lo'):
+            glosses.append('and the')
+            skip_next = True
+            continue
+
+        # "ia te" → "unto"
+        if cl == 'ia' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'te':
+            glosses.append('unto')
+            skip_next = True
+            continue
+
+        # "o a'u" → "I am" (first person pronoun predicate) — handle all apostrophe variants
+        if cl == 'o' and idx + 1 < len(clean_words):
+            next_norm = clean_words[idx+1].lower().replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            if next_norm in ("a'u", "au"):
+                glosses.append('I am')
+                skip_next = True
+                continue
+
+        # "o ia" → "he/it"
+        if cl == 'o' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'ia':
+            glosses.append('he/it')
+            skip_next = True
+            continue
+
+        # "i laua" / "i latou" → "them"
+        if cl == 'i' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() in ('laua', 'latou'):
+            glosses.append('them')
+            skip_next = True
+            continue
+
+        # Possessive patterns: "lo/la" + pronoun
+        if cl in ('lo', 'la') and idx + 1 < len(clean_words):
+            next_cl = clean_words[idx+1].lower()
+            POSS_MAP = {
+                'tatou': 'our', 'matou': 'our', 'latou': 'their',
+                'outou': 'your', 'oulua': 'your', 'laua': 'their',
+            }
+            if next_cl in POSS_MAP:
+                glosses.append(POSS_MAP[next_cl])
+                skip_next = True
+                continue
+
+        # "o iai" → "there is/are"
+        if cl == 'o' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'iai':
+            glosses.append('there is')
+            skip_next = True
+            continue
+
+        # Tense markers — skip them in gloss (implicit in English)
+        if cl in ('ua', 'na', 'sa', "ole'a", "ole\u02bba", "olo'o", "olo\u02bbo"):
+            continue
+
+        if cl == 'ona' and pos_in_remainder == 0:
+            glosses.append('and')
+            continue
+
+        # Common particles — skip in gloss
+        if cl in ('ai', "a'i", 'lea', 'te'):
+            continue
+
+        # "o" as subject/predicate marker — skip
+        if cl == 'o':
+            continue
+
+        # Dictionary lookup
+        g = lookup_word(clean)
+        if g and not g.startswith('('):
+            glosses.append(g)
+        elif g and g.startswith('('):
+            # Skip grammatical markers like (past), (perf), (dir)
+            continue
+        else:
+            # Unknown word — use the Samoan word itself in the gloss
+            glosses.append(clean.lower())
+
+    result = ' '.join(glosses)
+    # Clean up
+    result = re.sub(r'\s+', ' ', result).strip()
+    # Use first option from slash alternatives for cleaner output
+    result = re.sub(r'(\w+)/\w+(?:/\w+)*', r'\1', result)
+    # Clean up double spaces
+    result = re.sub(r'\s+', ' ', result).strip()
+    return result
+
+
+def split_chunk_by_subphrases(phrase_text):
+    """
+    Try to split a chunk into multiple sub-phrases using WHOLE_PHRASES.
+    Returns list of (samoan_text, english_gloss) tuples.
+    If no sub-phrase splitting is possible, returns None.
+    """
+    words = phrase_text.split()
+    clean_words = [w.strip('.,;:!?\u201c\u201d\u201e()').lower() for w in words]
+
+    if len(clean_words) <= 1:
+        return None
+
+    # Greedy left-to-right sub-phrase matching
+    # When no match found at position, collect unmatched words and keep trying
+    parts = []
+    matched_count = 0
+    i = 0
+    unmatched_buffer = []  # words not yet matched to a known phrase
+
+    while i < len(clean_words):
+        matched = False
+        for length in range(min(8, len(clean_words) - i), 1, -1):
+            sub = ' '.join(clean_words[i:i+length])
+            # Normalize apostrophes for matching
+            sub_norm = sub.replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            match_key = sub if sub in WHOLE_PHRASES else (sub_norm if sub_norm in WHOLE_PHRASES else None)
+            if match_key:
+                # Flush any unmatched buffer as its own chunk
+                if unmatched_buffer:
+                    buf_display = ' '.join(unmatched_buffer)
+                    buf_gloss = gloss_phrase(buf_display)
+                    if not buf_gloss:
+                        buf_gloss = buf_display.lower()
+                    parts.append((buf_display, buf_gloss))
+                    unmatched_buffer = []
+                # Add the matched sub-phrase
+                display = ' '.join(words[i:i+length])
+                parts.append((display, WHOLE_PHRASES[match_key]))
+                i += length
+                matched = True
+                matched_count += 1
+                break
+        if not matched:
+            # No match at this position — buffer this word and move on
+            unmatched_buffer.append(words[i])
+            i += 1
+
+    # Flush remaining unmatched buffer
+    if unmatched_buffer:
+        buf_display = ' '.join(unmatched_buffer)
+        buf_gloss = gloss_phrase(buf_display)
+        if not buf_gloss:
+            buf_gloss = buf_display.lower()
+        parts.append((buf_display, buf_gloss))
+
+    # Only return if we found at least 1 known sub-phrase AND it splits into 2+ parts
+    if matched_count >= 1 and len(parts) >= 2:
+        return parts
+
+    return None
+
+
+def _split_at_punctuation(text):
+    """Split text at commas, semicolons, and colons (keeping punctuation with preceding segment)."""
+    parts = re.split(r'(?<=[,;:])\s*', text)
+    return [p.strip() for p in parts if p.strip()]
+
+
+def _merge_to_align(sam_segs, eng_segs):
+    """
+    When Samoan has more segments than KJV (or vice versa),
+    merge the side with more segments to match the smaller count,
+    then pair them. Always produces len(min(sam,eng)) pairs with no empty glosses.
+    """
+    if len(sam_segs) == len(eng_segs):
+        return [[s, e] for s, e in zip(sam_segs, eng_segs)]
+
+    if len(sam_segs) > len(eng_segs):
+        # More Samoan segments — merge consecutive Samoan segs to match KJV count
+        target = len(eng_segs)
+        merged_sam = []
+        # Distribute sam_segs into target groups
+        for i in range(target):
+            start = round(i * len(sam_segs) / target)
+            end = round((i + 1) * len(sam_segs) / target)
+            merged_sam.append(' '.join(sam_segs[start:end]))
+        return [[s, e] for s, e in zip(merged_sam, eng_segs)]
+    else:
+        # More KJV segments — merge consecutive KJV segs to match Samoan count
+        target = len(sam_segs)
+        merged_eng = []
+        for i in range(target):
+            start = round(i * len(eng_segs) / target)
+            end = round((i + 1) * len(eng_segs) / target)
+            merged_eng.append(' '.join(eng_segs[start:end]))
+        return [[s, e] for s, e in zip(sam_segs, merged_eng)]
+
+
+def annotate_verse(verse_key, samoan_text, english_text=""):
+    """
+    Generate phrase annotations for a verse.
+    Returns list of [samoan_phrase, english_gloss] pairs.
+    Uses KJV English aligned at punctuation breaks when available.
+    Falls back to gloss_phrase() when KJV alignment fails.
+    """
+    if not samoan_text:
+        return []
+
+    # --- Strategy 1: KJV punctuation alignment ---
+    if english_text:
+        sam_segs = _split_at_punctuation(samoan_text)
+        eng_segs = _split_at_punctuation(english_text)
+
+        if len(sam_segs) == len(eng_segs) and len(sam_segs) > 0:
+            # Perfect punctuation alignment — pair directly
+            return [[s, e] for s, e in zip(sam_segs, eng_segs)]
+
+        # Try sentence-level alignment (split at periods only) if segment counts differ
+        sam_sentences = [s.strip() for s in re.split(r'(?<=\.)\s+', samoan_text) if s.strip()]
+        eng_sentences = [s.strip() for s in re.split(r'(?<=\.)\s+', english_text) if s.strip()]
+
+        if len(sam_sentences) == len(eng_sentences) and len(sam_sentences) > 1:
+            # Align within each sentence
+            result = []
+            for sam_sent, eng_sent in zip(sam_sentences, eng_sentences):
+                ss = _split_at_punctuation(sam_sent)
+                es = _split_at_punctuation(eng_sent)
+                if len(ss) == len(es):
+                    result.extend([[s, e] for s, e in zip(ss, es)])
+                else:
+                    # Merge Samoan segments to match KJV count
+                    result.extend(_merge_to_align(ss, es))
+            return result
+
+        # If only one segment on both sides or no segments, pair as whole verse
+        if len(sam_segs) <= 1 or len(eng_segs) <= 1:
+            return [[samoan_text, english_text]]
+
+        # Merge Samoan segments to match KJV count
+        return _merge_to_align(sam_segs, eng_segs)
+
+    # --- Strategy 2: Fallback to gloss_phrase ---
+    phrases = chunk_verse(samoan_text)
+    result = []
+    for phrase in phrases:
+        gloss = gloss_phrase(phrase)
+        if not gloss:
+            gloss = phrase.lower()
+        result.append([phrase, gloss])
+    return result
+
+
+# ============================================================
+# Main: generate annotations for all verses
+# ============================================================
+def main():
+    sys.stdout = open(sys.stdout.fileno(), mode='w', encoding='utf-8', buffering=1)
+
+    # Regenerate ALL annotations from scratch
+    phrase_path = os.path.join(base, '_phrase_annotations.json')
+    annotations = {}
+
+    # Process all verses
+    total = 0
+    auto = 0
+
+    for key, samoan_text in sorted(samoan_verses.items()):
+        eng = english_verses.get(key, '')
+        phrases = annotate_verse(key, samoan_text, eng)
+
+        if phrases:
+            annotations[key] = phrases
+            auto += 1
+
+        total += 1
+        if total % 5000 == 0:
+            print(f"  Processed {total} verses ({auto} auto-annotated)...")
+
+    print(f"\nTotal verses processed: {total}")
+    print(f"Auto-annotated: {auto}")
+    print(f"Regenerated from scratch (no preserved entries)")
+    print(f"Total annotations: {len(annotations)}")
+
+    # Save
+    with open(phrase_path, 'w', encoding='utf-8') as f:
+        json.dump(annotations, f, ensure_ascii=False, indent=1)
+    print(f"Saved to {phrase_path}")
+
+
+if __name__ == '__main__':
+    main()

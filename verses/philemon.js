@@ -1,0 +1,31 @@
+(function() {
+var phm_ch_1_Verses = [
+  {num:1,words:[["O a'u o Paulo,", "Paul,"], ["o le ua noanoatia ona o Keriso Iesu,", "a prisoner of Jesus Christ,"], ["o Timoteo foi lo tatou uso,", "and Timothy our brother, unto Philemon our dearly beloved,"], ["o la ma tusi lenei ia Filemoni o le pele na tatou galulue faatasi;", "and fellowlabourer,"]]},
+  {num:2,words:[["ma Afia le pele,", "And to our beloved Apphia,"], ["ma Arekipa o le na tatou matātau faatasi,", "and Archippus our fellowsoldier,"], ["atoa ma le ekalesia i lou fale;", "and to the church in thy house:"]]},
+  {num:3,words:[["ia ia te outou le alofa tunoa ma le manuia mai le Atua lo tatou Tamā,", "Grace to you, and peace,"], ["atoa ma le Alii o Iesu Keriso.", "from God our Father and the Lord Jesus Christ."]]},
+  {num:4,words:[["Ou te faafetai atu i lo'u Atua,", "I thank my God,"], ["o loo ou ta'uta'ua oe e le aunoa i a'u tatalo,", "making mention of thee always in my prayers,"]]},
+  {num:5,words:[["ina ua ou faalogo i lou alofa ma le faatuatua o ia te oe i le Alii o Iesu,", "Hearing of thy love and faith, which thou hast toward the Lord Jesus,"], ["atoa ma le au paia uma;", "and toward all saints;"]]},
+  {num:6,words:[["ina ia galue lava lou mafuta faatasi i le faatuatua, ina ia matuā iloa mea lelei uma o ia te outou ia Keriso Iesu.", "That the communication of thy faith may become effectual by the acknowledging of every good thing which is in you in Christ Jesus."]]},
+  {num:7,words:[["Auā lo'u uso e,", "For we have great joy and consolation in thy love,"], ["ua tele lo matou fiafia ma le mafanafana ona o lou alofa,", "because the bowels of the saints are refreshed by thee,"], ["ina ua faamafanafanaina le au paia ona o oe.", "brother."]]},
+  {num:8,words:[["O lenei,", "Wherefore,"], ["e ui lava ina ua ia te au le pule lava mai ia Keriso e poloai atu ai ia te oe i mea e tatau,", "though I might be much bold in Christ to enjoin thee that which is convenient,"]]},
+  {num:9,words:[["a e ou te aioi atu ona o le alofa,", "Yet for love's sake I rather beseech thee,"], ["o a'u nei lava o Paulo le toeaina,", "being such an one as Paul the aged,"], ["o le ua noanoatia nei foi ona o Iesu Keriso.", "and now also a prisoner of Jesus Christ."]]},
+  {num:10,words:[["Ou te aioi atu ia te oe mo lo'u atalii o Onesemo, o le na fanaua e a'u,", "I beseech thee for my son Onesimus,"], ["a e noanoatia a'u,", "whom I have begotten in my bonds:"]]},
+  {num:11,words:[["sa le aoga o ia ia te oe,", "Which in time past was to thee unprofitable,"], ["a o lenei e aoga tele ia te oe atoa ma a'u,", "but now profitable to thee and to me:"]]},
+  {num:12,words:[["ou te faafoi atu ia te ia;", "Whom I have sent again:"], ["ina e talia mai o ia,", "thou therefore receive him, that is,"], ["o lo'u lava tino ia.", "mine own bowels:"]]},
+  {num:13,words:[["Na ou loto ina ia taofi pea ia te ia ma te nonofo ma a'u, ina ia fai mou sui,", "Whom I would have retained with me,"], ["na te auauna mai ia te au i o'u noanoataga ona o le tala lelei.", "that in thy stead he might have ministered unto me in the bonds of the gospel:"]]},
+  {num:14,words:[["A ou te le fia faia se mea e tasi pe a le to mai sau pule,", "But without thy mind would I do nothing;"], ["ina ne'i pei o se mea ua faatauanauina lou agalelei mai,", "that thy benefit should not be as it were of necessity,"], ["a ia faia ma le loto.", "but willingly."]]},
+  {num:15,words:[["Auā atonu o le mea lea na te'a ese ai o ia i sina itu aso,", "For perhaps he therefore departed for a season,"], ["ina ia e toe maua o ia e faavavau;", "that thou shouldest receive him for ever;"]]},
+  {num:16,words:[["e le toe faapei o se pologa,", "Not now as a servant, but above a servant,"], ["a e sili i le pologa,", "a brother beloved, specially to me,"], ["o le uso pele ia ia te au lava;", "but how much more unto thee,"], ["e le sili ea ona faapea ia te oe i la le tino atoa ma la le Alii?", "both in the flesh, and in the Lord?"]]},
+  {num:17,words:[["O lenei afai e te manatu i la ta uo,", "If thou count me therefore a partner,"], ["ia e talia mai o ia e pei o a'u lava.", "receive him as myself."]]},
+  {num:18,words:[["A e afai na ia agaleaga ia te oe,", "If he hath wronged thee,"], ["po ua ia te ia sau mea,", "or oweth thee ought,"], ["ia e tuu mai lea mea ia te au.", "put that on mine account;"]]},
+  {num:19,words:[["O a'u o Paulo, ua ou tusi atu i lo'u lava lima,", "I Paul have written it with mine own hand,"], ["ou te taui atu lava;", "I will repay it:"], ["a e ou te le fai atu, e tatau ona e tuuina mai oe lava ia te au.", "albeit I do not say to thee how thou owest unto me even thine own self besides."]]},
+  {num:20,words:[["E moni,", "Yea,"], ["lo'u uso e,", "brother,"], ["se'i e faafiafia mai ia te au i le Alii,", "let me have joy of thee in the Lord:"], ["ina faamafanafana mai ia i lo'u loto i le Alii.", "refresh my bowels in the Lord."]]},
+  {num:21,words:[["Ua ou tusi atu ia te oe, auā ou te faatuatua i lou gauai mai,", "Having confidence in thy obedience I wrote unto thee,"], ["ua ou iloa e te faia mea e sili lava i mea ou te fai atu ai.", "knowing that thou wilt also do more than I say."]]},
+  {num:22,words:[["Tasi foi lea mea, ia e sauni se mea ou te nofo ai;", "But withal prepare me also a lodging:"], ["auā ou te faamoemoe e tuuinaatua a'u ia te outou, ona o a outou tatalo.", "for I trust that through your prayers I shall be given unto you."]]},
+  {num:23,words:[["O loo alofa atu ia te oe o Epafara,", "There salute thee Epaphras,"], ["o loo noanoatia faatasi ma a'u ona o Keriso Iesu.", "my fellowprisoner in Christ Jesus;"]]},
+  {num:24,words:[["O loo alolofa foi Mareko,", "Marcus,"], ["ma Aritako,", "Aristarchus,"], ["ma Tema,", "Demas,"], ["ma Luka,", "Lucas,"], ["e ua galulue faatasi ma a'u.", "my fellowlabourers."]]},
+  {num:25,words:[["Ia i o outou agaga le alofa tunoa o lo tatou Alii o Iesu Keriso. Amene.", "The grace of our Lord Jesus Christ be with your spirit. Amen."]]},
+];
+renderVerseSet(phm_ch_1_Verses, 'phm-ch1-verses');
+
+})();
