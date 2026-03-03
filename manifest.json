@@ -1,7 +1,7 @@
 {
-  "name": "O Le Tusi Paia — Samoan Interlinear",
-  "short_name": "Tusi Paia",
-  "description": "Samoan Interlinear Standard Works with KJV English",
+  "name": "O Le Tusitusiga Paia — Samoan Interlinear",
+  "short_name": "Tusitusiga Paia",
+  "description": "Samoan Interlinear Standard Works — Word-by-Word with English Glosses",
   "start_url": "./TusiPaia.html",
   "display": "standalone",
   "background_color": "#1e2233",
