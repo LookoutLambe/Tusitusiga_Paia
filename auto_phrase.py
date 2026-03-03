@@ -158,6 +158,9 @@ EXTENDED_VOCAB = {
     'mua': 'grass',
 
     # Creation-specific vocabulary
+    'tofu': 'was without form',
+    'agafoi': 'moved',
+    'suasami': 'waters',
     'faapotopotoga': 'gathering',
     'potopotoga': 'gathering',
     'uiga': 'kind',
@@ -1645,8 +1648,8 @@ def split_chunk_by_subphrases(phrase_text):
 
 
 def _split_at_punctuation(text):
-    """Split text at commas, semicolons, and colons (keeping punctuation with preceding segment)."""
-    parts = re.split(r'(?<=[,;:])\s*', text)
+    """Split text at commas, semicolons, colons, and periods (keeping punctuation with preceding segment)."""
+    parts = re.split(r'(?<=[,;:.])\s+', text)
     return [p.strip() for p in parts if p.strip()]
 
 
@@ -1684,47 +1687,16 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     Generate phrase annotations for a verse.
     Returns list of [samoan_phrase, english_gloss] pairs.
-    Uses KJV English aligned at punctuation breaks when available.
-    Falls back to gloss_phrase() when KJV alignment fails.
+    Splits Samoan at punctuation and glosses each phrase independently.
     """
     if not samoan_text:
         return []
 
-    # --- Strategy 1: KJV punctuation alignment ---
-    if english_text:
-        sam_segs = _split_at_punctuation(samoan_text)
-        eng_segs = _split_at_punctuation(english_text)
+    # Split Samoan at punctuation boundaries (commas, semicolons, colons, periods)
+    phrases = _split_at_punctuation(samoan_text)
+    if len(phrases) <= 1:
+        phrases = [samoan_text]
 
-        if len(sam_segs) == len(eng_segs) and len(sam_segs) > 0:
-            # Perfect punctuation alignment — pair directly
-            return [[s, e] for s, e in zip(sam_segs, eng_segs)]
-
-        # Try sentence-level alignment (split at periods only) if segment counts differ
-        sam_sentences = [s.strip() for s in re.split(r'(?<=\.)\s+', samoan_text) if s.strip()]
-        eng_sentences = [s.strip() for s in re.split(r'(?<=\.)\s+', english_text) if s.strip()]
-
-        if len(sam_sentences) == len(eng_sentences) and len(sam_sentences) > 1:
-            # Align within each sentence
-            result = []
-            for sam_sent, eng_sent in zip(sam_sentences, eng_sentences):
-                ss = _split_at_punctuation(sam_sent)
-                es = _split_at_punctuation(eng_sent)
-                if len(ss) == len(es):
-                    result.extend([[s, e] for s, e in zip(ss, es)])
-                else:
-                    # Merge Samoan segments to match KJV count
-                    result.extend(_merge_to_align(ss, es))
-            return result
-
-        # If only one segment on both sides or no segments, pair as whole verse
-        if len(sam_segs) <= 1 or len(eng_segs) <= 1:
-            return [[samoan_text, english_text]]
-
-        # Merge Samoan segments to match KJV count
-        return _merge_to_align(sam_segs, eng_segs)
-
-    # --- Strategy 2: Fallback to gloss_phrase ---
-    phrases = chunk_verse(samoan_text)
     result = []
     for phrase in phrases:
         gloss = gloss_phrase(phrase)
