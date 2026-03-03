@@ -620,6 +620,138 @@ body.dual-mode .hw { font-size: 16px; }
   #word-popup .popup-gloss { font-size: 1.3em !important; }
 }
 
+/* Cross-Reference Panel (right slide) */
+#xref-panel {
+  position: fixed; top: 0; right: -400px; width: 380px; height: 100vh;
+  background: var(--bg); border-left: 2px solid var(--accent); z-index: 160;
+  transition: right 0.3s ease; overflow-y: auto; padding: 0;
+  font-family: 'Times New Roman', Times, serif;
+  box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+}
+#xref-panel.open { right: 0; }
+.xref-panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 16px; border-bottom: 1px solid var(--rule-light);
+  position: sticky; top: 0; background: var(--bg); z-index: 2;
+}
+.xref-panel-header h3 { margin: 0; font-size: 1em; color: var(--ink); }
+.xref-panel-close { cursor: pointer; font-size: 18px; color: #888; padding: 4px 8px; }
+.xref-panel-word { font-weight: 600; color: var(--accent); font-size: 1.1em; padding: 12px 16px 0; }
+.xref-panel-category { font-size: 0.8em; color: var(--ink-light, #888); padding: 2px 16px 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.xref-ref-card { padding: 12px 16px; border-bottom: 1px solid var(--rule-light); }
+.xref-ref-title { font-weight: 600; color: var(--ink); font-size: 0.95em; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
+.xref-ref-goto { font-size: 0.75em; color: var(--ink-light, #888); cursor: pointer; padding: 2px 8px; border: 1px solid var(--rule-light); border-radius: 3px; text-decoration: none; white-space: nowrap; }
+.xref-ref-goto:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.xref-ref-content { display: flex; flex-wrap: wrap; gap: 4px 8px; margin: 6px 0; line-height: 1.7; }
+.xref-ref-word { display: inline-flex; flex-direction: column; align-items: center; text-align: center; padding: 2px 3px; }
+.xref-ref-word .hw { font-family: 'Times New Roman', Times, serif; font-size: 1.05em; color: var(--ink); }
+.xref-ref-word .en { font-size: 0.65em; color: #5a6a8a; direction: ltr; }
+.xref-ref-english { font-size: 0.88em; color: var(--ink-light, #888); line-height: 1.5; margin-top: 6px; padding: 8px 10px; background: rgba(200,168,78,0.05); border-radius: 4px; border-left: 3px solid var(--accent); }
+.xref-ref-nodata { padding: 16px; color: #888; font-style: italic; }
+
+/* Cross-ref markers on words (hidden — access via word click) */
+.xref-marker { display: none; }
+.word-unit.xref-linked { cursor: pointer; }
+.word-unit.xref-linked .hw { color: #5dade2 !important; }
+.word-unit.xref-linked .gl { color: #5dade2 !important; }
+.word-unit.xref-linked:hover .hw { color: #85c1e9 !important; text-decoration: underline; }
+.word-unit.xref-linked:hover .gl { color: #85c1e9 !important; }
+
+/* Talk reference badge */
+.talk-ref-badge { display: block; font-size: 0.7em; cursor: pointer; margin-top: 2px; opacity: 0.7; transition: opacity 0.2s; }
+.talk-ref-badge:hover { opacity: 1; }
+
+/* Dark mode for xref panel */
+body.dark-mode #xref-panel { background: #252525; border-color: #d4af37; }
+body.dark-mode .xref-panel-header { background: #252525; }
+body.dark-mode .xref-ref-card { border-color: #444; }
+body.dark-mode .xref-ref-english { background: rgba(200,168,78,0.08); }
+
+@media (max-width: 600px) {
+  #xref-panel { width: 85%; right: -85%; }
+}
+
+/* Return navigation banner */
+#return-banner {
+  display: none; position: fixed; top: 0; left: 0; right: 0; z-index: 101;
+  background: var(--bg); padding: 8px 20px; text-align: center;
+  font-family: 'Times New Roman', Times, serif; font-size: 0.95em;
+  border-bottom: 1px solid var(--rule-light); box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+#return-banner a {
+  display: inline-block; background: var(--accent); color: #fff; text-decoration: none;
+  padding: 6px 18px; border-radius: 4px; font-weight: 600; font-size: 0.9em;
+}
+#return-banner a:hover { background: #b8942e; }
+#return-banner .return-dismiss {
+  position: absolute; right: 16px; top: 50%; transform: translateY(-50%);
+  cursor: pointer; color: #999; font-size: 1.2em; background: none; border: none;
+}
+body.dark-mode #return-banner { background: #252525; border-color: #444; }
+body.dark-mode #return-banner a { background: #d4af37; color: #1a1a1a; }
+body.dark-mode #return-banner a:hover { background: #c8a84e; }
+
+/* Inline audio player */
+.talk-audio-player {
+  padding: 8px 0; margin-top: 6px;
+}
+.talk-audio-player audio {
+  width: 100%; height: 36px; border-radius: 4px;
+}
+.talk-audio-player .audio-label {
+  font-size: 0.75em; color: var(--ink-light, #888); margin-bottom: 4px;
+}
+.talk-audio-lang-tabs {
+  display: flex; gap: 0; margin-bottom: 6px; border-radius: 4px; overflow: hidden; border: 1px solid var(--rule-light);
+}
+.talk-audio-lang-tabs button {
+  flex: 1; padding: 5px 8px; font-size: 0.8em; cursor: pointer;
+  background: var(--bg-deep, #f0ece0); border: none; color: var(--ink);
+  font-family: 'Times New Roman', Times, serif; font-weight: 600; transition: background 0.2s;
+}
+.talk-audio-lang-tabs button.active {
+  background: var(--accent); color: #fff;
+}
+.talk-audio-lang-tabs button:hover:not(.active) {
+  background: var(--rule-light);
+}
+body.dark-mode .talk-audio-lang-tabs button { background: #333; color: #ccc; }
+body.dark-mode .talk-audio-lang-tabs button.active { background: #d4af37; color: #1a1a1a; }
+
+/* Full talk view in panel */
+.talk-full-view { padding: 0 16px 16px; }
+.talk-full-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 0; border-bottom: 1px solid var(--rule-light); margin-bottom: 12px;
+}
+.talk-full-header h4 { margin: 0; font-size: 1em; color: var(--accent); font-weight: 600; }
+.talk-font-controls {
+  display: flex; gap: 4px; align-items: center;
+}
+.talk-font-controls button {
+  width: 28px; height: 28px; border: 1px solid var(--rule-light); border-radius: 4px;
+  background: var(--bg-deep, #f0ece0); cursor: pointer; font-size: 0.9em;
+  font-family: 'Times New Roman', Times, serif; font-weight: 700; color: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+}
+.talk-font-controls button:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+body.dark-mode .talk-font-controls button { background: #333; color: #ccc; border-color: #555; }
+body.dark-mode .talk-font-controls button:hover { background: #d4af37; color: #1a1a1a; }
+.talk-back-btn {
+  display: inline-block; cursor: pointer; color: var(--accent); font-size: 0.85em;
+  font-weight: 600; padding: 4px 0; margin-bottom: 8px; border: none; background: none;
+  font-family: 'Times New Roman', Times, serif;
+}
+.talk-back-btn:hover { text-decoration: underline; }
+.talk-paragraphs p {
+  font-family: 'Times New Roman', Times, serif; color: var(--ink);
+  line-height: 1.7; margin: 0 0 12px; text-align: justify;
+}
+.talk-paragraphs p .talk-scripture-ref {
+  color: var(--accent); cursor: pointer; font-weight: 600;
+}
+.talk-paragraphs p .talk-scripture-ref:hover { text-decoration: underline; }
+
 /* Search */
 #search-container {
   display: none;
@@ -754,7 +886,7 @@ body.dual-mode .hw { font-size: 16px; }
   display: inline-block;
   background: transparent;
   border: 1px solid var(--accent);
-  color: var(--accent);
+  color: #1a2744;
   padding: 8px 20px;
   font-family: 'Times New Roman', Times, serif;
   font-size: 1em;
@@ -763,7 +895,7 @@ body.dual-mode .hw { font-size: 16px; }
   transition: all 0.2s;
   margin: 4px;
 }
-.volume-link-btn:hover { background: var(--accent); color: #1e2233; }
+.volume-link-btn:hover { background: #1a2744; color: #faf8f2; }
 
 /* ===== DARK MODE ===== */
 body.dark-mode {
@@ -823,6 +955,23 @@ body.dark-mode .verse.highlighted { background: rgba(200, 168, 78, 0.12); }
   <span class="popup-close" onclick="closePopup()" role="button" aria-label="Close popup">&#10005;</span>
   <div class="popup-samoan" id="popup-hw"></div>
   <div class="popup-gloss" id="popup-gl"></div>
+</div>
+
+<!-- Cross-Reference Panel (right slide) -->
+<div id="xref-panel">
+  <div class="xref-panel-header">
+    <h3>Fa&#x02BB;asinomaga</h3>
+    <span class="xref-panel-close" onclick="closeXrefPanel()">&#10005;</span>
+  </div>
+  <div class="xref-panel-word"></div>
+  <div class="xref-panel-category"></div>
+  <div id="xref-panel-refs"></div>
+</div>
+
+<!-- Return navigation banner -->
+<div id="return-banner">
+  <a id="return-link" href="javascript:void(0)" onclick="returnToPrevious()">&#x276E; Return to <span id="return-verse"></span></a>
+  <button class="return-dismiss" onclick="dismissReturnBanner()" aria-label="Dismiss">&times;</button>
 </div>
 
 <!-- Overlay -->
@@ -934,12 +1083,13 @@ body.dark-mode .verse.highlighted { background: rgba(200, 168, 78, 0.12); }
       <div class="ornament" style="margin:24px 0">&#183; &#183; &#9670; &#183; &#183;</div>
 
       <div style="margin-top:20px">
-        <div style="font-family:'Times New Roman',Times,serif;font-size:0.95em;color:var(--accent);font-weight:600;margin-bottom:12px">Volumes</div>
+        <div style="font-family:'Times New Roman',Times,serif;font-size:0.95em;color:#1a2744;font-weight:600;margin-bottom:12px">Volumes</div>
         <button class="volume-link-btn" onclick="navTo('gen-ch1')">Le Feagaiga Tuai</button><br>
         <button class="volume-link-btn" onclick="navTo('mat-ch1')">Le Feagaiga Fou</button><br>
         <button class="volume-link-btn" onclick="navTo('ch1')">O Le Tusi a Mamona</button><br>
         <button class="volume-link-btn" onclick="navTo('dc-sec1')">Mataupu Faavae ma Feagaiga</button><br>
-        <button class="volume-link-btn" onclick="navTo('ms-ch1')">Penina Tau Tele</button>
+        <button class="volume-link-btn" onclick="navTo('ms-ch1')">Penina Tau Tele</button><br>
+        <button class="volume-link-btn" style="margin-top:12px;border-color:var(--accent);color:var(--accent);" onclick="window.open('https://www.churchofjesuschrist.org/study/general-conference/speakers/dallin-h-oaks?lang=eng','_blank')">&#127897;&#65039; President Oaks Talks</button>
       </div>
 
       <div class="ornament" style="margin:30px 0 0">&#183; &#183; &#9670; &#183; &#183;</div>
@@ -1323,6 +1473,10 @@ function _doRenderVerses(verseData, containerId) {
 
     container.appendChild(verseDiv);
   });
+  // Apply cross-reference markers to newly rendered verses
+  if (window._crossrefsLoaded && typeof window.addCrossRefMarkers === 'function') {
+    setTimeout(window.addCrossRefMarkers, 100);
+  }
 }
 
 function _ensureChapterRendered(chapId) {
@@ -1809,6 +1963,7 @@ document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') {
     closeSearch();
     closePopup();
+    if (typeof closeXrefPanel === 'function') closeXrefPanel();
     var drawer = document.getElementById('drawer');
     if (drawer && drawer.classList.contains('open')) toggleDrawer();
   }
@@ -1847,6 +2002,13 @@ if ('serviceWorker' in navigator) {
 <script src="verses/js_history.js"></script>
 <script src="verses/articles_of_faith.js"></script>
 <script src="english_verses.js"></script>
+
+<!-- Cross-references + Oaks talks -->
+<script src="crossrefs_all.js"></script>
+<script src="talks_data/oaks_scripture_index.js"></script>
+<script src="talks_data/oaks_talks.js"></script>
+<script src="talks_data/oaks_audio_urls.js"></script>
+<script src="crossrefs_engine_sm.js"></script>
 
 </body>
 </html>
