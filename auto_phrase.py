@@ -1949,7 +1949,7 @@ def main():
             'i le faitotoa': 'in the gate',
             'o le tupu,': 'of the king',
             'ia Moretekai,': 'to Mordecai',
-            'Se a le mea': 'but the thing',
+            'Se a le mea': 'what is this?',
             'ua e soli ai': 'why do you transgress',
             'le poloaiga': 'the commandment',
             'a le tupu?': 'of the king',
