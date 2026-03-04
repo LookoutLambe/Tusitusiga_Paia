@@ -60,7 +60,7 @@ FUNC_WORDS = {
     "olo'o": '(prog)',
     "olo\u02bbo": '(prog)',
     'o': '',
-    'ona': 'then',
+    'ona': 'then/his/her',
     'lea': '',
     # Negation
     "le\u0304": 'not',
@@ -82,14 +82,22 @@ FUNC_WORDS = {
     'te': '',
     'lo': '',
     'la': '',
-    'latou': 'them/their',
-    'lona': 'his/its',
-    'ana': 'his',
-    'lau': 'your/my',
-    'laua': 'them two',
-    'oulua': 'you two',
-    'outou': 'ye/you all',
-    'matou': 'we',
+    'latou': 'they/them',
+    'lona': 'his/her',
+    'lana': 'his/her',
+    'ana': 'his/her',
+    'lau': 'your',
+    'laua': 'they/them (two)',
+    "la'ua": 'they/them (two)',
+    "la\u02bbua": 'they/them (two)',
+    "ta'ua": 'us (two, incl)',
+    "ta\u02bbua": 'us (two, incl)',
+    "ma'ua": 'us (two, excl)',
+    "ma\u02bbua": 'us (two, excl)',
+    'oulua': 'you (two)',
+    'outou': 'you (all)',
+    'matou': 'we/us (excl)',
+    'tatou': 'we/us (incl)',
     'taitasi': 'each',
     'faauta': 'behold',
     'faapea': 'thus/so',
@@ -130,7 +138,7 @@ EXTENDED_VOCAB = {
     'moana': 'deep',
     'vanimonimo': 'firmament',
     'pouliuli': 'darkness',
-    'malamalama': 'light',
+    'malamalama': 'knowledge/light',
     'ao': 'day',
     'po': 'night',
     'aso': 'day',
@@ -225,6 +233,7 @@ EXTENDED_VOCAB = {
     'sau': 'come',
     'alu': 'go',
     'nofo': 'dwell',
+    'nofoalii': 'throne',
     'tu': 'stand',
     'savali': 'walk',
     'taofi': 'hold',
@@ -271,7 +280,9 @@ EXTENDED_VOCAB = {
     'foai': 'give',
     'maua': 'received',
     'tali': 'answer',
-    'aai': 'eat',
+    'aai': 'city',
+    "a'ai": 'eat',
+    "a\u02bbai": 'eat',
     "'aina": 'edible',
     "'ai": 'eat',
     'inu': 'drink',
@@ -384,13 +395,18 @@ EXTENDED_VOCAB = {
     'moni': 'true/truth',
     'la\u02bcu': 'my',
     "la'u": 'my',
-    'lau': 'your/my',
+    'lau': 'your',
     'lona': 'his/her',
     'lo\u02bbu': 'my',
     "lo'u": 'my',
+    "o'u": 'my',
+    'o\u02bbu': 'my',
     'lou': 'your',
     'ona': 'his/her',
     'tunoa': 'grace/free',
+    'gasologa': 'course/process',
+    'puapuaga': 'affliction',
+    'alofagia': 'favored',
     'faiva': 'ministry/calling',
     'suafa': 'name',
     'manuia': 'peace/blessing',
@@ -409,8 +425,21 @@ EXTENDED_VOCAB = {
     "'oe": 'you',
     'ia': 'he/she/him/her',
     'ita': 'we (excl)',
-    'tatou': 'we (incl)',
-    'outou': 'you (pl)',
+    # Plural pronouns (3+)
+    'tatou': 'we/us (incl)',
+    'matou': 'we/us (excl)',
+    'outou': 'you (all)',
+    'latou': 'they/them',
+    # Dual pronouns (2)
+    "ta'ua": 'us (two, incl)',
+    "ta\u02bbua": 'us (two, incl)',
+    "ma'ua": 'us (two, excl)',
+    "ma\u02bbua": 'us (two, excl)',
+    'oulua': 'you (two)',
+    'laua': 'they/them (two)',
+    "la'ua": 'they/them (two)',
+    "la\u02bbua": 'they/them (two)',
+    'oulua': 'you (two)',
     # Short pronoun forms (used with tense markers)
     "'ou": 'I',
     "o\u02bbu": 'I',
@@ -546,7 +575,6 @@ EXTENDED_VOCAB = {
     'auā': 'for/because',
     'aua': 'for/because',
     'loo': '(progressive)',
-    'lana': 'his/her',
     'tusa': 'according to',
     'pea': 'continually',
     'nisi': 'some/others',
@@ -910,7 +938,17 @@ def chunk_grammatical(text):
                 start_new = True
             # "ona" narrative continuation
             elif w_clean == 'ona':
-                start_new = True
+                c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e') if current else ''
+                if c_prev1 == 'faapea':
+                    pass  # "faapea ona" = while thus, keep together
+                elif c_prev1 == 'tatau':
+                    pass  # "e tatau ona" = should/ought to, keep together
+                elif c_prev1 == 'uma':
+                    pass  # "ua uma ona" = finished, keep together
+                elif c_prev1 == 'lava':
+                    pass  # "e pei lava ona" = just as, keep together
+                else:
+                    start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
             elif w_clean in ('ma', 'a', 'ae', 'atoa'):
                 if w_clean == 'a' and len(current) >= 2:
@@ -920,27 +958,77 @@ def chunk_grammatical(text):
                         pass  # "o le a" = future tense marker, keep together
                     else:
                         start_new = True
+                elif w_clean == 'ma' and len(current) >= 1:
+                    c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_prev1 == 'tusa':
+                        pass  # "e tusa ma" = according to, keep together
+                    else:
+                        start_new = True
+                elif w_clean == 'atoa' and len(current) >= 1:
+                    c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_prev1 == 'loto':
+                        pass  # "loto atoa" = wholeheartedly, keep together
+                    else:
+                        start_new = True
                 else:
                     start_new = True
             # Prepositions
             elif w_clean in ('i', 'mo'):
-                start_new = True
+                # Keep "e ui i lea" together (nevertheless)
+                if w_clean == 'i' and len(current) >= 2:
+                    c_p1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    c_p2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_p2 == 'e' and c_p1 == 'ui':
+                        pass  # "e ui i lea" = nevertheless, keep together
+                    elif c_p1 == 'atu' and c_p2 == 'sili':
+                        pass  # "sili atu i lo" = comparison, keep together
+                    else:
+                        start_new = True
+                else:
+                    start_new = True
             # "mai" as preposition (after 3+ words to preserve verb+directional)
             elif w_clean == 'mai' and len(current) >= 3:
                 start_new = True
             # Agent marker "e"
+            # BUT: "e tele" = "many/great" modifies previous noun, keep together
             elif w_clean == 'e':
-                start_new = True
-            # "o" before article -> new predicate/possessive NP
+                if i + 1 < len(words):
+                    next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if next_e == 'tele':
+                        pass  # "e tele" = many, keep with noun
+                    elif next_e in ('ia', 'au', 'oe', 'latou', 'matou', 'tatou',
+                                    'outou', 'laua', 'oulua', 'i') and len(current) <= 3:
+                        pass  # "e + pronoun" = agent marker (by him/her), keep with verb
+                    elif next_e == 'ao' and i + 2 < len(words):
+                        next_e2 = words[i+2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                        if next_e2 == 'ina':
+                            start_new = True  # "e ao ina" = must needs, start new chunk here
+                        else:
+                            start_new = True
+                    else:
+                        start_new = True
+                else:
+                    start_new = True
+            # "o" before article or possessive pronoun -> new predicate/possessive NP
             # BUT: "o le a [verb]" is future tense — don't split
             elif w_clean == 'o' and i + 1 < len(words):
-                next_c = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
-                if next_c in ('le', 'lo', 'la', 'se', 'ni'):
+                next_c = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e').replace('\u02bb', "'").replace('\u02bc', "'")
+                c_prev_o = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e') if current else ''
+                if c_prev_o == 'pei':
+                    pass  # "e pei o le" = like the, keep together
+                elif c_prev_o in ('latou', 'tatou', 'matou', 'outou',
+                                  'laua', 'oulua', "ta'ua", "ma'ua", "la'ua",
+                                  'ia', 'oe', "'oe", 'au', "a'u"):
+                    start_new = True  # "o" after pronoun = relative clause marker
+                elif next_c in ('le', 'lo', 'la', 'se', 'ni',
+                              "lo'u", "la'u", "o'u", "a'u",
+                              'lou', 'lau', 'lona', 'lana',
+                              'ona', 'ana', 'lo', 'la'):
                     # Check for "o le a" future tense pattern
                     if next_c == 'le' and i + 2 < len(words):
                         next2_c = words[i+2].lower().strip('.,;:!?()\u201c\u201d\u201e').replace('\u02bb', "'").replace('\u02bc', "'")
                         if next2_c == 'a' and i + 3 < len(words):
-                            pass  # "o le a [verb]" = future tense, keep together
+                            start_new = True  # "o le a [verb]" = future tense, start new chunk
                         else:
                             start_new = True
                     else:
@@ -950,16 +1038,90 @@ def chunk_grammatical(text):
                 start_new = True
             # Discourse markers
             elif w_clean in ('faauta', 'ina'):
-                start_new = True
+                if w_clean == 'ina' and len(current) >= 2:
+                    c_p1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    c_p2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_p2 == 'e' and c_p1 == 'ao':
+                        pass  # "e ao ina" = must, keep together
+                    elif c_p1 == 'oo' and c_p2 == 'sa':
+                        pass  # "sa oo ina" = it came to pass, keep together
+                    else:
+                        start_new = True
+                else:
+                    start_new = True
             # "pe" subordinating conjunction (whether/if)
             elif w_clean == 'pe':
                 start_new = True
+            # "nai" comparison marker (nai lo = more than)
+            elif w_clean == 'nai':
+                start_new = True
+
+        # --- Forced break after "e ao ina" (must needs) or "sa oo ina" (it came to pass) ---
+        if not start_new and len(current) >= 3:
+            c_words = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-3:]]
+            if c_words == ['e', 'ao', 'ina'] or c_words == ['sa', 'oo', 'ina']:
+                start_new = True
+
+        # --- Forced break after "faapea ona" (while thus) ---
+        if not start_new and len(current) >= 2:
+            c2 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-2:]]
+            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona']:
+                start_new = True
+
+        # --- Forced break after "sili atu i lo" (comparison: exceeded than) ---
+        if not start_new and len(current) >= 4:
+            c4 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-4:]]
+            if c4 == ['sili', 'atu', 'i', 'lo']:
+                start_new = True
+
+        # --- Forced break after "ia te ia" (unto him) ---
+        if not start_new and len(current) >= 3:
+            c3 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-3:]]
+            if c3 == ['ia', 'te', 'ia']:
+                start_new = True
+
+        # --- Forced break after vocative "e" (e.g. "Le Alii e" = O Lord) ---
+        if not start_new and len(current) >= 3:
+            prev_e = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            prev_title = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            if prev_e == 'e' and prev_title in ('alii', 'atua'):
+                start_new = True
+
+        # --- Forced break at 4+ words after pronoun ---
+        if not start_new and len(current) >= 4:
+            prev_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e').replace('\u02bb', "'").replace('\u02bc', "'")
+            if prev_c in ("a'u", 'au', 'oe', "'oe", 'ia', 'tatou', 'matou',
+                          'latou', 'outou', 'laua', 'oulua', "ta'ua", "ma'ua", "la'ua"):
+                # Don't break if next word is "te" or "i" (directional: "ia te ia" = unto him, "ia i" = toward)
+                if prev_c == 'ia' and w_clean in ('te', 'i'):
+                    pass
+                # Don't break after possessive pronoun (lo/la + pronoun + noun)
+                elif len(current) >= 2:
+                    prev2_c = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if prev2_c in ('lo', 'la'):
+                        pass  # possessive phrase, let noun attach
+                    else:
+                        start_new = True
+                else:
+                    start_new = True
 
         # --- Forced break at 5+ words on any function word ---
+        # BUT: don't break "o ia" pronoun apart
         if not start_new and len(current) >= 5:
-            if w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia', 'mo', 'mai',
+            prev_fw = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            if w_clean == 'ia' and prev_fw == 'o':
+                pass  # "o ia" = he/she, keep together
+            elif w_clean == 'ia' and prev_fw == 'te':
+                pass  # "ia te ia" = unto him, keep together
+            elif w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia', 'mo', 'mai',
                            'a', 'ae', 'ona', 'ua', 'na', 'sa', 'foi', 'lava'):
                 start_new = True
+
+        # --- Vocative "e" after title/name: "Le Alii e" = O Lord ---
+        if start_new and w_clean == 'e' and current:
+            prev_voc = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            if prev_voc in ('alii', 'atua'):
+                start_new = False  # vocative "e", keep with title
 
         if start_new and current:
             chunks.append(' '.join(current))
@@ -981,6 +1143,31 @@ WHOLE_PHRASES = {
     # "O a'u o" = "I am" patterns
     "o a\u02bbu o": 'I am',
     # Common scripture phrases
+    "sa oo ina": 'it came to pass',
+    "e tusa ma": 'according to',
+    "e ao ina": 'must needs',
+    "loto atoa lava": 'wholeheartedly',
+    "e ui i lea": 'nevertheless',
+    "a'o faapea ona": 'and while thus',
+    "e tatau ona": 'should',
+    "ua uma ona": 'finished',
+    "nai lo": 'more than',
+    "sili atu i lo": 'exceeded',
+    "tuu mai": 'gave',
+    "e uiga ia": 'concerning',
+    "e uiga i": 'concerning',
+    "e pei o le": 'like the',
+    "e pei lava ona": 'even as',
+    "puapuaga e tele": 'many afflictions',
+    "malamalama tele": 'great knowledge',
+    "alofagia tele": 'highly favored',
+    "sa alofagia tele a'u": 'I was highly favored',
+    "sa alofagia tele a\u02bbu": 'I was highly favored',
+    "o'u aso uma": 'all my days',
+    "o\u02bbu aso uma": 'all my days',
+    "e ao ina": 'must needs',
+    "e matua lelei": 'goodly parents',
+    "matua lelei": 'goodly parents',
     "le tala lelei": 'the gospel',
     "tala lelei": 'gospel',
     "a le atua": 'of God',
@@ -1940,6 +2127,306 @@ def main():
             'na latou fa\u02bbailoa atu ai': 'they declared',
             "na latou fa'ailoa atu ai": 'they declared',
             'ia Hamana,': 'to Haman',
+        },
+        '1 Nephi|1|1': {
+            'na fanaua': 'born to',
+            'e matua lelei ,': 'goodly parents',
+            "na aoaoina ai a'u": 'I was taught',
+            'teisi i le poto uma': 'somewhat in all the knowledge',
+            "o lo'u tamā;": 'of my father',
+            'ma ona': 'therefore',
+            'ua ou vaai': 'I saw',
+            'i le gasologa': 'in the course',
+            "o o'u aso,": 'of my days',
+            'o lea ou te faia ai': 'therefore I make',
+            "o a'u taualumaga": 'my proceedings',
+            "i o'u aso.": 'in my days',
+        },
+        '1 Nephi|1|2': {
+            'ou te faia': 'I make',
+            'a tagata Aikupito.': 'Egyptian',
+        },
+        '1 Nephi|1|3': {
+            'Ma ua ou iloa': 'I know',
+            "i lo'u lava lima;": 'by my own hand',
+            "e tusa ma lo'u iloa.": 'according to my knowledge',
+        },
+        '1 Nephi|1|4': {
+            'i ona aso uma);': 'in all his days',
+            'na o mai ai perofeta': 'there came prophets',
+            'e toatele,': 'many',
+            'ma vavalo atu': 'and prophesied',
+            'i tagata': 'to the people',
+            'e faapea': 'saying',
+            'latou salamo,': 'they repent',
+            'po o': 'all',
+            'o le a faaumatia': 'will be destroyed',
+            'le aai tele o Ierusalema .': 'the great city | Jerusalem',
+        },
+        '1 Nephi|1|5': {
+            "ua alu atu lo'u tamā,": 'my father went forth',
+            'sa tatalo atu o ia': 'he prayed',
+            'ma lona loto atoa lava,': 'with his whole heart',
+            'mo ona tagata.': 'for his people',
+        },
+        '1 Nephi|1|6': {
+            "a'o tatalo atu o ia": 'while he prayed',
+            'se afi faaniutu': 'a pillar of fire',
+            'ma ua nofo': 'and dwelt',
+            'i luga': 'upon',
+            'o se papa': 'a rock',
+            'i ona luma;': 'before him',
+            'ma sa vaaia': 'and he saw',
+            'ma faalogoina e ia': 'and he heard',
+            'mea e tele;': 'great things',
+            'sa ia vaaia': 'he saw',
+            'ma faalogoina,': 'and heard',
+            'sa galulu': 'quaking',
+            'ma tetemu tele ai o ia.': 'and trembling exceedingly | upon him',
+        },
+        '1 Nephi|1|7': {
+            "ma sa ia faapa'\u016b o ia": 'and he fell',
+            'lava i lona moega,': 'upon his bed',
+            'ona ua lofituina o ia': 'therefore | being overcome',
+            'i le Agaga': 'by the Spirit',
+            'ma mea': 'of things',
+            'na ia vaaia.': 'which he saw',
+        },
+        '1 Nephi|1|8': {
+            "Ma a'o faapea ona": 'and while he was thus',
+            'lofituina o ia': 'he was overcome',
+            'i le Agaga,': 'by the Spirit',
+            'sa segia o ia': 'he was carried away',
+            'i se faaaliga vaaia,': 'in a vision',
+            'sa vaai ai lava o ia': 'he indeed saw',
+            'ua avanoa': 'the heaven',
+            'le lagi ,': 'opened',
+            'sa vaai o ia': 'he saw',
+            'i le Atua o afio': 'God | sitting',
+            'i lona nofoalii,': 'upon his throne',
+            'ua siosiomia': 'surrounded',
+            "i 'au agelu": 'by his angels',
+            "e l\u0113 masino": 'multitude',
+            'e peiseai o pepese': 'in the attitude of singing',
+            'ma vivii atu': 'praising',
+            'ma sa manatu o ia': 'and he thought',
+            'i lo latou Atua.': 'their God',
+        },
+        '1 Nephi|1|9': {
+            'vaai atu o ia': 'he looked',
+            'i se Toatasi': 'One',
+            'ua afio ifo': 'descending',
+            'ma sa vaai o ia': 'and he saw',
+            'ua sili atu lona pupula': 'was greater | his brightness',
+            'nai lo le la': 'more than the sun',
+            'i le aoauli.': 'at noon',
+        },
+        '1 Nephi|1|10': {
+            'Ma sa vaaia foi': 'and he also saw',
+            'e ia ni isi': 'others',
+            'e toasefululua o mulimuli atu': 'twelve | following',
+            'ia te ia,': 'him',
+            'ma o lo latou pupula': 'and their brightness',
+            'sa sili atu i lo': 'exceeded',
+            'fetu o le vanimonimo.': 'stars of the firmament',
+        },
+        '1 Nephi|1|11': {
+            'Ma sa latou afifio ifo': 'and they came down',
+            'i lalo': 'below',
+            'ma maliliu atu': 'and they went forth',
+            'i luga': 'upon',
+            'o le lalolagi;': 'the earth',
+            'ma sa afio': 'and there came',
+            "mai l\u0113": 'the',
+            'na muamua': 'first',
+            'ma tu': 'and stood',
+            'i luma': 'before',
+            "o lo'u tam\u0101,": 'my father',
+            'ma tuu mai ia te ia': 'and gave unto him',
+            'ma fetalai mai ia te ia': 'and said | unto him',
+            'se tusi ,': 'a book',
+            'faitau e ia.': 'read it',
+        },
+        '1 Nephi|1|12': {
+            'ua faitau o ia,': 'as he read',
+            'sa tumu o ia': 'he was filled',
+            'i le Agaga': 'by the Spirit',
+        },
+        '1 Nephi|1|13': {
+            'Ma sa faitau o ia,': 'and it read',
+            'fai mai:': 'saying',
+            'Oi talofa,': 'wo',
+            'oi talofa,': 'wo',
+            'aua ua Ou vaai': 'for I see',
+            'i au mea inosia!': 'your iniquities',
+            'ma e tele mea': 'and great things',
+            'sa faitau': 'read',
+            "i ai lo'u tam\u0101": 'it | my father',
+            "e uiga ia Ierusalema \u2014e faapea": 'concerning Jerusalem | that',
+            'o le a faaumatiaina,': 'it shall be destroyed',
+            'ma e o nonofo ai;': 'and the inhabitants thereof',
+            'e toatele': 'many',
+            'o le a fano': 'shall perish',
+            'i le pelu,': 'by the sword',
+            'ma e toatele foi': 'and many also',
+            'o le a ave faatagataotaua': 'will be taken | captive',
+            'i Papelonia.': 'into Babylon',
+        },
+        '1 Nephi|1|14': {
+            "faitau ma vaai lo'u tam\u0101": 'reading and seeing | my father',
+            'i le tele o mea tetele': 'many great',
+            'ma le ofoofogia,': 'and marvelous things',
+            'e tele mea': 'many things',
+            'sa alaga atu e ia': 'he cried out',
+            'i le Alii;': 'to the Lord',
+            'e pei o le:': 'such as',
+            'Ua silisili': 'great',
+            'ma ofoofogia au galuega,': 'and marvelous | your works',
+            'Le Alii e': 'O Lord',
+            'le Atua Malosi Aoao!' : 'God Almighty',
+            'Ua maualug\u0101': 'is lifted high',
+            'i le lagi lou nofoalii,': 'in the heaven | thy throne',
+            'ma o lou mana,': 'and your power',
+            'ma lou alofa mutimutivale': 'and your mercy',
+            'ua i ai': 'is',
+            'i luga o': 'upon',
+            'e uma o nonofo': 'all who dwell',
+            'i le lalolagi;': 'on the earth',
+            'ona e te alofa mutimutivale,': 'because of your mercy',
+            'e te l\u0113 tuua': 'you will not suffer',
+            'i latou': 'them',
+            'o e': 'who',
+            'e o mai ia te oe': 'come | unto you',
+            'ia fano': 'to perish',
+        },
+        '1 Nephi|1|15': {
+            'Ma sa faapea': 'after this manner',
+            'le ituaiga o gagana': 'of language',
+            "a lo'u tam\u0101": 'my father',
+            'i le viiga': 'in the praising',
+            'o lona Atua;': 'of his God',
+            'ona sa olioli lona agaga,': 'then his soul rejoiced',
+            'ma sa tumu lona loto atoa,': 'and his whole heart was filled',
+            'ona o mea': 'because of the things',
+            'sa vaaia e ia,': 'that he saw',
+            'na faaali mai': 'had shown',
+        },
+        '1 Nephi|1|16': {
+            'Ma o lenei,': 'and now',
+            "o a'u,": 'I',
+            'o Nifae,': 'Nephi',
+            'ou te l\u0113 faia': 'I do not make',
+            'se tala': 'a complete',
+            'atoa o mea': 'record | of things',
+            'ua tusia': 'that were written',
+            "e lo'u tam\u0101,": 'by my father',
+            'ona ua tusia e ia': 'because he wrote',
+            'le tele o mea': 'many things',
+            'sa ia vaaia': 'which he saw',
+            'i faaaliga': 'in visions',
+            'ma miti;': 'and dreams',
+            'ma ua tusia foi': 'and he also had written',
+            'e ia le tele o mea': 'many things',
+            'sa ia vavalo': 'that he prophesied',
+            'ma tautala atu ai': 'and spoke unto',
+            'i ana fanau,': 'his children',
+            'o le a ou l\u0113 faia': 'I do not make',
+            'i ai': 'thereof',
+            'se tala': 'a complete',
+            'atoa.': 'record',
+        },
+        '1 Nephi|1|17': {
+            'Ae o le a ou faia': 'but | I will make',
+            'se tala': 'a record',
+            "i a'u taualumaga": 'the proceedings',
+            "i o'u aso.": 'in my days',
+            'ou te faia': 'I make',
+            'se otootoga': 'an abridgment',
+            'o le talafaamaumau': 'the record',
+            "a lo'u tam\u0101,": 'of my father',
+            'i luga o papatusi': 'upon plates',
+            'na ou faia': 'which I made',
+            "i o'u lava lima;": 'with my own hands',
+            'o le mea lea,': 'wherefore',
+            'a uma ona': 'when I am finished',
+            'ou otooto': 'abridging',
+            "a lo'u tam\u0101": 'of my father',
+            'ona ou faia lea': 'I will make',
+            'o se tala': 'a record',
+            "o lo'u lava olaga.": 'of my life',
+        },
+        '1 Nephi|1|18': {
+            'O lea,': 'therefore',
+            'ou te manao ia': 'I desire',
+            'outou iloa,': 'that you will know',
+            'ina ua uma ona': 'when finished',
+            'faaali mai': 'revealing',
+            'e le Alii': 'by the Lord',
+            "i lo'u tam\u0101,": 'to my father',
+            "le tele na'u\u0101 o mea ofoofogia,": 'many marvelous things',
+            'e uiga': 'concerning',
+            'i le faaumatiaga o Ierusalema,': 'the destruction of Jerusalem',
+            'sa alu atu o ia': 'he went',
+            'i tagata,': 'to the people',
+            'ma amata': 'and began',
+            'ona vavalo': 'to prophesy',
+            'ma tautino atu ia te': 'and witness | unto',
+            'i latou': 'them',
+            'i mea': 'the things',
+            'sa ia vaaia': 'which he saw',
+            'ma faalogoina.': 'and heard',
+        },
+        '1 Nephi|1|19': {
+            'faatauemu tagata Iutaia ia te ia': 'the Jews mocked him',
+            'ona o mea': 'because of the things',
+            'sa molimau atu ai o ia': 'which he did witness of',
+            'e uiga ia te': 'concerning',
+            'i latou;': 'them',
+            'ona sa molimau moni atu': 'for he truly testified',
+            'i lo latou amioleaga': 'of their sins',
+            'ma a latou mea inosia;': 'and of their abominations',
+            'ma sa molimau atu o ia': 'and he witnessed',
+            'o mea': 'of things',
+            'sa ia vaaia': 'he saw',
+            'ma faalogoina,': 'and heard',
+            'ma mea foi': 'and other things',
+            'sa ia faitauina': 'that he read',
+            'ua faaali manino': 'that clearly revealed',
+            'mai ai': 'from that',
+            'le afio mai': 'the coming of',
+            'o se Mesia ,': 'a Messiah',
+            'ma le togiolaina foi': 'and also the redemption',
+            'o le lalolagi.': 'of the world',
+        },
+        '1 Nephi|1|20': {
+            'Ma ina': 'and when',
+            'ua faalogo mai tagata Iutaia': 'the Jews heard',
+            'i nei mea': 'these things',
+            'sa latou feitai ia te ia;': 'they were angry with him',
+            'e pei lava ona': 'even as',
+            'sa latou faia': 'they did unto',
+            'i perofeta anamua,': 'the prophets of old',
+            'o e': 'who',
+            'na latou tutuli esea,': 'they cast out',
+            'ma fetogi': 'and stoned',
+            'i maa,': 'with stones',
+            'ma fasioti;': 'and killed',
+            'ma sa latou saili foi lona ola,': 'they also sought his life',
+            'ina ia latou aveeseina.': 'so they could take it away',
+            'o le alofa mutimutivale agamalu': 'of the tender mercies',
+            'o le Alii': 'of the Lord',
+            'i luga o': 'is upon',
+            'i latou uma o': 'all those',
+            'e ua ia filifilia,': 'who he has chosen',
+            'ona o lo latou faatuatua,': 'because of their faith',
+            'i latou': 'them',
+            'e faamalolosi tele ai': 'to make them mighty',
+            'o le a ou faaali atu': 'I will show',
+            'ia te outou': 'unto you',
+            "le 'ai": 'the presence',
+            'e oo lava': 'unto',
+            'i le mana': 'the power',
+            'e laveaiina ai.': 'of deliverance',
         },
         'Esther|3|3': {
             'Ona fai atu lea o auauna': 'then said a servant',
