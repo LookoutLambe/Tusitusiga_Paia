@@ -1977,6 +1977,17 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').catch(function() {});
   });
 }
+
+// Auto-restore last chapter on page load/refresh
+(function() {
+  try {
+    var last = localStorage.getItem('tp-last-chapter');
+    if (last && typeof chapterOrder !== 'undefined' && chapterOrder.indexOf(last) >= 0) {
+      // Small delay to ensure DOM and verse scripts are ready
+      setTimeout(function() { navTo(last); }, 100);
+    }
+  } catch(e) {}
+})();
 </script>
 
 <!-- Verse data files -->

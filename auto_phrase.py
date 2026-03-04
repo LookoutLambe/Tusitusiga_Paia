@@ -293,7 +293,7 @@ EXTENDED_VOCAB = {
     'tumau': 'endure',
     "fa'atonuga": 'decree',
     "fa\u02bbatonuga": 'decree',
-    'tulaga': 'standing',
+    'tulaga': 'matter',
     "fa'amatala": 'explained',
     "fa\u02bbamatala": 'explained',
     "va'ai": 'see',
@@ -860,6 +860,117 @@ def chunk_verse(text):
     return phrases
 
 
+def chunk_grammatical(text):
+    """
+    Split Samoan text into ~2-4 word grammatical phrase groups,
+    similar to Hebrew interlinear style.
+
+    Breaks on Samoan grammatical boundaries:
+    - Verb phrases: tense marker + verb (+ directional particle)
+    - Agent phrases: e + article + noun
+    - Noun phrases: article + noun (+ modifier)
+    - Prepositional phrases: prep + article + noun
+    - Conjunction phrases: ma/a/ae + next phrase
+    - Predicate/possessive: o + article + noun
+    """
+    if not text:
+        return []
+
+    words = text.split()
+    if len(words) <= 3:
+        return [text]
+
+    # Prepositions/particles that expect an article to follow
+    # (prevent "le" from starting a new chunk when preceded by these)
+    PREP_LIKE = {'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo'}
+
+    chunks = []
+    current = []
+
+    for i, w in enumerate(words):
+        raw_stripped = w.lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+        w_clean = raw_stripped.replace('\u02bb', "'").replace('\u02bc', "'")
+
+        prev_raw = words[i-1] if i > 0 else ''
+        prev_stripped = prev_raw.lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019') if prev_raw else ''
+        prev_clean = prev_stripped.replace('\u02bb', "'").replace('\u02bc', "'") if prev_stripped else ''
+
+        start_new = False
+
+        # --- Hard break: after sentence-internal punctuation ---
+        if i > 0 and any(prev_raw.rstrip(')').endswith(p) for p in (',', ';', '.', ':', '!')):
+            start_new = True
+
+        # --- Grammatical breaks (need >= 2 words in current chunk) ---
+        elif len(current) >= 2:
+            # Tense/aspect markers start new verb phrase
+            if w_clean in ('ua', 'na', 'sa', "ole'a", "olo'o"):
+                start_new = True
+            # "ona" narrative continuation
+            elif w_clean == 'ona':
+                start_new = True
+            # Conjunctions (but NOT "a" when part of "o le a" future tense)
+            elif w_clean in ('ma', 'a', 'ae', 'atoa'):
+                if w_clean == 'a' and len(current) >= 2:
+                    c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    c_prev2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_prev2 == 'o' and c_prev1 == 'le':
+                        pass  # "o le a" = future tense marker, keep together
+                    else:
+                        start_new = True
+                else:
+                    start_new = True
+            # Prepositions
+            elif w_clean in ('i', 'mo'):
+                start_new = True
+            # "mai" as preposition (after 3+ words to preserve verb+directional)
+            elif w_clean == 'mai' and len(current) >= 3:
+                start_new = True
+            # Agent marker "e"
+            elif w_clean == 'e':
+                start_new = True
+            # "o" before article -> new predicate/possessive NP
+            # BUT: "o le a [verb]" is future tense — don't split
+            elif w_clean == 'o' and i + 1 < len(words):
+                next_c = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                if next_c in ('le', 'lo', 'la', 'se', 'ni'):
+                    # Check for "o le a" future tense pattern
+                    if next_c == 'le' and i + 2 < len(words):
+                        next2_c = words[i+2].lower().strip('.,;:!?()\u201c\u201d\u201e').replace('\u02bb', "'").replace('\u02bc', "'")
+                        if next2_c == 'a' and i + 3 < len(words):
+                            pass  # "o le a [verb]" = future tense, keep together
+                        else:
+                            start_new = True
+                    else:
+                        start_new = True
+            # Article after content word -> new NP
+            elif w_clean in ('le', 'se') and prev_clean not in PREP_LIKE:
+                start_new = True
+            # Discourse markers
+            elif w_clean in ('faauta', 'ina'):
+                start_new = True
+            # "pe" subordinating conjunction (whether/if)
+            elif w_clean == 'pe':
+                start_new = True
+
+        # --- Forced break at 5+ words on any function word ---
+        if not start_new and len(current) >= 5:
+            if w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia', 'mo', 'mai',
+                           'a', 'ae', 'ona', 'ua', 'na', 'sa', 'foi', 'lava'):
+                start_new = True
+
+        if start_new and current:
+            chunks.append(' '.join(current))
+            current = [w]
+        else:
+            current.append(w)
+
+    if current:
+        chunks.append(' '.join(current))
+
+    return chunks
+
+
 # ============================================================
 # Known whole-phrase patterns (module-level for use by both
 # gloss_phrase and annotate_verse sub-phrase splitting)
@@ -1171,6 +1282,21 @@ WHOLE_PHRASES = {
     "o le \u02bba": 'what',
     "o le \u2018a": 'what',
 
+    # "na/ua ia [verb] atu" — passive/dative: "it was [verb]ed"
+    # Verb + dative patterns
+    'o ia o se tagata': 'to him he is a',
+    "na ia fa'amatala atu": 'he explained',
+    "na ia fa\u02bbamatala atu": 'he explained',
+    "na ia fa'ailoa atu": 'he declared',
+    "na ia fa\u02bbailoa atu": 'he declared',
+    "na ia fai atu": 'he said',
+    "na ia fai mai": 'he told',
+    "ua ia fai atu": 'he said',
+    "ua ia fai mai": 'he told',
+    "na ia ta'u atu": 'he told',
+    "na ia ta\u02bbu atu": 'he told',
+    "ua ia ta'u atu": 'he told',
+
     # ============================================================
     # High-frequency phrases across ALL standard works
     # ============================================================
@@ -1428,6 +1554,7 @@ def gloss_phrase(phrase_text):
         glosses = []
     # Process remaining words starting from index i
     skip_next = False
+    _skip_count = 0
     start_i = i
 
     for idx in range(start_i, len(clean_words)):
@@ -1439,10 +1566,43 @@ def gloss_phrase(phrase_text):
         if skip_next:
             skip_next = False
             continue
+        if _skip_count > 0:
+            _skip_count -= 1
+            continue
 
         cl = clean.lower()
 
-        # Handle multi-word patterns
+        # "o le a" → future tense "will" when followed by a verb (not article/noun)
+        # Must check BEFORE sub-phrase matching (which would catch it as "what")
+        if cl == 'o' and idx + 2 < len(clean_words):
+            next1 = clean_words[idx+1].lower()
+            next2 = clean_words[idx+2].lower().replace('\u02bb', "'").replace('\u02bc', "'")
+            if next1 == 'le' and next2 == 'a':
+                # If followed by a non-article word → future tense "will"
+                if idx + 3 < len(clean_words):
+                    next3 = clean_words[idx+3].lower()
+                    if next3 not in ('le', 'lo', 'la', 'se', 'ni', 'o', 'i'):
+                        glosses.append('will')
+                        _skip_count = 2  # skip "le" and "a"
+                        continue
+                # else: "o le a" at end or before article → "what" (handled by sub-phrase)
+
+        # --- Try 2-4 word compound phrase match from WHOLE_PHRASES ---
+        _sub_found = False
+        for _slen in range(min(4, len(clean_words) - idx), 1, -1):
+            if _slen <= 1:
+                break
+            _sub = ' '.join(cw.lower() for cw in clean_words[idx:idx+_slen])
+            _sub_n = _sub.replace('\u02bb', "'").replace('\u02bc', "'").replace('\u2018', "'").replace('\u2019', "'")
+            _mk = _sub if _sub in WHOLE_PHRASES else (_sub_n if _sub_n in WHOLE_PHRASES else None)
+            if _mk:
+                glosses.append(WHOLE_PHRASES[_mk])
+                _skip_count = _slen - 1
+                _sub_found = True
+                break
+        if _sub_found:
+            continue
+
         # "la le" → "the" (article compound)
         if cl == 'la' and idx + 1 < len(clean_words) and clean_words[idx+1].lower() == 'le':
             glosses.append('the')
@@ -1562,6 +1722,18 @@ def gloss_phrase(phrase_text):
 
         # "o" as subject/predicate marker — skip
         if cl == 'o':
+            continue
+
+        # "a" before proper noun → possessive "of" (not conjunction "but")
+        if cl == 'a' and idx + 1 < len(clean_words):
+            next_raw = words[idx + 1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if next_raw and next_raw[0].isupper():
+                glosses.append('of')
+                continue
+
+        # "pe" → "whether" (subordinating conjunction in clauses)
+        if cl == 'pe':
+            glosses.append('whether')
             continue
 
         # Dictionary lookup
@@ -1687,22 +1859,26 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     Generate phrase annotations for a verse.
     Returns list of [samoan_phrase, english_gloss] pairs.
-    Splits Samoan at punctuation and glosses each phrase independently.
+    First splits at punctuation, then applies grammatical chunking
+    to produce ~2-4 word interlinear groups.
     """
     if not samoan_text:
         return []
 
-    # Split Samoan at punctuation boundaries (commas, semicolons, colons, periods)
-    phrases = _split_at_punctuation(samoan_text)
-    if len(phrases) <= 1:
-        phrases = [samoan_text]
+    # First split at punctuation boundaries (commas, semicolons, colons, periods)
+    punct_segments = _split_at_punctuation(samoan_text)
+    if len(punct_segments) <= 1:
+        punct_segments = [samoan_text]
 
     result = []
-    for phrase in phrases:
-        gloss = gloss_phrase(phrase)
-        if not gloss:
-            gloss = phrase.lower()
-        result.append([phrase, gloss])
+    for segment in punct_segments:
+        # Apply grammatical chunking to each punctuation segment
+        chunks = chunk_grammatical(segment)
+        for chunk in chunks:
+            gloss = gloss_phrase(chunk)
+            if not gloss:
+                gloss = chunk.lower()
+            result.append([chunk, gloss])
     return result
 
 
@@ -1736,6 +1912,28 @@ def main():
     print(f"Auto-annotated: {auto}")
     print(f"Regenerated from scratch (no preserved entries)")
     print(f"Total annotations: {len(annotations)}")
+
+    # ============================================================
+    # Manual overrides for specific verse glosses
+    # ============================================================
+    MANUAL_GLOSS_OVERRIDES = {
+        'Esther|3|4': {
+            "auā na ia fa\u02bbamatala atu": 'he explained',
+            "auā na ia fa'amatala atu": 'he explained',
+            'o ia': 'to him',
+            'o se tagata Iuta.': 'he is a Jew',
+        },
+    }
+    overridden = 0
+    for vkey, overrides in MANUAL_GLOSS_OVERRIDES.items():
+        if vkey in annotations:
+            for i, pair in enumerate(annotations[vkey]):
+                samoan = pair[0]
+                if samoan in overrides:
+                    annotations[vkey][i][1] = overrides[samoan]
+                    overridden += 1
+    if overridden:
+        print(f"Applied {overridden} manual gloss overrides")
 
     # Save
     with open(phrase_path, 'w', encoding='utf-8') as f:
