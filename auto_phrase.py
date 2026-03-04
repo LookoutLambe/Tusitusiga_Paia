@@ -468,6 +468,7 @@ EXTENDED_VOCAB = {
     'tanielu': 'Daniel',
     'ruta': 'Ruth',
     'eseta': 'Esther',
+    'hamana': 'Haman',
     'iopa': 'Job',
     'iona': 'Jonah',
     'saulo': 'Saul',
@@ -1709,6 +1710,12 @@ def gloss_phrase(phrase_text):
             continue
 
         # Tense markers — skip them in gloss (implicit in English)
+        # "na te [verb]" = pronoun "he/she/it" (not past tense marker)
+        if cl == 'na' and idx + 1 < len(clean_words):
+            next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            if next_cl == 'te':
+                glosses.append('he/she/it')
+                continue
         if cl in ('ua', 'na', 'sa', "ole'a", "ole\u02bba", "olo'o", "olo\u02bbo"):
             continue
 
@@ -1922,6 +1929,16 @@ def main():
             "auā na ia fa'amatala atu": 'he explained',
             'o ia': 'to him',
             'o se tagata Iuta.': 'he is a Jew',
+            'pe o le a tumau': 'whether | will | endure',
+            'Na fai atu pea': 'they continually said',
+            'i latou ia te ia': 'to him',
+            'i aso uma,': 'every day',
+            'ae na lē tali': 'but he did not',
+            'mai o ia.': 'respond',
+            'O lea': 'therefore',
+            'na latou fa\u02bbailoa atu ai': 'they declared',
+            "na latou fa'ailoa atu ai": 'they declared',
+            'ia Hamana,': 'to Haman',
         },
     }
     overridden = 0
