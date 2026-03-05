@@ -1185,6 +1185,14 @@ WHOLE_PHRASES = {
     "le ali\u02bbi sili": 'the Lord Most High',
 
     # Common Book of Mormon phrases
+    "foi mai": 'return',
+    "sa ou miti se miti": 'I dreamed a dream',
+    "na poloaiina ai a'u": 'I was commanded',
+    "e lei talitonu foi i laua": 'they also did not believe',
+    "ma sa pei": 'and they were like',
+    "o tagata Iutaia": 'the Jews',
+    "na saili": 'sought',
+    "e aveese": 'to take away',
     "sa fai mai": 'said',
     "sa fai atu": 'spoke',
     "sa tautala atu o ia": 'he spoke',
@@ -2671,6 +2679,15 @@ def main():
             'ua faia e ia': 'he did',
             'ona o mafaufauga valea': 'because of the foolish imaginations',
             'o lona loto.': 'of his heart',
+        },
+        '1 Nephi|2|13': {
+            'E lei talitonu foi': 'they also did not believe',
+            'Ma sa pei': 'and they were like',
+            'o tagata Iutaia o': 'the Jews',
+            'na saili': 'sought',
+            'e aveese': 'to take away',
+            "le ola": 'the life',
+            "o lo'u tamā.": 'of my father',
         },
         'Esther|3|3': {
             'Ona fai atu lea o auauna': 'then said a servant',

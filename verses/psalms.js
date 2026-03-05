@@ -1378,7 +1378,7 @@ var psa_ch_73_Verses = [
   {num:7,words:[["Ua lululu o latou", "fat choeks they"], ["mata;", "eye"], ["latou te faasilisili", "they faasilisili"], ["i manatu", "in thought"], ["o le loto.", "the heart"]]},
   {num:8,words:[["Ua latou tauemu,", "they tauemu"], ["ma ua tautala leaga", "and to talk evil"], ["i le saua;", "in the to have a return of sick-"], ["ua latou tautala faamaualuga.", "they to talk to be proud"]]},
   {num:9,words:[["Ua upu vale o latou", "word foolish they"], ["gutu i le lagi;", "mouth in heaven"], ["ua feoai foi o latou", "feoai also they"], ["laulaufaiva i le lalolagi.", "tongue in the world"]]},
-  {num:10,words:[["O le mea lea", "therefore/wherefore"], ["e foi mai ai lona nuu iinei;", "by also from his nation here"], ["e faainumia foi", "by faainumia also"], ["i latou", "them"], ["i le vai e tele.", "in the water to great"]]},
+  {num:10,words:[["O le mea lea", "therefore/wherefore"], ["e foi mai ai lona nuu iinei;", "by return his nation here"], ["e faainumia foi", "by faainumia also"], ["i latou", "them"], ["i le vai e tele.", "in the water to great"]]},
   {num:11,words:[["E faapea", "saying"], ["a latou,", "but they"], ["Pe faapefea", "whether how ?"], ["ona silafia", "and seen"], ["e le Atua?", "by God"], ["Pe silafia ea", "whether seen to rise (as a diver to the sur-"], ["e lē Silisili ese?", "by not very much away"]]},
   {num:12,words:[["Faauta,", "behold"], ["o i latou nei o", "them this"], ["e amio leaga,", "to iniquity"], ["e ua manuia", "by peace"], ["i le olaga nei;", "in the lifetime this"], ["e faateleina o latou", "by faateleina they"], ["oloa.", "goods"]]},
   {num:13,words:[["E moni lava,", "verily I say"], ["ua ou faamamāfuaina lo'u loto,", "I faamamāfuaina my heart"], ["ma a'u fafano o'u lima", "and I made small by stretch- my five"], ["ina ua ou", "let I"], ["le sala,", "the a fine"], ["a e fai fua lava .", "but to make fruit indeed"]]},
@@ -2681,7 +2681,7 @@ var psa_ch_126_Verses = [
   {num:3,words:[["Ua faia", "made"], ["e Ieova mea tetele", "to Jehovah thing great"], ["mo i tatou;", "for in we (incl)"], ["ua tatou fiafia ai.", "we (incl) competition"]]},
   {num:4,words:[["Ieova e,", "Jehovah by"], ["ia e faafoisia", "to by faafoisia"], ["mai la matou tafeaga,", "from our exiles in wa^"], ["faapei o vaitafe", "like river"], ["i le itu", "on the side"], ["i toga.", "in Tonga"]]},
   {num:5,words:[["O e lulu saito", "who barn owl wheat"], ["ma loimata,", "and loimata"], ["latou te seleseleina", "they seleseleina"], ["ma le alaga fiafia.", "and the a shoulder or leg of aa ' competition"]]},
-  {num:6,words:[["O le", "the"], ["ua alu atu", "go away"], ["ma tagi fano,", "and to cry perish"], ["o loo ave", "take"], ["le saito", "the wheat"], ["e lulu,", "to barn owl"], ["e foi mai lava ia", "by also from indeed to"], ["ma le alaga fiafia,", "and the a shoulder or leg of aa ' competition"], ["o loo au", "I"], ["mai ana fusi saito.", "from his fusi wheat"]]},
+  {num:6,words:[["O le", "the"], ["ua alu atu", "go away"], ["ma tagi fano,", "and to cry perish"], ["o loo ave", "take"], ["le saito", "the wheat"], ["e lulu,", "to barn owl"], ["e foi mai lava ia", "by return indeed to"], ["ma le alaga fiafia,", "and the a shoulder or leg of aa ' competition"], ["o loo au", "I"], ["mai ana fusi saito.", "from his fusi wheat"]]},
 ];
 renderVerseSet(psa_ch_126_Verses, 'psa-ch126-verses');
 
