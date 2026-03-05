@@ -1195,6 +1195,105 @@ WHOLE_PHRASES = {
     "e tafe atu pea": 'to flow continually',
     "o le amiotonu uma": 'of all righteousness',
 
+    # Seeing / Vision / Revelation
+    'ua ou vaai': 'I saw',
+    'sa vaai o ia': 'he saw',
+    'ma sa vaai o ia': 'and he saw',
+    'sa ia vaaia': 'he saw',
+    'ma sa vaaia': 'and he saw',
+    'sa vaaia e ia': 'that he saw',
+    'vaai atu o ia': 'he looked',
+    'sa vaai ai lava o ia': 'he indeed saw',
+    'i se faaaliga vaaia': 'in a vision',
+    'i faaaliga': 'in visions',
+    'faaali mai': 'revealed',
+    'ua faaali manino': 'clearly revealed',
+    'sa segia o ia': 'he was carried away',
+    'lofituina o ia': 'he was overcome',
+    'ua afio ifo': 'descending',
+    'ua siosiomia': 'surrounded',
+
+    # Speaking / Prophesying / Witnessing
+    'sa tatalo atu o ia': 'he prayed',
+    'ma vavalo atu': 'and prophesied',
+    'ona vavalo': 'to prophesy',
+    'sa ia vavalo': 'that he prophesied',
+    'ma tautala atu ai': 'and spoke unto',
+    'sa molimau atu o ia': 'he witnessed',
+    'sa molimau moni atu': 'truly testified',
+    'sa alaga atu e ia': 'he cried out',
+    'ma vivii atu': 'praising',
+    'ma faalogoina': 'and heard',
+
+    # God / Divine Titles
+    'le Atua Malosi Aoao': 'God Almighty',
+    'le afio mai': 'the coming of',
+    'le togiolaina': 'the redemption',
+    'alofa mutimutivale': 'mercy',
+    'alofa mutimutivale agamalu': 'tender mercies',
+    'le Alii lo matou Atua': 'the Lord our God',
+
+    # Judgment / Destruction / Sin
+    'oi talofa': 'wo',
+    'mea inosia': 'abominations',
+    'o le a faaumatia': 'will be destroyed',
+    'o le a faaumatiaina': 'shall be destroyed',
+    'o le a fano': 'shall perish',
+    'ia fano': 'to perish',
+    'i le pelu': 'by the sword',
+    'ave faatagataotaua': 'taken captive',
+    'mafaufauga valea': 'foolish imaginations',
+
+    # Emotion / State
+    'sa tumu o ia': 'he was filled',
+    'sa galulu': 'quaking',
+    'sa latou feitai ia te ia': 'they were angry with him',
+
+    # Obedience / Commandments
+    'usiusitai o ia': 'he obeyed',
+    'i le afioga': 'the word',
+    'poloaiina ai o ia': 'he was commanded',
+    'i le tausiga o poloaiga': 'in keeping the commandments',
+    'e tumau': 'to be firm',
+    'ma mausali': 'and steadfast',
+
+    # Record-Keeping (BOM)
+    'o le talafaamaumau': 'the record',
+    'se otootoga': 'an abridgment',
+    'i luga o papatusi': 'upon plates',
+    'ua tusia': 'written',
+    'sa ia faitauina': 'that he read',
+    'ou te faia': 'I make',
+
+    # Travel / Wilderness / Dwelling
+    'ma o ese atu': 'and departed',
+    'sa malaga o ia': 'he traveled',
+    'lona faleie': 'his tent',
+    'i se vanu': 'in a valley',
+    'o se vaitafe': 'a river',
+    'ua mavae aso': 'days had passed',
+
+    # Sacrifice / Worship
+    'se fatafaitaulaga': 'an altar',
+    'se taulaga': 'an offering',
+    'le faafetai': 'thanks',
+
+    # Prophets / People
+    'perofeta anamua': 'the prophets of old',
+    'na o mai ai perofeta': 'there came prophets',
+
+    # Common Connectors / Grammar
+    'ona o mea': 'because of the things',
+    'ma amata': 'and began',
+    'e faapea': 'saying',
+    'i nei mea': 'these things',
+    'mea e tele': 'great things',
+    'le tele o mea': 'many things',
+    'e toatele': 'many',
+    'ona o lo latou faatuatua': 'because of their faith',
+    'i ana fanau': 'his children',
+    'ma lona loto atoa lava': 'with his whole heart',
+
     # =============================================
     # Genesis Creation phrases (Ch. 1-3)
     # =============================================
