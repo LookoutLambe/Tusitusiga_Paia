@@ -915,6 +915,7 @@ EXTENDED_VOCAB = {
     'faaonoono': 'vex',
     'tagi': 'cry/weep',
     'mavae': 'passed/after',
+    'vaai': 'look/behold',
     'asiasi': 'spy out/visit',
     'petavene': 'Beth-aven',
     'tiga': 'grieved/pain',
@@ -7424,6 +7425,19 @@ MANUAL_CHUNK_OVERRIDES = {
         ["o a'u ia te oe", 'I to you'],
         ['i tama tane', 'sons'],
         ['e toatinoagafulu?', 'ten?'],
+    ],
+    '1 Nephi|15|1': [
+        ['Ma sa oo ina', 'and it came to pass'],
+        ['ua mavae ona', 'after'],
+        ['aveeseina atu', 'carried away'],
+        ["o a'u,", 'I'],
+        ['o Nifae,', 'Nephi'],
+        ['i le agaga,', 'in the spirit'],
+        ['ma ou vaai', 'and I beheld'],
+        ['i nei mea uma,', 'all these things'],
+        ['sa ou toe foi mai', 'I returned again'],
+        ['i le faleie', 'to the tent'],
+        ["o lo'u tamā.", 'of my father'],
     ],
 }
 
