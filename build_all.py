@@ -442,7 +442,7 @@ for js_name, book_name, prefix, num_chapters in ALL_BOOKS:
             continue
 
         # Write chapter data
-        var_name = f"{prefix.replace('-', '_')}_{ch}_Verses"
+        var_name = f"_{prefix.replace('-', '_')}_{ch}_Verses"
         container_id = f"{prefix}{ch}-verses"
 
         # Serialize manually for readability

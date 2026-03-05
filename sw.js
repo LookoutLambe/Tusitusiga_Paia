@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tusipaia-v53';
+const CACHE_NAME = 'tusipaia-v65';
 
 const CORE_ASSETS = [
   './',
