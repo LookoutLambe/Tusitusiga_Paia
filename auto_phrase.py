@@ -1056,7 +1056,7 @@ EXTENDED_VOCAB = {
     'toatolu': 'three (people)',
     'leona': 'lion',
     'maualuluga': 'most high/exalted',
-    'aveeseina': 'removed/taken away',
+    'aveeseina': 'carried away',
     'mamafa': 'heavy/severe',
     'faapena': 'likewise/so',
     'mauaina': 'obtained/found',
@@ -1969,10 +1969,10 @@ def chunk_grammatical(text):
             if c_words == ['e', 'ao', 'ina'] or c_words == ['sa', 'oo', 'ina']:
                 start_new = True
 
-        # --- Forced break after "faapea ona" (while thus) ---
+        # --- Forced break after "faapea ona", "mavae ona", etc. ---
         if not start_new and len(current) >= 2:
             c2 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-2:]]
-            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona'] or c2 == ['pei', 'ona'] or c2 == ['mafai', 'ona']:
+            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona'] or c2 == ['pei', 'ona'] or c2 == ['mafai', 'ona'] or c2 == ['mavae', 'ona']:
                 start_new = True
 
         # --- Forced break after "sili atu i lo" (comparison: exceeded than) ---
