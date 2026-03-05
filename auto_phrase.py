@@ -1848,6 +1848,8 @@ def chunk_grammatical(text):
                     pass  # "e pei ona" = as, keep together
                 elif c_prev1 == 'mafai':
                     pass  # "e mafai ona" / "na mafai ona" = could/able to, keep together
+                elif c_prev1 == 'mavae':
+                    pass  # "ua mavae ona" = after, keep together
                 else:
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
@@ -2859,6 +2861,10 @@ WHOLE_PHRASES = {
     "i le fogāeleele uma": 'the face of all the earth',
     "i aso uma": 'all the days',
     "taulaga mu": 'burnt offerings',
+    "ua mavae ia mea": 'after these things',
+    "ua mavae foi ia mea": 'after these things also',
+    "ua mavae lea mea": 'after that',
+    "ua mavae ona": 'after',
     "ua mavae": 'after',
     "a e peitai": 'but',
     "i luma o ieova": 'before the LORD',
