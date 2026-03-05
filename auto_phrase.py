@@ -3172,6 +3172,7 @@ def gloss_phrase(phrase_text):
             continue
 
         # Tense markers — skip them in gloss (implicit in English)
+        # BUT: TAM + "le" = negative construction → output "not"
         # "na te [verb]" = pronoun "he/she/it" (not past tense marker)
         if cl == 'na' and idx + 1 < len(clean_words):
             next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
@@ -3179,7 +3180,42 @@ def gloss_phrase(phrase_text):
                 glosses.append('he/she/it')
                 continue
         if cl in ('ua', 'na', 'sa', "ole'a", "ole\u02bba", "olo'o", "olo\u02bbo"):
+            # Check if followed by "le" (negation) — produce "not"
+            if idx + 1 < len(clean_words):
+                next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                if next_cl == 'le':
+                    # Check if le + verb (not le + noun/article use)
+                    if idx + 2 < len(clean_words):
+                        after_le = clean_words[idx+2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                        after_g = lookup_word(clean_words[idx+2])
+                        # If word after "le" is a known verb/adj (not article+noun pattern)
+                        # Heuristic: "le" + lowercase word that has a gloss = negation
+                        if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+                            glosses.append('not')
+                            skip_next = True  # skip the "le"
+                            continue
+                    else:
+                        # "le" at end of chunk — likely negation
+                        glosses.append('not')
+                        skip_next = True
+                        continue
             continue
+
+        # "aua le" / "auā le" = prohibitive "do not" (not "for the")
+        if cl in ('aua', 'auā') and idx + 1 < len(clean_words):
+            next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            if next_cl == 'le':
+                if idx + 2 < len(clean_words):
+                    after_le = clean_words[idx+2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    after_g = lookup_word(clean_words[idx+2])
+                    if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+                        glosses.append('do not')
+                        skip_next = True
+                        continue
+                else:
+                    glosses.append('do not')
+                    skip_next = True
+                    continue
 
         if cl == 'ona' and pos_in_remainder == 0:
             glosses.append('and')
