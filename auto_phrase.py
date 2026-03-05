@@ -144,7 +144,7 @@ EXTENDED_VOCAB = {
     'aso': 'day',
     'afiafi': 'evening',
     'taeao': 'morning',
-    'masina': 'moon',
+    'masina': 'month',
     'la': 'sun',
     'fetu': 'star',
     'amataga': 'beginning',
@@ -233,7 +233,7 @@ EXTENDED_VOCAB = {
     'fetalai': 'said',
     'faaigoa': 'called',
     'silasila': 'saw',
-    'iloa': 'known',
+    'iloa': 'know',
     'faalogo': 'hearken',
     'tuu': 'put',
     'ave': 'take',
@@ -2233,7 +2233,7 @@ WHOLE_PHRASES = {
     "alu ae": 'go up',
     "alu ifo": 'go down',
     "alu atu": 'go forth',
-    "alu ane": 'go along',
+    "alu ane": 'go forth',
     "alu ese": 'go away',
     "sau ae": 'come up',
     "sau ifo": 'come down',
@@ -2263,6 +2263,7 @@ WHOLE_PHRASES = {
     "asiasi mai": 'visited (here)',
     "toe foi mai": 'returned',
     "toe foi atu": 'went back',
+    "nofo ane": 'dwell there',
 
     # Directional markers (spatial)
     "i tai": 'towards the sea',
@@ -2273,6 +2274,9 @@ WHOLE_PHRASES = {
 
     # "O a'u o" = "I am" patterns
     "o a\u02bbu o": 'I am',
+    # Knowledge/desire compounds
+    "fia iloa": 'desire to know',
+
     # Common scripture phrases
     "sa oo ina": 'it came to pass',
     "a oo foi": 'and also came to pass',
@@ -3182,6 +3186,252 @@ WHOLE_PHRASES = {
 _PHRASE_PAIRS = _build_phrase_pairs()
 
 
+# ---- Past tense conversion for TAM marker support ----
+# When ua/sa/na precede a verb, the verb should be glossed in past tense.
+_PAST_TENSE = {
+    # Common irregular verbs
+    'make': 'made', 'come': 'came', 'say': 'said', 'give': 'gave',
+    'do': 'did', 'see': 'saw', 'go': 'went', 'take': 'took',
+    'know': 'knew', 'speak': 'spoke', 'write': 'wrote', 'rise': 'rose',
+    'begin': 'began', 'eat': 'ate', 'drink': 'drank', 'fall': 'fell',
+    'find': 'found', 'get': 'got', 'have': 'had', 'hear': 'heard',
+    'hold': 'held', 'keep': 'kept', 'lead': 'led', 'leave': 'left',
+    'let': 'let', 'lie': 'lay', 'lose': 'lost', 'meet': 'met',
+    'pay': 'paid', 'put': 'put', 'read': 'read', 'run': 'ran',
+    'send': 'sent', 'set': 'set', 'sit': 'sat', 'stand': 'stood',
+    'teach': 'taught', 'tell': 'told', 'think': 'thought',
+    'understand': 'understood', 'wake': 'woke', 'wear': 'wore',
+    'win': 'won', 'bring': 'brought', 'build': 'built',
+    'buy': 'bought', 'catch': 'caught', 'choose': 'chose',
+    'draw': 'drew', 'drive': 'drove', 'feel': 'felt',
+    'fight': 'fought', 'fly': 'flew', 'forget': 'forgot',
+    'grow': 'grew', 'hang': 'hung', 'hide': 'hid',
+    'hit': 'hit', 'lay': 'laid', 'seek': 'sought',
+    'sell': 'sold', 'shine': 'shone', 'shoot': 'shot',
+    'show': 'showed', 'sing': 'sang', 'sleep': 'slept',
+    'spend': 'spent', 'spread': 'spread', 'steal': 'stole',
+    'strike': 'struck', 'swear': 'swore', 'swim': 'swam',
+    'tear': 'tore', 'throw': 'threw', 'bind': 'bound',
+    'bite': 'bit', 'bleed': 'bled', 'blow': 'blew',
+    'break': 'broke', 'burn': 'burned', 'cut': 'cut',
+    'dig': 'dug', 'feed': 'fed', 'forgive': 'forgave',
+    'freeze': 'froze', 'grind': 'ground', 'hurt': 'hurt',
+    'kneel': 'knelt', 'lend': 'lent', 'mean': 'meant',
+    'overcome': 'overcame', 'ride': 'rode', 'ring': 'rang',
+    'shake': 'shook', 'shed': 'shed', 'shut': 'shut',
+    'slide': 'slid', 'spin': 'spun', 'split': 'split',
+    'spring': 'sprang', 'stick': 'stuck', 'sting': 'stung',
+    'stride': 'strode', 'string': 'strung',
+    'sweep': 'swept', 'swing': 'swung', 'weave': 'wove',
+    'weep': 'wept', 'wind': 'wound', 'wring': 'wrung',
+    'is': 'was', 'are': 'were', 'am': 'was',
+    'bear': 'bore', 'become': 'became', 'be': 'was',
+    'arise': 'arose', 'awake': 'awoke',
+    # Bible/BofM specific irregular verbs
+    'smite': 'smote', 'slay': 'slew', 'behold': 'beheld',
+    'dwell': 'dwelt', 'forsake': 'forsook', 'beget': 'begat',
+    'cleave': 'clove', 'strive': 'strove', 'forbid': 'forbade',
+    # Verbs that stay the same in past tense
+    'cast': 'cast', 'cost': 'cost', 'quit': 'quit',
+    'born': 'born', 'shut': 'shut', 'rid': 'rid',
+    # Common regular verbs (Bible/BofM glosses)
+    'call': 'called', 'look': 'looked', 'turn': 'turned',
+    'return': 'returned', 'answer': 'answered', 'gather': 'gathered',
+    'scatter': 'scattered', 'destroy': 'destroyed', 'establish': 'established',
+    'command': 'commanded', 'prepare': 'prepared', 'deliver': 'delivered',
+    'remember': 'remembered', 'promise': 'promised', 'declare': 'declared',
+    'refuse': 'refused', 'move': 'moved', 'place': 'placed',
+    'name': 'named', 'offer': 'offered', 'pray': 'prayed',
+    'obey': 'obeyed', 'rule': 'ruled', 'reign': 'reigned',
+    'suffer': 'suffered', 'perish': 'perished', 'rejoice': 'rejoiced',
+    'mourn': 'mourned', 'grieve': 'grieved', 'fear': 'feared',
+    'walk': 'walked', 'follow': 'followed', 'remain': 'remained',
+    'hope': 'hoped', 'trust': 'trusted', 'repent': 'repented',
+    'baptize': 'baptized', 'prophesy': 'prophesied', 'worship': 'worshipped',
+    'cry': 'cried', 'die': 'died', 'live': 'lived', 'love': 'loved',
+    'judge': 'judged', 'believe': 'believed', 'save': 'saved',
+    'serve': 'served', 'praise': 'praised', 'create': 'created',
+    'bless': 'blessed', 'curse': 'cursed', 'receive': 'received',
+    'fill': 'filled', 'open': 'opened', 'close': 'closed',
+    'finish': 'finished', 'start': 'started', 'pass': 'passed',
+    'cross': 'crossed', 'enter': 'entered', 'depart': 'departed',
+    'arrive': 'arrived', 'travel': 'traveled', 'journey': 'journeyed',
+    'ask': 'asked', 'help': 'helped', 'work': 'worked',
+    'lift': 'lifted', 'raise': 'raised', 'lower': 'lowered',
+    'cover': 'covered', 'uncover': 'uncovered', 'change': 'changed',
+    'touch': 'touched', 'reach': 'reached', 'search': 'searched',
+    'want': 'wanted', 'need': 'needed', 'wish': 'wished',
+    'end': 'ended', 'last': 'lasted', 'wait': 'waited',
+    'watch': 'watched', 'guard': 'guarded', 'protect': 'protected',
+    'heal': 'healed', 'harm': 'harmed', 'kill': 'killed',
+    'spare': 'spared', 'warn': 'warned', 'punish': 'punished',
+    'reward': 'rewarded', 'honor': 'honored', 'thank': 'thanked',
+    'test': 'tested', 'try': 'tried', 'fail': 'failed',
+    'succeed': 'succeeded', 'prosper': 'prospered', 'increase': 'increased',
+    'decrease': 'decreased', 'multiply': 'multiplied', 'divide': 'divided',
+    'separate': 'separated', 'join': 'joined', 'unite': 'united',
+    'plant': 'planted', 'harvest': 'harvested', 'reap': 'reaped',
+    'sow': 'sowed', 'pour': 'poured', 'pour': 'poured',
+    'wash': 'washed', 'clean': 'cleaned', 'cleanse': 'cleansed',
+    'anoint': 'anointed', 'consecrate': 'consecrated', 'sanctify': 'sanctified',
+    'purify': 'purified', 'redeem': 'redeemed', 'atone': 'atoned',
+    'reveal': 'revealed', 'respond': 'responded', 'proclaim': 'proclaimed',
+    'preach': 'preached', 'teach': 'taught', 'learn': 'learned',
+    'number': 'numbered', 'count': 'counted', 'mark': 'marked',
+    'seal': 'sealed', 'sign': 'signed', 'record': 'recorded',
+    'dwell': 'dwelt', 'settle': 'settled', 'camp': 'camped',
+    'pitch': 'pitched', 'march': 'marched', 'conquer': 'conquered',
+    'surrender': 'surrendered', 'capture': 'captured', 'free': 'freed',
+    'release': 'released', 'allow': 'allowed', 'permit': 'permitted',
+    'deny': 'denied', 'reject': 'rejected', 'accept': 'accepted',
+    'agree': 'agreed', 'promise': 'promised', 'vow': 'vowed',
+    'swear': 'swore', 'pledge': 'pledged', 'devote': 'devoted',
+    'commit': 'committed', 'transgress': 'transgressed', 'sin': 'sinned',
+    'err': 'erred', 'wander': 'wandered', 'stray': 'strayed',
+    'gather': 'gathered', 'assemble': 'assembled', 'collect': 'collected',
+    'distribute': 'distributed', 'share': 'shared', 'inherit': 'inherited',
+    'possess': 'possessed', 'own': 'owned', 'claim': 'claimed',
+    'desire': 'desired', 'covet': 'coveted', 'envy': 'envied',
+    'hate': 'hated', 'despise': 'despised', 'mock': 'mocked',
+    'scorn': 'scorned', 'persecute': 'persecuted', 'oppress': 'oppressed',
+    'afflict': 'afflicted', 'torment': 'tormented', 'torture': 'tortured',
+    'execute': 'executed', 'appoint': 'appointed', 'ordain': 'ordained',
+    'commission': 'commissioned', 'charge': 'charged', 'instruct': 'instructed',
+    'counsel': 'counseled', 'advise': 'advised', 'guide': 'guided',
+    'direct': 'directed', 'lead': 'led', 'govern': 'governed',
+    'minister': 'ministered', 'administer': 'administered',
+    'perform': 'performed', 'accomplish': 'accomplished', 'fulfill': 'fulfilled',
+    'complete': 'completed', 'perfect': 'perfected',
+    'cause': 'caused', 'require': 'required', 'demand': 'demanded',
+    'order': 'ordered', 'decree': 'decreed', 'proclaim': 'proclaimed',
+    'announce': 'announced', 'report': 'reported', 'testify': 'testified',
+    'witness': 'witnessed', 'confirm': 'confirmed', 'prove': 'proved',
+    'show': 'showed', 'demonstrate': 'demonstrated', 'display': 'displayed',
+    'appear': 'appeared', 'disappear': 'disappeared', 'vanish': 'vanished',
+    'prevail': 'prevailed', 'overcome': 'overcame', 'conquer': 'conquered',
+    'resist': 'resisted', 'endure': 'endured', 'persevere': 'persevered',
+    'continue': 'continued', 'cease': 'ceased', 'stop': 'stopped',
+    'pause': 'paused', 'rest': 'rested', 'sleep': 'slept',
+    'add': 'added', 'remove': 'removed', 'supply': 'supplied',
+    'provide': 'provided', 'sustain': 'sustained', 'support': 'supported',
+    'nourish': 'nourished', 'feed': 'fed', 'starve': 'starved',
+    'thirst': 'thirsted', 'hunger': 'hungered',
+    'carry': 'carried', 'drag': 'dragged', 'pull': 'pulled',
+    'push': 'pushed', 'drop': 'dropped', 'pick': 'picked',
+    'select': 'selected', 'choose': 'chose', 'prefer': 'preferred',
+    'decide': 'decided', 'determine': 'determined', 'resolve': 'resolved',
+    'plan': 'planned', 'intend': 'intended', 'propose': 'proposed',
+    'suggest': 'suggested', 'mention': 'mentioned', 'refer': 'referred',
+    'describe': 'described', 'explain': 'explained', 'interpret': 'interpreted',
+    'translate': 'translated', 'express': 'expressed', 'utter': 'uttered',
+    'exclaim': 'exclaimed', 'whisper': 'whispered', 'shout': 'shouted',
+    'murmur': 'murmured', 'complain': 'complained', 'groan': 'groaned',
+    'sigh': 'sighed', 'laugh': 'laughed', 'smile': 'smiled',
+    'weep': 'wept', 'sob': 'sobbed', 'lament': 'lamented',
+    'stretch': 'stretched', 'extend': 'extended', 'expand': 'expanded',
+    'contract': 'contracted', 'wrap': 'wrapped', 'fold': 'folded',
+    'tie': 'tied', 'bind': 'bound', 'loose': 'loosed',
+    'fasten': 'fastened', 'attach': 'attached', 'detach': 'detached',
+    'mix': 'mixed', 'blend': 'blended', 'combine': 'combined',
+    'compare': 'compared', 'liken': 'likened', 'resemble': 'resembled',
+    'differ': 'differed', 'distinguish': 'distinguished',
+    'notice': 'noticed', 'observe': 'observed', 'examine': 'examined',
+    'inspect': 'inspected', 'investigate': 'investigated',
+    'discover': 'discovered', 'detect': 'detected', 'recognize': 'recognized',
+    'identify': 'identified', 'realize': 'realized', 'notice': 'noticed',
+    'imagine': 'imagined', 'suppose': 'supposed', 'assume': 'assumed',
+    'conclude': 'concluded', 'infer': 'inferred', 'deduce': 'deduced',
+    'reason': 'reasoned', 'argue': 'argued', 'debate': 'debated',
+    'discuss': 'discussed', 'contend': 'contended', 'dispute': 'disputed',
+    'quarrel': 'quarreled', 'wrestle': 'wrestled', 'struggle': 'struggled',
+    'battle': 'battled', 'war': 'warred', 'fight': 'fought',
+    'attack': 'attacked', 'defend': 'defended', 'retreat': 'retreated',
+    'flee': 'fled', 'escape': 'escaped', 'hide': 'hid',
+    'pursue': 'pursued', 'chase': 'chased', 'hunt': 'hunted',
+    'trap': 'trapped', 'snare': 'snared', 'seize': 'seized',
+    'grab': 'grabbed', 'grasp': 'grasped', 'grip': 'gripped',
+    'release': 'released', 'free': 'freed', 'liberate': 'liberated',
+    'rescue': 'rescued', 'save': 'saved', 'preserve': 'preserved',
+    'maintain': 'maintained', 'repair': 'repaired', 'restore': 'restored',
+    'renew': 'renewed', 'refresh': 'refreshed', 'revive': 'revived',
+    'strengthen': 'strengthened', 'weaken': 'weakened',
+    'empower': 'empowered', 'enable': 'enabled',
+    'exist': 'existed', 'occur': 'occurred', 'happen': 'happened',
+    'result': 'resulted', 'follow': 'followed', 'precede': 'preceded',
+    'surpass': 'surpassed', 'exceed': 'exceeded', 'excel': 'excelled',
+    'progress': 'progressed', 'advance': 'advanced', 'proceed': 'proceeded',
+    'approach': 'approached', 'retreat': 'retreated', 'withdraw': 'withdrew',
+    'remove': 'removed', 'place': 'placed', 'position': 'positioned',
+    'arrange': 'arranged', 'organize': 'organized', 'sort': 'sorted',
+    'classify': 'classified', 'rank': 'ranked', 'rate': 'rated',
+    'measure': 'measured', 'weigh': 'weighed', 'balance': 'balanced',
+}
+
+# Words that should NOT get past-tense conversion (non-verb glosses)
+_NO_PAST_TENSE = frozenset({
+    'the', 'a', 'an', 'of', 'in', 'to', 'for', 'by', 'from', 'with',
+    'on', 'at', 'and', 'but', 'or', 'not', 'also', 'only', 'then',
+    'there', 'here', 'this', 'that', 'these', 'those', 'some', 'all',
+    'every', 'many', 'much', 'great', 'good', 'evil', 'true', 'holy',
+    'righteous', 'wicked', 'together', 'always', 'never', 'again',
+    'now', 'still', 'very', 'more', 'most', 'other', 'each',
+    'above', 'below', 'before', 'after', 'between', 'among',
+    'up', 'down', 'out', 'into', 'upon', 'unto', 'toward',
+    'like', 'as', 'so', 'if', 'when', 'while', 'until',
+    'who', 'whom', 'whose', 'what', 'which', 'where', 'why', 'how',
+    'one', 'two', 'three', 'four', 'five', 'six', 'seven',
+    'eight', 'nine', 'ten', 'hundred', 'thousand',
+    # Common adjectives (should not get -ed suffix after TAM markers)
+    'beautiful', 'strong', 'weak', 'old', 'young', 'new', 'clean',
+    'unclean', 'rich', 'poor', 'wise', 'foolish', 'full', 'empty',
+    'high', 'low', 'long', 'short', 'deep', 'wide', 'narrow',
+    'precious', 'sacred', 'bitter', 'sweet', 'dry', 'wet',
+    'heavy', 'light', 'dark', 'bright', 'thick', 'thin',
+    'glad', 'angry', 'afraid', 'ashamed', 'ready', 'able',
+    'worthy', 'faithful', 'known', 'unknown', 'indeed', 'enough',
+    'sick', 'well', 'whole', 'firm', 'clear', 'near', 'far',
+    'hard', 'soft', 'rough', 'smooth', 'bare', 'fierce',
+})
+
+def _to_past_tense(gloss):
+    """Convert an English verb gloss to past tense.
+    Handles irregular verbs via map, regular verbs via -ed rules.
+    For slash alternatives (make/do), converts only the first word.
+    Skips nouns, adjectives, and other non-verb glosses."""
+    if not gloss:
+        return gloss
+
+    # Handle slash alternatives: convert first word only
+    parts = gloss.split('/')
+    first_part = parts[0]
+
+    # Handle multi-word glosses: convert only the first word
+    words = first_part.split()
+    verb = words[0].lower()
+
+    # Skip if already past tense (-ed ending)
+    if verb.endswith('ed') and verb not in ('need', 'feed', 'seed', 'speed', 'bleed'):
+        return gloss
+
+    # Skip non-verb words (articles, prepositions, adjectives, etc.)
+    if verb in _NO_PAST_TENSE:
+        return gloss
+
+    # Skip words already in irregular past form (e.g. "arose", "went")
+    if verb in _PAST_TENSE.values():
+        return gloss
+
+    # Check verb map (irregular + common regular verbs)
+    if verb in _PAST_TENSE:
+        words[0] = _PAST_TENSE[verb]
+        parts[0] = ' '.join(words)
+        return '/'.join(parts)
+
+    # Unknown word — not in our verb map, leave unchanged
+    # (avoids false positives on nouns, adjectives, pronouns, etc.)
+    return gloss
+
+
 def gloss_phrase(phrase_text):
     """
     Generate an English gloss for a Samoan phrase.
@@ -3235,6 +3485,7 @@ def gloss_phrase(phrase_text):
     # Process remaining words starting from index i
     skip_next = False
     _skip_count = 0
+    tam_context = None  # Track active TAM marker for verb tense modification
     start_i = i
 
     for idx in range(start_i, len(clean_words)):
@@ -3276,7 +3527,14 @@ def gloss_phrase(phrase_text):
             _sub_n = _sub.replace('\u02bb', "'").replace('\u02bc', "'").replace('\u2018', "'").replace('\u2019', "'")
             _mk = _sub if _sub in WHOLE_PHRASES else (_sub_n if _sub_n in WHOLE_PHRASES else None)
             if _mk:
-                glosses.append(WHOLE_PHRASES[_mk])
+                _phrase_gloss = WHOLE_PHRASES[_mk]
+                # Apply TAM verb tense modification to compound phrase
+                if tam_context == 'past':
+                    _p_past = _to_past_tense(_phrase_gloss)
+                    if _p_past != _phrase_gloss:
+                        _phrase_gloss = _p_past
+                        tam_context = None  # consumed
+                glosses.append(_phrase_gloss)
                 _skip_count = _slen - 1
                 _sub_found = True
                 break
@@ -3388,13 +3646,14 @@ def gloss_phrase(phrase_text):
             skip_next = True
             continue
 
-        # Tense markers — skip them in gloss (implicit in English)
-        # BUT: TAM + "le" = negative construction → output "not"
-        # "na te [verb]" = pronoun "he/she/it" (not past tense marker)
+        # Tense markers — affect verb tense of following word
+        # TAM + "le" = negative construction → output "not"
+        # "na te [verb]" = pronoun "he/she/it" + past tense verb
         if cl == 'na' and idx + 1 < len(clean_words):
             next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
             if next_cl == 'te':
                 glosses.append('he/she/it')
+                tam_context = 'past'  # na is still past tense marker
                 continue
         if cl in ('ua', 'na', 'sa', "ole'a", "ole\u02bba", "olo'o", "olo\u02bbo"):
             # "sa" + proper noun = clan/family marker, NOT past tense
@@ -3423,6 +3682,9 @@ def gloss_phrase(phrase_text):
                         glosses.append('not')
                         skip_next = True
                         continue
+            # Set TAM context for verb tense modification on next content word
+            if cl in ('ua', 'na', 'sa'):
+                tam_context = 'past'
             continue
 
         # "aua le" / "auā le" = prohibitive "do not" (not "for the")
@@ -3485,16 +3747,27 @@ def gloss_phrase(phrase_text):
         # Dictionary lookup
         g = lookup_word(clean)
         if g and not g.startswith('('):
+            # Apply TAM verb tense modification to first verb after marker
+            # Only consume TAM context if the word actually changes (is a verb)
+            if tam_context == 'past' and not (clean and clean[0].isupper()):
+                g_past = _to_past_tense(g)
+                if g_past != g:
+                    g = g_past
+                    tam_context = None  # consumed — verb got past tense
+                # else: non-verb word, TAM passes through to next word
             glosses.append(g)
         elif g and g.startswith('('):
             # Skip grammatical markers like (past), (perf), (dir)
+            # TAM context passes through particles (not consumed)
             continue
         else:
             # Unknown word — if it starts with uppercase, keep it (proper name)
             if clean and clean[0].isupper():
                 glosses.append(clean)
+                tam_context = None  # reset on proper noun
             else:
                 glosses.append(clean.lower())
+                tam_context = None  # reset on unknown word
 
     result = ' '.join(glosses)
     # Clean up
@@ -7624,6 +7897,15 @@ MANUAL_CHUNK_OVERRIDES = {
         ["o a'u ia te oe", 'I to you'],
         ['i tama tane', 'sons'],
         ['e toatinoagafulu?', 'ten?'],
+    ],
+    'Exodus|2|2': [
+        ['Ona to lea o le fafine,', 'and the woman conceived'],
+        ['ua fanau mai le tama tane;', 'and bare a son'],
+        ['ua ia iloa o ia', 'and when she saw him'],
+        ['ua lalelei,', 'that he was goodly'],
+        ['ona ia n\u0101 lava lea', 'she hid him'],
+        ['ia te ia', 'unto him'],
+        ['i masina e tolu.', 'three months'],
     ],
     '1 Nephi|15|1': [
         ['Ma sa oo ina', 'and it came to pass'],
