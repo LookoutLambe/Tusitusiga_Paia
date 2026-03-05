@@ -652,10 +652,10 @@ body.dual-mode .hw { font-size: 16px; }
 /* Cross-ref markers on words (hidden — access via word click) */
 .xref-marker { display: none; }
 .word-unit.xref-linked { cursor: pointer; }
-.word-unit.xref-linked .hw { color: #5dade2 !important; }
-.word-unit.xref-linked .gl { color: #5dade2 !important; }
-.word-unit.xref-linked:hover .hw { color: #85c1e9 !important; text-decoration: underline; }
-.word-unit.xref-linked:hover .gl { color: #85c1e9 !important; }
+.word-unit.xref-linked .hw { color: var(--ink) !important; }
+.word-unit.xref-linked .gl { color: var(--gloss) !important; }
+.word-unit.xref-linked:hover .hw { color: var(--ink) !important; text-decoration: underline; }
+.word-unit.xref-linked:hover .gl { color: var(--gloss) !important; }
 
 /* Talk reference badge */
 .talk-ref-badge { display: block; font-size: 0.7em; cursor: pointer; margin-top: 2px; opacity: 0.7; transition: opacity 0.2s; }
@@ -1099,7 +1099,7 @@ body.dark-mode .verse.highlighted { background: rgba(200, 168, 78, 0.12); }
         please reach out!
       </div>
       <div style="margin-top:12px;font-size:0.9em">
-        <a href="mailto:lookoutlambe@gmail.com" style="color:var(--accent);text-decoration:none">lookoutlambe@gmail.com</a>
+        <a href="mailto:lookoutlambe@gmail.com" style="color:var(--ink);text-decoration:none">lookoutlambe@gmail.com</a>
       </div>
       <div style="margin-top:18px;font-size:0.78em;color:#888;line-height:1.5">
         This is an independent project and is not affiliated with, endorsed by, or associated with The Church of Jesus Christ of Latter-day Saints.
