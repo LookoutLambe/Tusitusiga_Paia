@@ -301,7 +301,7 @@ var _psa_ch_18_Verses = [
 renderVerseSet(_psa_ch_18_Verses, 'psa-ch18-verses');
 
 var _psa_ch_19_Verses = [
-  {num:1,words:[["Ua tala mai e le lagi", "side from by the heaven"], ["le mamalu", "the glory"], ["o le Atua;", "of God"], ["ua faaalia foi e le va nimonimo", "revealed also by the space firmament"], ["le galuega", "the work"], ["a ona aao.", "but then hand (extended)"]]},
+  {num:1,words:[["Ua tala mai e le lagi", "side from by the heaven"], ["le mamalu", "the glory"], ["o le Atua;", "of God"], ["ua faaalia foi e le va nimonimo", "revealed also by the expanse firmament"], ["le galuega", "the work"], ["a ona aao.", "but then hand (extended)"]]},
   {num:2,words:[["O loo ta'u atu le upu", "told the word"], ["e le tasi aso", "by the one day"], ["i le tasi aso,", "in the one day"], ["o loo faailoa foi le poto", "revealed also the wise"], ["e le tasi po", "by the one night"], ["i le tasi po.", "in the one night"]]},
   {num:3,words:[["E leai se gagana,", "there is no language"], ["e leai foi ni upu,", "there is not also some word"], ["e le lagona o latou", "by the to understand of they"], ["leo.", "voice"]]},
   {num:4,words:[["Ua oo atu lo latou leo", "it came to pass their voice"], ["i le lalolagi uma lava,", "on the earth all indeed"], ["ma a latou upu", "and but they word"], ["i tuluiga", "in anointing"], ["o le atu laulau.", "the table or tray"], ["Ua na tuu", "put"], ["i ai le fale ie", "therein the house faamaise"], ["mo le la;", "for the la"]]},
@@ -1253,7 +1253,7 @@ var _psa_ch_68_Verses = [
   {num:22,words:[["Ua fetalai mai le Alii,", "said the Lord"], ["Ou te faafoisia", "I will restored"], ["mai mai Vasana,", "from from Bashan"], ["ou te faafoisia", "I will restored"], ["mai mai le loloto", "from from the deep"], ["o le sami;", "Sea"]]},
   {num:23,words:[["ina ia feseuai lou vae", "so that to stir round one another your foot"], ["i le toto;", "in the blood"], ["ia etoeto foi laulaufaiva o āu ulī", "to etoeto also tongue of āu dog"], ["le toto o e ita", "the blood who angry"], ["ia te oe taitasi uma lava.", "unto you each all indeed"]]},
   {num:24,words:[["Le Atua e,", "God by"], ["na latou iloa lou afio atu;", "they knew your dwell (respectful)"], ["o le afio atu o lo'u Atua,", "the dwell (respectful) my God"], ["ma lo'u Tupu", "and my king"], ["i le malumalu.", "in the temple"]]},
-  {num:25,words:[["Ua muamua o e pepese,", "first who sang"], ["ua mulimuli o e ta laaupese;", "followed after who a stroke laaupese"], ["ua i le va taupou ta topa.", "in the space virgin a stroke topa"]]},
+  {num:25,words:[["Ua muamua o e pepese,", "first who sang"], ["ua mulimuli o e ta laaupese;", "followed after who a stroke laaupese"], ["ua i le va taupou ta topa.", "in the expanse virgin a stroke topa"]]},
   {num:26,words:[["Ia faafetaia", "to praised"], ["le Atua i faapotopotoga,", "God in gathering"], ["o le Alii lava,", "the Lord indeed"], ["outou na", "you (all)"], ["ua puna mai ia", "sprang of water from to"], ["Isaraelu.", "Israel"]]},
   {num:27,words:[["O i ai Peniamina", "therein Benjamin"], ["le uii,", "the uii"], ["o le pule ia i latou;", "the rule to them"], ["o alii o Iuta", "Lord of Judas"], ["ma o latou faipule;", "and of they a councillor"], ["o alii o Sepulona", "Lord of Zebulun"], ["atoa ma alii o Nafatali.", "and Lord of Naphtali"]]},
   {num:28,words:[["Ua pule mai e lou Atua lou malosi;", "ruled from by your God your strong"], ["le Atua e,", "God by"], ["ia malosi oe", "to strong you"], ["i le mea", "in the thing"], ["ua e faia", "to made"], ["mo i matou.", "for in we (excl)"]]},
@@ -2053,7 +2053,7 @@ var _psa_ch_104_Verses = [
   {num:7,words:[["O lau aoai atu", "your chastise"], ["na sola ai o ia,", "escaped he"], ["na taalise atu i le leo", "to be quick in the voice"], ["o lou faititili.", "your to thund r"]]},
   {num:8,words:[["Ua o", "of"], ["ae mauga,", "but mountain"], ["ua o ifo vanu,", "of down valley"], ["e oo i lea lava mea", "unto indeed thing"], ["na e saunia", "to prepared"], ["mo i latou.", "for them"]]},
   {num:9,words:[["Ua e tuuina", "to given"], ["i ai le tuaoi ne'i sopoia", "therein the border now crossed over"], ["e ia,", "by him"], ["ne'i toe foi mai ia", "now returned to"], ["e lofia", "by lofia"], ["le laueleele.", "the ground"]]},
-  {num:10,words:[["Ua aunai atu e ia o vaipuna", "aunai by him of a fountain"], ["i vanu,", "in valley"], ["ua tafe ia i va o mauga.", "to flow to in space of mountain"]]},
+  {num:10,words:[["Ua aunai atu e ia o vaipuna", "aunai by him of a fountain"], ["i vanu,", "in valley"], ["ua tafe ia i va o mauga.", "to flow to in expanse of mountain"]]},
   {num:11,words:[["E inu ai manu uma lava o le vao,", "to drink animal all indeed the vegetation"], ["e malilie ai foi asini", "by malilie also donkey"], ["o le vao.", "the vegetation"]]},
   {num:12,words:[["E nonofo latalata ane", "to dwell near"], ["i ai o manu felelei,", "therein birds"], ["e lagona o latou", "to to understand of they"], ["leo i totonu o la laau.", "voice in the midst of la tree"]]},
   {num:13,words:[["O lē faasūsū mauga", "not faasūsū mountain"], ["mai ona afeafe aupitoaluga;", "from then porch aupitoaluga"], ["o fua o au", "fruit I am"], ["galuega e ma'ona ai le laueleele.", "work to to subside the ground"]]},
@@ -3051,7 +3051,7 @@ var _psa_ch_149_Verses = [
 renderVerseSet(_psa_ch_149_Verses, 'psa-ch149-verses');
 
 var _psa_ch_150_Verses = [
-  {num:1,words:[["Ia outou vivii atu ia", "to you (all) praised to"], ["Ioa.", "name"], ["Ia outou vivii atu i le Atua i lona malumalu;", "to you (all) praised in the God in his temple"], ["ia vivii atu outou", "to praised you (all)"], ["ia te ia i le va nimonimo", "to him in the space firmament"], ["o i ai lona malosi.", "therein his strong"]]},
+  {num:1,words:[["Ia outou vivii atu ia", "to you (all) praised to"], ["Ioa.", "name"], ["Ia outou vivii atu i le Atua i lona malumalu;", "to you (all) praised in the God in his temple"], ["ia vivii atu outou", "to praised you (all)"], ["ia te ia i le va nimonimo", "to him in the expanse firmament"], ["o i ai lona malosi.", "therein his strong"]]},
   {num:2,words:[["Ia outou vivii atu ia te ia", "to you (all) praised to him"], ["ona o ana mea mamana;", "because of his thing mamana"], ["vivii atu ia te ia", "praised to him"], ["e tusa ma lona silisili ese.", "according to his very much away"]]},
   {num:3,words:[["Ia outou vivii atu ia te ia i le leo", "to you (all) praised to him in the voice"], ["o le pu;", "the the tail"], ["vivii atu ia te ia i le napeli", "praised to him in the napeli"], ["atoa ma le kitara.", "and the guitar"]]},
   {num:4,words:[["Ia outou vivii atu ia te ia i le topa", "to you (all) praised to him in the topa"], ["ma le siva;", "and the dance"], ["vivii atu ia te ia i le menima", "praised to him in the menima"], ["ma le faaili.", "and the faaili"]]},

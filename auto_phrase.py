@@ -186,7 +186,7 @@ EXTENDED_VOCAB = {
     'faailoga': 'sign',
     'tau': 'season',
     'tausaga': 'year',
-    'va': 'space',
+    'va': 'expanse',
     'nimonimo': 'firmament',
     'vaefa': 'four-footed',
     'fanua': 'land',
