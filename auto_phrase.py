@@ -3537,8 +3537,8 @@ def main():
             "e te tu'imomomoina lona mulivae.": 'shall bruise His heel',
         },
         'Genesis|3|16': {
-            'Ua fetalai atu o ia': 'To the woman He said',
-            'i le fafine,': '',
+            'Ua fetalai atu o ia': 'And He said',
+            'i le fafine,': 'to the woman',
             'Ou te matuā faateleina': 'I will greatly multiply',
             'le tiga': 'your sorrow',
             "o lou ma'i to;": 'and your conception',
