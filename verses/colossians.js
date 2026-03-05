@@ -105,7 +105,7 @@ var col_ch_4_Verses = [
   {num:14,words:[["O loo alofa atu ia te outou", "love unto you"], ["o Luka", "Luke"], ["le fomai pele,", "the fomai dear"], ["atoa ma Tema.", "and tema"]]},
   {num:15,words:[["Ua ou alofa atu", "I love"], ["i le au uso", "in the I a relative of the same generation and gender"], ["i Laotikaia,", "in laotikaia"], ["o Numefa foi,", "numefa also"], ["atoa ma le ekalesia o", "and the church"], ["i lona fale.", "in his house"]]},
   {num:16,words:[["Pe a uma ona", "whether but all then"], ["faitau e outou", "to count by you (all)"], ["o lenei tusi,", "this book"], ["ia faitauina foi", "to faitauina also"], ["e le ekalesia", "by the church"], ["i Laotikaia,", "in laotikaia"], ["ia outou faitau foi", "to you (all) to count also"], ["le tusi mai Laotikaia.", "the book from laotikaia"]]},
-  {num:17,words:[["Fai atu foi ia", "said to also to"], ["Arekipa,", "arekipa"], ["Ia oe", "to you"], ["i le faiva", "in the ministry"], ["na tuuina atu ia te oe", "given unto thee"], ["i le Alii,", "in the Lord"], ["ina ia", "so that"], ["e faaiuina.", "by faaiuina"]]},
+  {num:17,words:[["Fai atu foi ia", "said to also to"], ["Arekipa,", "arekipa"], ["Ia oe", "to you"], ["i le faiva", "in the ministry"], ["na tuuina atu ia te oe", "given unto you"], ["i le Alii,", "in the Lord"], ["ina ia", "so that"], ["e faaiuina.", "by faaiuina"]]},
   {num:18,words:[["O le alofa atu lenei", "the love this"], ["o a'u", "I am"], ["o Paulo", "Paul"], ["i lo'u lava lima.", "in my indeed five"], ["Ia outou mānatua", "to you (all) mānatua"], ["mai lo'u noanoaga.", "from my bonds"], ["Ia ia te outou", "to unto you"], ["le alofa tunoa.", "grace"], ["Amene.", "amen"]]},
 ];
 renderVerseSet(col_ch_4_Verses, 'col-ch4-verses');
