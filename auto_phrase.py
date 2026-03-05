@@ -2113,6 +2113,8 @@ WHOLE_PHRASES = {
     "togaolive masani": 'tame olive tree',
     "togaolive vao": 'wild olive tree',
     "tutuli ese": 'cast out',
+    "au faitaulaga": 'company of priests',
+    "le au faitaulaga": 'the priests',
 
     "e tusa ma": 'according to',
     "e ao ina": 'must needs',
@@ -3180,6 +3182,13 @@ def gloss_phrase(phrase_text):
                 glosses.append('he/she/it')
                 continue
         if cl in ('ua', 'na', 'sa', "ole'a", "ole\u02bba", "olo'o", "olo\u02bbo"):
+            # "sa" + proper noun = clan/family marker, NOT past tense
+            # e.g., "sa Levī" = "of the clan of Levi"
+            if cl == 'sa' and idx + 1 < len(clean_words):
+                next_raw = words[idx+1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+                if next_raw and next_raw[0].isupper():
+                    glosses.append('of the clan of')
+                    continue
             # Check if followed by "le" (negation) — produce "not"
             if idx + 1 < len(clean_words):
                 next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
