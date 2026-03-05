@@ -2295,6 +2295,13 @@ WHOLE_PHRASES = {
     # Compound noun phrases
     "galu teine": 'maidens',
     "auauna fafine": 'maidservant',
+    "fafine failele": 'nursing woman',
+
+    # Pronoun + tense compounds
+    "ou te": 'I will',
+    "tatou te": 'we will',
+    "latou te": 'they will',
+    "lua te": 'you two will',
 
     # Directional markers (spatial)
     "i tai": 'towards the sea',
@@ -7981,9 +7988,10 @@ MANUAL_CHUNK_OVERRIDES = {
     'Exodus|2|7': [
         ['Ona fai mai lea', 'then said'],
         ['o lona tuafafine', 'his sister'],
-        ['i le afafine o Farao,', 'to the daughter of Pharaoh'],
-        ['Ou te alu ea', 'shall I go'],
-        ['e aami se fafine failele', 'and call a nursing woman'],
+        ['i le afafine o Farao,', "to Pharaoh's daughter"],
+        ['Ou te alu ea', 'I will go'],
+        ['e aami', 'and call'],
+        ['se fafine failele', 'a nursing woman'],
         ['o sa Eper\u016b', 'of the Hebrews'],
         ['e sau ia te oe,', 'to come to you'],
         ['na te tausia le tama', 'to nurse the child'],
