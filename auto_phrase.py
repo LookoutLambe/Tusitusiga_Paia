@@ -2420,6 +2420,7 @@ WHOLE_PHRASES = {
     "na fegaoioiai foi": 'was also hovering',
     "le vanimonimo": 'the firmament',
     "o le vanimonimo": 'the firmament',
+    "va a'i": 'divide/separate',
     "ua va a'i": 'separated',
     "le malamalama": 'the light',
     "le pouliuli": 'the darkness',
@@ -3967,7 +3968,9 @@ MANUAL_CHUNK_OVERRIDES = {
         ['Ia i le va', 'Let there be space'],
         ['o vai', 'of water'],
         ['le vanimonimo,', 'the firmament'],
-        ["e va a'i isi vai ma isi vai.", 'dividing waters from waters'],
+        ["e va a'i", 'separated'],
+        ['isi vai', 'water'],
+        ['ma isi vai.', 'from the water'],
     ],
     'Genesis|1|7': [
         ['Ua faia e le Atua', 'And God made'],
