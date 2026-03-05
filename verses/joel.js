@@ -80,7 +80,7 @@ var _jol_ch_3_Verses = [
   {num:18,words:[["A oo foi i lea aso,", "and also came to pass in day"], ["ona tautulu mai lea o suāvine", "and tautulu from of suāvine"], ["i mauga,", "in mountain"], ["e tafe foi le suāsusu", "to to flow also the milk"], ["i mauga iti,", "in mountain small"], ["o alia uma foi o Iuta", "a young anae all also of Judas"], ["e tafe mai ai suāvai;", "to to flow from suāvai"], ["e tafe mai", "to to flow from"], ["se punāvai ai le fale", "a punāvai the house"], ["o Ieova,", "the LORD"], ["e faasūsū ai le vanu", "by faasūsū the valley"], ["o Setima.", "shittim wood"]]},
   {num:19,words:[["E faatafunaina Aikupito,", "to destroyed Egypt"], ["e avea Etoma", "to become Edom"], ["ma laueleele gaogao,", "and ground void"], ["ona o le faasaua", "because of the cruel"], ["i le fanauga a Iuta,", "in the children of Judas"], ["auā ua latou faamaligiina", "for they faamaligiina"], ["i lo latou nuu", "in the they nation"], ["le toto o e le sala.", "the blood who the a fine"]]},
   {num:20,words:[["A e tumau Iuta", "but to be firm Judas"], ["e faavavau,", "forever/everlasting"], ["o Ierusalema foi i lea tupulaga", "Jerusalem also in generation"], ["ma lea tupulaga.", "and generation"]]},
-  {num:21,words:[["Ou te faamamā lo latou toto", "I will make clean their blood"], ["sa le faamamāina", "not make clean"], ["e a'u;", "to I"], ["o a'u lava o Ieova", "I am indeed the LORD"], ["o lē nofo", "not dwell"], ["i Siona.", "in Zion"]]},
+  {num:21,words:[["Ou te faamamā lo latou toto", "I will purify their blood"], ["sa le faamamāina", "not purify"], ["e a'u;", "to I"], ["o a'u lava o Ieova", "I am indeed the LORD"], ["o lē nofo", "not dwell"], ["i Siona.", "in Zion"]]},
 ];
 renderVerseSet(_jol_ch_3_Verses, 'jol-ch3-verses');
 
