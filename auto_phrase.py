@@ -3964,7 +3964,8 @@ MANUAL_CHUNK_OVERRIDES = {
     ],
     'Genesis|1|6': [
         ['Ua fetalai mai foi le Atua,', 'And God said'],
-        ['Ia i le va o vai', 'Let there be in the midst of the waters'],
+        ['Ia i le va', 'Let there be space'],
+        ['o vai', 'of water'],
         ['le vanimonimo,', 'the firmament'],
         ["e va a'i isi vai ma isi vai.", 'dividing waters from waters'],
     ],
