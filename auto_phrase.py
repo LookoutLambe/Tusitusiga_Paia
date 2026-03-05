@@ -1193,6 +1193,14 @@ WHOLE_PHRASES = {
     "o tagata Iutaia": 'the Jews',
     "na saili": 'sought',
     "e aveese": 'to take away',
+    "ona sa ou talavou lava": 'because I was very young',
+    "sa ou tino ese": 'being large in stature',
+    "ma sa ia te a'u foi": 'and I also had',
+    "le naunau tele": 'the great desire',
+    "e fia iloa mealilo": 'to know the mysteries',
+    "na ou tagi atu ai": 'I cried out',
+    "ma faamalūlūina lo'u loto": 'and humbled my heart',
+    "sa asiasi mai o ia": 'and he visited',
     "sa fai mai": 'said',
     "sa fai atu": 'spoke',
     "sa tautala atu o ia": 'he spoke',
@@ -1781,6 +1789,7 @@ WHOLE_PHRASES = {
     'o lo\'u leoleo mamoe o ia': 'he is my shepherd',
 
     # Leviticus vocabulary (multi-word phrases)
+    'faleie': 'tent',
     'fale fetafai': 'tabernacle',
     'le fale fetafai o le faapotopotoga': 'the tabernacle of the congregation',
     'fale fetafai o le faapotopotoga': 'tabernacle of the congregation',
