@@ -3551,8 +3551,8 @@ def main():
             'ia te oe.': 'over you',
         },
         'Genesis|3|17': {
-            'Ua ia fetalai atu foi': 'Then to Adam He said',
-            'ia Atamu,': '',
+            'Ua ia fetalai atu foi': 'And He also said',
+            'ia Atamu,': 'to Adam',
             'Ua e usiusitai': 'Because you have heeded',
             'i le upu': 'the voice',
             'a lau avā,': 'of your wife',
