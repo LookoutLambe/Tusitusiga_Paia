@@ -947,6 +947,8 @@ def chunk_grammatical(text):
                     pass  # "ua uma ona" = finished, keep together
                 elif c_prev1 == 'lava':
                     pass  # "e pei lava ona" = just as, keep together
+                elif c_prev1 == 'pei':
+                    pass  # "e pei ona" = as, keep together
                 else:
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
@@ -1065,7 +1067,7 @@ def chunk_grammatical(text):
         # --- Forced break after "faapea ona" (while thus) ---
         if not start_new and len(current) >= 2:
             c2 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-2:]]
-            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona']:
+            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona'] or c2 == ['pei', 'ona']:
                 start_new = True
 
         # --- Forced break after "sili atu i lo" (comparison: exceeded than) ---
@@ -1158,6 +1160,7 @@ WHOLE_PHRASES = {
     "e uiga i": 'concerning',
     "e pei o le": 'like the',
     "e pei lava ona": 'even as',
+    "e pei ona": 'as',
     "puapuaga e tele": 'many afflictions',
     "malamalama tele": 'great knowledge',
     "alofagia tele": 'highly favored',
@@ -2427,6 +2430,84 @@ def main():
             'e oo lava': 'unto',
             'i le mana': 'the power',
             'e laveaiina ai.': 'of deliverance',
+        },
+        '1 Nephi|2|1': {
+            'i se miti lava,': 'even in a dream',
+            'ona o mea': 'because of the things',
+            'ua e faia;': 'you have done',
+            'sa e faamaoni': 'you were faithful',
+            'ma tautino atu': 'and declared unto',
+            'i lenei nuu mea': 'to this people',
+            'na Ou poloaiina ai oe,': 'that I commanded you',
+            'ua latou saili': 'they seek',
+            'e aveese lou ola.': 'to take your life',
+        },
+        '1 Nephi|2|2': {
+            "poloaiina e le Alii lo'u tamā,": 'the Lord commanded my father',
+            'i se miti lava,': 'even in a dream',
+            'e tatau ia te ia': 'that he should',
+            'ona ave lona aiga': 'take his family',
+            'ma o ese atu': 'depart',
+            'i le vao.': 'the wilderness',
+        },
+        '1 Nephi|2|3': {
+            'usiusitai o ia': 'he obeyed',
+            'i le afioga': 'the word',
+            'a le Alii,': 'of the Lord',
+            'na faia ai e ia': 'he did',
+            'poloaiina ai o ia': 'he was commanded',
+            'e le Alii.': 'by the Lord',
+        },
+        '1 Nephi|2|4': {
+            'alu ese atu o ia': 'he went out',
+            'Ma sa tuu e ia': 'and he left',
+            'o lona tofi,': 'of his inheritance',
+            'ma ana mea taua,': 'and his precious things',
+            'ma sa lē avea': 'he did not take',
+            'e ia se mea,': 'a thing',
+            'vagana ai lona aiga,': 'except his family',
+            'ma tapenapenaga,': 'and provisions',
+            'ma faleie,': 'and tents',
+            'ma o ese atu': 'and they departed',
+            'i le vao.': 'the wilderness',
+        },
+        '1 Nephi|2|5': {
+            'Ma sa alu ifo o ia': 'and he came down',
+            'i lalo': 'below',
+            'i tafatafa o tuaoi': 'by the borders neighboring',
+            'e latalata': 'near',
+            'i le matafaga': 'the shore',
+            'o le Sami Ulaula;': 'the Red Sea',
+            'ma sa malaga o ia': 'and he traveled',
+            'i tuaoi': 'in the borders',
+            'e latalata lava': 'even near',
+            'i le Sami Ulaula;': 'the Red Sea',
+            'i le vao faatasi': 'in the wilderness',
+            'ma lona aiga,': 'with his family',
+            "sa i ai lo'u tinā,": 'consisting of my mother',
+            'o Sarai,': 'Saraiah',
+            "ma o'u uso matutua,": 'and my older brothers',
+            'ma Sama.': 'and Sam',
+        },
+        '1 Nephi|2|6': {
+            'ua mavae aso': 'days had passed',
+            'e tolu talu': 'three | since',
+            'ona malaga o ia': 'he traveled',
+            'sa faatu e ia': 'he pitched',
+            'lona faleie': 'his tent',
+            'i se vanu': 'in a valley',
+            'i tafatafa': 'near',
+            'o se vaitafe.': 'a river',
+        },
+        '1 Nephi|2|7': {
+            'faia e ia se fatafaitaulaga': 'he made an altar',
+            'i maa ,': 'of stones',
+            'ma osi ai': 'and offered on it',
+            'se taulaga': 'an offering',
+            'i le Alii,': 'to the Lord',
+            'ma avatu': 'and offered',
+            'le faafetai': 'thanks',
+            'i le Alii lo matou Atua.': 'to the Lord our God',
         },
         'Esther|3|3': {
             'Ona fai atu lea o auauna': 'then said a servant',
