@@ -3992,10 +3992,13 @@ MANUAL_CHUNK_OVERRIDES = {
         ['o le aso lua lea.', 'were the second day'],
     ],
     'Genesis|1|9': [
-        ['Ua fetalai mai foi le Atua,', 'And God said'],
-        ['Ia potopoto i le mea e tasi', 'Let be gathered together into one place'],
-        ['o vai i lalo o le lagi,', 'the waters under the heaven'],
-        ['ia iloa foi le eleele matutu;', 'and let the dry land appear'],
+        ['Ua fetalai mai foi le Atua,', 'And God said also'],
+        ['Ia potopoto', 'gather together'],
+        ['i le mea e tasi', 'into one place'],
+        ['o vai', 'the waters'],
+        ['i lalo o le lagi,', 'under the heaven'],
+        ['ia iloa foi', 'let be seen also'],
+        ['le eleele matutu;', 'the dry land'],
         ['i le ua faapea lava.', 'and it was so'],
     ],
     'Genesis|1|10': [
