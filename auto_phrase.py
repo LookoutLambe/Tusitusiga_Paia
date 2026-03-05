@@ -2222,6 +2222,23 @@ def _merge_to_align(sam_segs, eng_segs):
         return [[s, e] for s, e in zip(sam_segs, merged_eng)]
 
 
+# Per-verse chunk overrides: bypass the chunker entirely for specific verses.
+# Each entry is a list of [samoan_chunk, english_gloss] pairs.
+MANUAL_CHUNK_OVERRIDES = {
+    'Genesis|3|5': [
+        ['auā ua silafia', 'For God knows'],
+        ['e le Atua,', ''],
+        ['o le aso lua te aai ai,', 'in the day you eat of it'],
+        ['e pupula ai', 'will be opened'],
+        ['o oulua mata;', 'your eyes'],
+        ['ona avea ai lea o oulua', 'and you will be'],
+        ['e pei ni atua o loo iloa', 'like God knowing'],
+        ['le lelei', 'good'],
+        ['ma le leaga.', 'and evil'],
+    ],
+}
+
+
 def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     Generate phrase annotations for a verse.
@@ -2231,6 +2248,10 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     if not samoan_text:
         return []
+
+    # Use manual chunk overrides if available (bypasses chunker entirely)
+    if verse_key in MANUAL_CHUNK_OVERRIDES:
+        return [list(pair) for pair in MANUAL_CHUNK_OVERRIDES[verse_key]]
 
     # First split at punctuation boundaries (commas, semicolons, colons, periods)
     punct_segments = _split_at_punctuation(samoan_text)
@@ -3388,17 +3409,7 @@ def main():
             'Lua te': 'You will',
             'le oti lava;': 'not surely die',
         },
-        'Genesis|3|5': {
-            'auā ua silafia': 'For God knows',
-            'e le Atua,': '',
-            'o le aso lua te aai ai,': 'in the day you eat of it',
-            'e pupula ai o oulua': 'will be opened',
-            'mata;': 'your eyes',
-            'ona avea ai lea o oulua': 'and you will be like',
-            'e pei ni atua o loo iloa': 'God knowing',
-            'le lelei': 'good',
-            'ma le leaga.': 'and evil',
-        },
+        # Genesis|3|5 handled by MANUAL_CHUNK_OVERRIDES (custom chunk boundaries)
         'Genesis|3|6': {
             'Ona vaai atu lea': 'So when saw',
             'o le fafine': 'the woman',
