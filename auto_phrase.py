@@ -77,7 +77,7 @@ FUNC_WORDS = {
     'a': 'but',
     # 'ae' handled contextually in gloss_phrase (up/but)
     'pe': 'or',
-    'ina': 'let',
+    'ina': 'so that',
     'tatou': 'us',
     'te': '',
     'lo': '',
@@ -1103,6 +1103,93 @@ EXTENDED_VOCAB = {
     'ufanafana': 'fiery dart/arrow',
     'faatauasoina': 'led astray/blindness',
 
+    # Reciprocal verbs: fe- + root + -ai/-a'i (each other / about)
+    'fetaiai': 'meet one another',
+    'feoai': 'walk about',
+    "feoa'i": 'walk about',
+    'feiloai': 'meet one another',
+    "feiloa'i": 'meet one another',
+    'fealuai': 'walk about',
+    'fealualuai': 'walk about',
+    'fememeai': 'whisper to one another',
+    'fesagai': 'face one another',
+    'feitai': 'visit one another',
+    'fetautalatalai': 'converse with one another',
+    "fetautalatala'i": 'converse with one another',
+    'fetautalatalaai': 'converse with one another',
+    'felatai': 'be near one another',
+    'fevaevaeai': 'divide among one another',
+    'feitagai': 'look upon one another',
+    'feaveai': 'carry about',
+    'femalagaai': 'travel about',
+    "femalagaa'i": 'travel about',
+    'femisai': 'quarrel with each other',
+    "fetaia'i": 'fight one another',
+    'felafolafoai': 'consult together',
+    'fefaamafanafanai': 'comfort one another',
+    'femaliuai': 'turn about',
+    "femaliua'i": 'turn about',
+    'fesootai': 'join one another',
+    'fetaufetuliai': 'contend with one another',
+    'fefaauoai': 'exhort one another',
+    'fefaatauai': 'trade with one another',
+    "fefaataua'i": 'trade with one another',
+    'feaveaveai': 'carry about',
+    'feganavai': 'battle one another',
+    "feleiloana'i": 'meet one another',
+    'feseseseai': 'err/go astray',
+    "fesesea'i": 'go astray',
+    'femusuai': 'murmur to one another',
+    'feasofai': 'visit one another',
+    "feasofa'i": 'visit one another',
+    'fefasiai': 'touch one another',
+    'feliuliuai': 'go about',
+    "feliuliua'i": 'go about',
+    'fevalaauai': 'call to one another',
+    'fefilemuai': 'be at peace with one another',
+    'fefaamagaloai': 'forgive one another',
+    'feapoapoai': 'exhort one another',
+    'fefaamalieai': 'comfort one another',
+    'fefaamalosiai': 'strengthen one another',
+    'fefaatonuai': 'correct one another',
+    'fefaaaliai': 'reveal to one another',
+    'femanaoai': 'desire one another',
+    'fesaeiai': 'rise up against one another',
+    'feusuai': 'marry one another',
+
+    # High-frequency faa- causative words (proper glosses)
+    'faatasi': 'together',
+    'faamasino': 'judge',
+    'faamaoni': 'faithful/righteous',
+    'faapei': 'like/as',
+    'faatatau': 'liken/compare',
+    'faamoemoe': 'hope/trust',
+    'faatau': 'buy/sell',
+    'faafetai': 'thank/grateful',
+    'faaaliga': 'revelation',
+    'faasaua': 'cruel/violent',
+    'faamaualuga': 'exalted/proud',
+    'faaloaloa': 'stretch out',
+    'faatoga': 'order/decree',
+    'faalagolago': 'rely/trust',
+    'faaletino': 'bodily/in the flesh',
+    'faamau': 'establish/fasten',
+    'faataoto': 'lay down/prostrate',
+    'faatiga': 'afflict/hurt',
+    'faautauta': 'careful/cautious',
+    'faauma': 'finish/complete',
+    'faasuafa': 'named',
+    'faamalolosi': 'strengthen',
+    'faasaoina': 'spared/preserved',
+    'faaigoaina': 'named/called',
+    'faauuina': 'anointed',
+    'faafeao': 'escort/guard',
+    'faatagata': 'make human/humanize',
+    'faaleagaina': 'destroyed/ruined',
+    'faatuatua': 'faith',
+    'faataunuuina': 'fulfilled',
+    'miti': 'dream',
+
     # Names (high frequency, untranslated)
     'selā': 'Selah',
     'iopu': 'Job',
@@ -1684,6 +1771,53 @@ def lookup_word(word):
     if w3 in dictionary:
         return dictionary[w3].split(';')[0].split(',')[0].strip()
 
+    # ============================================================
+    # Morphological decomposition fallbacks (Samoan grammar rules)
+    # Only used when the word is not in any dictionary
+    # ============================================================
+    _skip_glosses = {'the', 'a', 'an', 'to', 'of', 'in', 'and', 'but', 'or',
+                     'for', 'at', 'by', 'from', 'with', 'on', 'some', 'this',
+                     'that', 'those', 'these', 'which', 'who', 'whom',
+                     '(tam)', '(part)', '(dir)', '(prep)'}
+
+    # 1. Reciprocal verb: fe- + root + -ai/-a'i = "[root] one another"
+    if w_norm.startswith('fe') and len(w_norm) > 4:
+        root = None
+        if w_norm.endswith("a'i") and len(w_norm) > 5:
+            root = w_norm[2:-3]
+        elif w_norm.endswith('ai') and len(w_norm) > 4:
+            root = w_norm[2:-2]
+        if root and len(root) >= 2:
+            root_g = lookup_word(root)
+            if root_g and root_g.lower() not in _skip_glosses:
+                return f"{root_g} one another"
+
+    # 2. Passive suffix: root + -ina = "was [root]ed" / "[root] (passive)"
+    if w_norm.endswith('ina') and len(w_norm) > 5:
+        root = w_norm[:-3]
+        if len(root) >= 2:
+            root_g = lookup_word(root)
+            if root_g and root_g.lower() not in _skip_glosses:
+                return root_g
+        # Try -aina variant (root + a + ina)
+        if w_norm.endswith('aina') and len(w_norm) > 6:
+            root2 = w_norm[:-4]
+            if len(root2) >= 2:
+                root_g = lookup_word(root2)
+                if root_g and root_g.lower() not in _skip_glosses:
+                    return root_g
+
+    # 3. Causative prefix: faa- + root = "cause to [root]" / "make [root]"
+    #    Skip if root resolves to a proper noun (capitalized = place/person name)
+    if w_norm.startswith('faa') and len(w_norm) > 5:
+        root = w_norm[3:]
+        if len(root) >= 2:
+            root_g = lookup_word(root)
+            if root_g and root_g.lower() not in _skip_glosses:
+                # Don't apply "make X" if X is a proper noun
+                if not root_g[0].isupper():
+                    return f"make {root_g}"
+
     return ""
 
 
@@ -1726,7 +1860,9 @@ def _build_phrase_pairs():
     for phrase in WHOLE_PHRASES:
         wds = phrase.split()
         for idx in range(len(wds) - 1):
+            # Store both original and lowercase pairs for case-insensitive matching
             pairs.add((wds[idx], wds[idx+1]))
+            pairs.add((wds[idx].lower(), wds[idx+1].lower()))
     return pairs
 
 # Will be initialized after WHOLE_PHRASES is defined (see below)
@@ -1884,6 +2020,8 @@ def chunk_grammatical(text):
                     pass  # "e mafai ona" / "na mafai ona" = could/able to, keep together
                 elif c_prev1 == 'mavae':
                     pass  # "ua mavae ona" = after, keep together
+                elif c_prev1 == 'faapefea':
+                    pass  # "e faapefea ona" = how is it that, keep together
                 else:
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
@@ -2064,6 +2202,14 @@ def chunk_grammatical(text):
             if prev_voc in ('alii', 'atua'):
                 start_new = False  # vocative "e", keep with title
 
+        # --- Override: don't split if words belong to a known compound phrase ---
+        # (unless it's a punctuation break)
+        if start_new and current:
+            is_punct_break = (i > 0 and any(prev_raw.rstrip(')').endswith(p) for p in (',', ';', '.', ':', '!')))
+            if not is_punct_break:
+                if (prev_clean, w_clean) in _PHRASE_PAIRS:
+                    start_new = False
+
         if start_new and current:
             chunks.append(' '.join(current))
             current = [w]
@@ -2151,6 +2297,27 @@ WHOLE_PHRASES = {
     "tutuli ese": 'cast out',
     "au faitaulaga": 'company of priests',
     "le au faitaulaga": 'the priests',
+
+    # Grammatical compound phrases (global patterns)
+    "o le a le uiga": 'what is the meaning',
+    "o le a le uiga o": 'what is the meaning of',
+    "o le tasi ma le isi": 'one with another',
+    "e ala i le": 'through the',
+    "e ala i": 'by means of',
+    "mo le va o": 'for the space of',
+    "E faapefea ona": 'how is it that',
+    "e faapefea ona": 'how is it that',
+    "Pe faapefea ona": 'how is it that',
+    "pe faapefea ona": 'how is it that',
+    "ina ia mafai ona": 'that it may be',
+    "i aso e gata ai": 'in the latter days',
+    "o se faatusa lea": 'it is a type/likeness',
+    "o se faatusa lea o": 'it is a type of',
+    "pe a mavae ona": 'after',
+    "seia mavae ona": 'until after',
+    "sa latou fai mai": 'they said',
+    "sa latou fai mai ia te": 'they said unto',
+    "o lenei": 'now',
 
     "e tusa ma": 'according to',
     "e ao ina": 'must needs',
