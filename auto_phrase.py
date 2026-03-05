@@ -2251,6 +2251,15 @@ MANUAL_CHUNK_OVERRIDES = {
         ['i laau', 'among the trees'],
         ['o le faatoaga.', 'of the garden'],
     ],
+    'Genesis|3|9': [
+        ['Ona valaau atu lea', 'then called'],
+        ['o Ieova le Atua', 'the LORD God'],
+        ['ia Atamu,', 'unto Adam'],
+        ['ua faapea atu', 'and said'],
+        ['ia te ia,', 'unto him'],
+        ['O fea o iai oe?', 'Where are you?'],
+        ['Ona tali mai lea o ia,', 'So he answered'],
+    ],
 }
 
 
@@ -3458,13 +3467,7 @@ def main():
             'mo laua titi.': 'themselves coverings',
         },
         # Genesis|3|8 handled by MANUAL_CHUNK_OVERRIDES (custom chunk boundaries)
-        'Genesis|3|9': {
-            'Ona valaau atu lea o Ieova': 'Then the LORD called',
-            'le Atua ia Atamu,': 'God to Adam',
-            'ua faapea atu ia te ia,': 'and said to him',
-            'O fea o iai oe?': 'Where are you?',
-            'Ona tali mai lea o ia,': 'So he said',
-        },
+        # Genesis|3|9 handled by MANUAL_CHUNK_OVERRIDES
         'Genesis|3|10': {
             'Na ou faalogo atu': 'I heard',
             'i lou siufofoga': 'Your voice',
