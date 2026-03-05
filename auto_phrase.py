@@ -3968,7 +3968,7 @@ MANUAL_CHUNK_OVERRIDES = {
         ['Ia i le va', 'Let there be space'],
         ['o vai', 'of water'],
         ['le vanimonimo,', 'the firmament'],
-        ["e va a'i", 'separated'],
+        ["e va a'i", 'to separate'],
         ['isi vai', 'water'],
         ['ma isi vai.', 'from the water'],
     ],
