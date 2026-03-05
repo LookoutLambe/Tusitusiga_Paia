@@ -949,6 +949,8 @@ def chunk_grammatical(text):
                     pass  # "e pei lava ona" = just as, keep together
                 elif c_prev1 == 'pei':
                     pass  # "e pei ona" = as, keep together
+                elif c_prev1 == 'mafai':
+                    pass  # "e mafai ona" / "na mafai ona" = could/able to, keep together
                 else:
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
@@ -990,7 +992,11 @@ def chunk_grammatical(text):
                     start_new = True
             # "mai" as preposition (after 3+ words to preserve verb+directional)
             elif w_clean == 'mai' and len(current) >= 3:
-                start_new = True
+                c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                if c_prev1 == 'fai':
+                    pass  # "sa fai mai" = said, keep together
+                else:
+                    start_new = True
             # Agent marker "e"
             # BUT: "e tele" = "many/great" modifies previous noun, keep together
             elif w_clean == 'e':
@@ -1067,7 +1073,7 @@ def chunk_grammatical(text):
         # --- Forced break after "faapea ona" (while thus) ---
         if not start_new and len(current) >= 2:
             c2 = [c.lower().strip('.,;:!?()\u201c\u201d\u201e') for c in current[-2:]]
-            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona'] or c2 == ['pei', 'ona']:
+            if c2 == ['faapea', 'ona'] or c2 == ['tatau', 'ona'] or c2 == ['uma', 'ona'] or c2 == ['lava', 'ona'] or c2 == ['pei', 'ona'] or c2 == ['mafai', 'ona']:
                 start_new = True
 
         # --- Forced break after "sili atu i lo" (comparison: exceeded than) ---
@@ -1177,6 +1183,17 @@ WHOLE_PHRASES = {
     "o le atua": 'of God',
     "le atua": 'God',
     "le ali\u02bbi sili": 'the Lord Most High',
+
+    # Common Book of Mormon phrases
+    "sa fai mai": 'said',
+    "sa fai atu": 'spoke',
+    "sa tautala atu o ia": 'he spoke',
+    "ma'umau e": 'that you would endure',
+    "e mafai ona": 'could',
+    "na mafai ona": 'could',
+    "pei oe": 'like you',
+    "e tafe atu pea": 'to flow continually',
+    "o le amiotonu uma": 'of all righteousness',
 
     # =============================================
     # Genesis Creation phrases (Ch. 1-3)
@@ -2524,17 +2541,37 @@ def main():
             'o le vaitafe': 'the water of the river',
             'i le punavai': 'in the fountain',
             'o le Sami Ulaula,': 'of the Red Sea',
-            'sa tautala atu o ia': 'he said',
+            'sa tautala atu o ia': 'he spoke',
             'ia Lamana,': 'unto Laman',
             'ua fai atu:': 'saying',
             'E,': 'Oh',
             "ma'umau e": 'that you would endure',
             'pe a': 'if',
-            'na mafai': 'you could be',
-            'ona pei oe': 'like',
+            'na mafai ona': 'could',
+            'pei oe': 'like you',
             'o lenei vaitafe,': 'this river',
-            'e tafe atu pea': 'flowing continually',
+            'e tafe atu pea': 'to flow continually',
             'o le amiotonu uma!': 'of all righteousness!',
+        },
+        '1 Nephi|2|10': {
+            'Ma sa tautala atu foi': 'he also spake',
+            'o ia ia Lemuelu:': 'unto Lemuel',
+            'E,': 'Oh',
+            'pe a': 'if',
+            'o lenei vanu,': 'this valley',
+            'e tumau': 'to be firm',
+            'ma mausali,': 'and steadfast',
+            'ma lē maluelue': 'and immovable',
+            'i le tausiga o poloaiga': 'in keeping the commandments',
+            'a le Alii!': 'of the Lord!',
+        },
+        '1 Nephi|2|11': {
+            'ua maaa o Lamana': 'the stiffneckedness of Laman',
+            'Ma sa fai mai': 'and they said',
+            'i laua': 'unto them (two)',
+            'ua faia e ia': 'he did',
+            'ona o mafaufauga valea': 'because of the foolish imaginations',
+            'o lona loto.': 'of his heart',
         },
         'Esther|3|3': {
             'Ona fai atu lea o auauna': 'then said a servant',
