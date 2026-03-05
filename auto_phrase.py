@@ -2236,6 +2236,16 @@ MANUAL_CHUNK_OVERRIDES = {
         ['le lelei', 'good'],
         ['ma le leaga.', 'and evil'],
     ],
+    'Genesis|3|8': [
+        ['Ua faalogo i laua', 'Then they heard'],
+        ['i le siufofoga o Ieova le Atua', 'the voice of the LORD God'],
+        ['o loo savali', 'walking'],
+        ['i le faatoaga', 'in the garden'],
+        ['i le itu aso e agi malie mai ai le matagi;', 'in the cool of the day'],
+        ['ona lalafi ai lea o Atamu ma lana avā', 'and Adam and his wife hid themselves'],
+        ['ai luma o Ieova le Atua', 'from the presence of the LORD God'],
+        ['i laau o le faatoaga.', 'among the trees of the garden'],
+    ],
 }
 
 
@@ -3442,23 +3452,7 @@ def main():
             'ua fai': 'and made',
             'mo laua titi.': 'themselves coverings',
         },
-        'Genesis|3|8': {
-            'Ua faalogo': 'And they heard',
-            'i laua': '',
-            'i le siufofoga o Ieova': 'the voice of the LORD',
-            'le Atua o loo savali': 'God walking',
-            'i le faatoaga': 'in the garden',
-            'i le itu aso': 'in the cool of the day',
-            'e agi malie': '',
-            'mai ai': '',
-            'le matagi;': '',
-            'ona lalafi ai lea o Atamu': 'and Adam hid himself',
-            'ma lana avā ai luma': 'and his wife from the presence',
-            'o Ieova': 'of the LORD',
-            'le Atua': 'God',
-            'i laau': 'among the trees',
-            'o le faatoaga.': 'of the garden',
-        },
+        # Genesis|3|8 handled by MANUAL_CHUNK_OVERRIDES (custom chunk boundaries)
         'Genesis|3|9': {
             'Ona valaau atu lea o Ieova': 'Then the LORD called',
             'le Atua ia Atamu,': 'God to Adam',
