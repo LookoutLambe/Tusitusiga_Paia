@@ -2226,8 +2226,8 @@ def _merge_to_align(sam_segs, eng_segs):
 # Each entry is a list of [samoan_chunk, english_gloss] pairs.
 MANUAL_CHUNK_OVERRIDES = {
     'Genesis|3|5': [
-        ['auā ua silafia', 'For God knows'],
-        ['e le Atua,', ''],
+        ['auā ua silafia', 'For knows'],
+        ['e le Atua,', 'God'],
         ['o le aso lua te aai ai,', 'in the day you eat of it'],
         ['e pupula ai', 'will be opened'],
         ['o oulua mata;', 'your eyes'],
