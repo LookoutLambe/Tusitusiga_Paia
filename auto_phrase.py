@@ -3975,9 +3975,13 @@ MANUAL_CHUNK_OVERRIDES = {
     'Genesis|1|7': [
         ['Ua faia e le Atua', 'And God made'],
         ['le va nimonimo,', 'the firmament'],
-        ["ua va a'i vai i lalo", 'and divided the waters under'],
+        ["ua va a'i", 'and divided'],
+        ['vai', 'the waters'],
+        ['i lalo', 'under'],
         ['o le vanimonimo', 'the firmament'],
-        ['ma vai i luga o le vanimonimo;', 'from the waters above the firmament'],
+        ['ma vai', 'and waters'],
+        ['i luga', 'above'],
+        ['o le vanimonimo;', 'the firmament'],
         ['i le ua faapea lava.', 'and it was so'],
     ],
     'Genesis|1|8': [
