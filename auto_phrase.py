@@ -3616,8 +3616,10 @@ WHOLE_PHRASES = {
     # "e fai ma" = "to be / to be appointed as"
     'e fai ma': 'to be',
     'fai ma': 'to be',
-    # "o lea" = "therefore"
+    # "o lea" = "therefore" or "that" (demonstrative before nouns)
     'o lea': 'therefore',
+    'o lea nuu': 'that nation',
+    "o lea nu'u": 'that nation',
     # "i le aiga o" = "in the family of" (possessive)
     'i le aiga o': "in the family of",
     # Romans 1:4+
@@ -3987,6 +3989,9 @@ WHOLE_PHRASES = {
     # Negative verb patterns
     'e le talia mai': 'not received',
     'e le talia': 'not received',
+    # Conditional conjunction
+    'a e afai': 'but if',
+    'e afai': 'if',
     # ============================================================
     # Samoan grammar patterns — reflexive, comparative, common constructions
     # ============================================================
