@@ -2143,10 +2143,13 @@ def chunk_grammatical(text):
                 if w_clean == 'i' and len(current) >= 2:
                     c_p1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     c_p2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    first_w_i = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
                     if c_p2 == 'e' and c_p1 == 'ui':
                         pass  # "e ui i lea" = nevertheless, keep together
                     elif c_p1 == 'atu' and c_p2 == 'sili':
                         pass  # "sili atu i lo" = comparison, keep together
+                    elif first_w_i == 'ia':
+                        pass  # Subjunctive: "ia e VERB i latou" = imperative + object
                     else:
                         start_new = True
                 else:
@@ -2326,6 +2329,11 @@ def chunk_grammatical(text):
                 _DIRECTIONALS = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese',
                                  'iai', 'nei', 'lava', 'foi', 'te',
                                  "a'u", 'au', 'oe', "'oe", 'ia'}
+                # Subjunctive "ia e VERB i latou" — keep object pronoun attached
+                # "ia e vavaeeseina i latou" = "cut them off!" (imperative + object)
+                if first_w == 'ia':
+                    _DIRECTIONALS = _DIRECTIONALS | {'i', 'latou', 'outou', 'matou',
+                                                      'tatou', 'laua', 'oulua'}
                 if w_clean not in _DIRECTIONALS:
                     start_new = True
 
@@ -2366,6 +2374,11 @@ def chunk_grammatical(text):
             _is_tam_fw = first_fw in ('ua', 'na', 'sa', "ole'a", "olo'o", 'ia')
             _TAM_KEEP = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese', 'ia', 'te',
                          "a'u", 'au', 'oe', "'oe", 'lava', 'foi'}
+            # Subjunctive 'ia' phrases: also keep 'i' + object pronouns
+            # "ia e vavaeeseina i latou" = "cut them off!" (imperative + object)
+            if first_fw == 'ia':
+                _TAM_KEEP = _TAM_KEEP | {'i', 'latou', 'outou', 'matou',
+                                          'tatou', 'laua', 'oulua'}
             if w_clean == 'ia' and prev_fw == 'o':
                 pass  # "o ia" = he/she, keep together
             elif w_clean == 'ia' and prev_fw == 'te':
@@ -3335,7 +3348,9 @@ WHOLE_PHRASES = {
     "a fasia": 'for slaughter',
 
     # Negative constructions
+    "e le vaaia e ia": 'he shall not see',
     "e le vaaia": 'he shall not see',
+    "lo latou iuga": 'their end',
     "e vavaeeseina": 'shall be cut off',
     "ia e vavaeeseina": 'cut them off!',
     "ia e vavaeeseina i latou": 'cut them off!',
@@ -3345,7 +3360,8 @@ WHOLE_PHRASES = {
     "ua faaumatia": 'are destroyed',
     "ua latou fai ane": 'they have said',
     "e faasaina": 'set apart/prepare',
-    "ia e faasaina": 'set them apart',
+    "ia e faasaina": 'punish them',
+    "ia e faasaina i latou": 'punish them',
 
     # Time / question patterns
     "seia afea": 'how long?/until when?',
