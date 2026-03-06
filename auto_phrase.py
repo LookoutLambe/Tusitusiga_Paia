@@ -269,7 +269,7 @@ EXTENDED_VOCAB = {
     'tatalo': 'pray',
     # 'ifo' handled as directional 'down' in FUNC_WORDS
     'galue': 'work',
-    'tofi': 'appoint',
+    'tofi': 'lot/portion/inheritance',
     'filifili': 'choose',
     'alualu': 'pursue',
     'sola': 'flee',
@@ -353,7 +353,7 @@ EXTENDED_VOCAB = {
     'paia': 'holy',
     'matutu': 'dry',
     'uluai': 'first',
-    'matua': 'very',
+    'matua': 'great/primary/very',
     'matu\u0101': 'very',
     'sili': 'most',
     'ogaoga': 'fierce',
@@ -939,7 +939,7 @@ EXTENDED_VOCAB = {
     'tagi': 'cry/weep',
     'mavae': 'passed/after',
     'vaai': 'look/behold',
-    'asiasi': 'spy out/visit',
+    'asiasi': 'visit/inspect',
     'petavene': 'Beth-aven',
     'tiga': 'grieved/pain',
     'toatinoagafulu': 'ten (people)',
@@ -1304,7 +1304,7 @@ EXTENDED_VOCAB = {
     'viia': 'praised',
     'taunuu': 'fulfilled',
     'faataunuuina': 'fulfilled',
-    'finau': 'strive',
+    'finau': 'contend/quarrel/strive',
     'solia': 'despised',
     'aveina': 'taken away',
     'fusifusia': 'bound',
@@ -1748,6 +1748,36 @@ EXTENDED_VOCAB = {
     'lamana': 'Lamanite',
     'nifai': 'Nephite',
     'nifaī': 'Nephites',
+
+    # ---- From "Se a ea le mea" grammar document ----
+    # Interrogative / emphatic particles
+    'ea': 'indeed?/really?',
+    # Military / action verbs
+    'pelu': 'sword',
+    'tuliloa': 'pursue/chase',
+    'tipieseina': 'cut off/severed',
+    'samusamu': 'pick up scraps/gather crumbs',
+    'tauia': 'repay/requite',
+    'fesili': 'ask/inquire',
+    'muamua': 'first/at the beginning',
+    'totoina': 'planted',
+    "totōina": 'planted',
+    'afua': 'begin/arise/originate',
+    # Reduplication verbs (plural subjects / repeated action)
+    'faifai': 'say repeatedly/they say',
+    'savalivali': 'walk about/wander',
+    "va'aiva'ai": 'look around/gaze about',
+    'vaaivai': 'look around/gaze about',
+    # Concessive / conditional particles
+    # pe a = even though (handled as compound in WHOLE_PHRASES)
+    # Qualities / states from Jeremiah 12
+    "faa'ole'ole": 'treacherous/deceitful',
+    "faaleoleole": 'treacherous/deceitful',
+    'tautala': 'speak/talk',
+    # Additional body/family terms
+    'lima matua': 'thumb',
+    'vae matua': 'big toe',
+    'laulau': 'table',
 }
 
 # ============================================================
@@ -1881,14 +1911,25 @@ BRIDGE_WORDS = {
 
 def _build_phrase_pairs():
     """Build a set of consecutive word pairs from known WHOLE_PHRASES.
-    Used to prevent the chunker from splitting words that belong together."""
+    Used to prevent the chunker from splitting words that belong together.
+    Only uses pairs from short compounds (2-3 words) to avoid false matches
+    from intermediate pairs in longer phrases like 'ua faia foi e le atua'.
+    Also excludes pairs where the second word is a common break-triggering
+    particle (e/o/i/a) since these are too ambiguous."""
+    # Single-letter particles that commonly trigger grammatical breaks —
+    # they shouldn't be locked to the previous word via phrase pairs
+    _BREAK_PARTICLES = {'e', 'o', 'i', 'a'}
     pairs = set()
     for phrase in WHOLE_PHRASES:
         wds = phrase.split()
-        for idx in range(len(wds) - 1):
-            # Store both original and lowercase pairs for case-insensitive matching
-            pairs.add((wds[idx], wds[idx+1]))
-            pairs.add((wds[idx].lower(), wds[idx+1].lower()))
+        if len(wds) <= 3:  # Only short compounds generate reliable pairs
+            for idx in range(len(wds) - 1):
+                w2 = wds[idx+1].lower()
+                if w2 in _BREAK_PARTICLES:
+                    continue  # Don't lock break-triggering particles
+                # Store both original and lowercase pairs for case-insensitive matching
+                pairs.add((wds[idx], wds[idx+1]))
+                pairs.add((wds[idx].lower(), wds[idx+1].lower()))
     return pairs
 
 # Will be initialized after WHOLE_PHRASES is defined (see below)
@@ -2000,7 +2041,7 @@ def chunk_grammatical(text):
         return []
 
     words = text.split()
-    if len(words) <= 3:
+    if len(words) <= 2:
         return [text]
 
     # Prepositions/particles that expect an article to follow
@@ -2024,10 +2065,10 @@ def chunk_grammatical(text):
         if i > 0 and any(prev_raw.rstrip(')').endswith(p) for p in (',', ';', '.', ':', '!')):
             start_new = True
 
-        # --- Grammatical breaks (need >= 2 words in current chunk) ---
-        elif len(current) >= 2:
+        # --- Grammatical breaks (need >= 1 word in current chunk) ---
+        elif len(current) >= 1:
             # Tense/aspect markers start new verb phrase
-            if w_clean in ('ua', 'na', 'sa', "ole'a", "olo'o"):
+            if w_clean in ('ua', 'na', 'sa', "ole'a", "olo'o", 'oloo'):
                 start_new = True
             # "ona" narrative continuation
             elif w_clean == 'ona':
@@ -2051,12 +2092,19 @@ def chunk_grammatical(text):
                 else:
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
-            elif w_clean in ('ma', 'a', 'ae', 'atoa'):
+            # "ae" is separate: conjunction "but" at 3+ words, directional "up" at 1-2
+            elif w_clean in ('ma', 'a', 'atoa'):
                 if w_clean == 'a' and len(current) >= 2:
                     c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     c_prev2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if c_prev2 == 'o' and c_prev1 == 'le':
                         pass  # "o le a" = future tense marker, keep together
+                    else:
+                        start_new = True
+                elif w_clean == 'a' and len(current) >= 1:
+                    c_prev_a = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                    if c_prev_a in ('se', 'pe'):
+                        pass  # "se a" = what (interrogative) / "pe a" = even though (concessive)
                     else:
                         start_new = True
                 elif w_clean == 'ma' and len(current) >= 1:
@@ -2071,6 +2119,14 @@ def chunk_grammatical(text):
                         pass  # "loto atoa" = wholeheartedly, keep together
                     else:
                         start_new = True
+                else:
+                    start_new = True
+            # "ae" — conjunction "but" (at 3+ words) vs directional "upward" (at 1-2)
+            # "o ae" = go up, "alu ae" = walk up → directional (short verb phrase)
+            # "ua latou faia ae" = they did, but → conjunction (longer phrase)
+            elif w_clean == 'ae':
+                if len(current) <= 2:
+                    pass  # Short chunk: ae is likely directional particle (upward)
                 else:
                     start_new = True
             # Prepositions
@@ -2094,10 +2150,26 @@ def chunk_grammatical(text):
                     pass  # "sa fai mai" = said, keep together
                 else:
                     start_new = True
-            # Agent marker "e"
-            # BUT: "e tele" = "many/great" modifies previous noun, keep together
+            # Agent marker "e" OR vocative "e" (direct address: "le lagi e," = O heavens!)
             elif w_clean == 'e':
-                if i + 1 < len(words):
+                # First check for vocative "e" — follows a content word, typically with punctuation
+                # Vocative pattern: [le] [noun] e[,] = "O [noun]!"
+                raw_e = w.rstrip(')')
+                e_has_punct = any(raw_e.endswith(p) for p in (',', ';', '.', ':', '!'))
+                _FUNC_E = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
+                           'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
+                           'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+                prev_e_voc = prev_clean
+                is_vocative_e = False
+                if current and prev_e_voc not in _FUNC_E:
+                    # Previous word is a content word
+                    if e_has_punct:
+                        is_vocative_e = True  # "e" + punct after content word = vocative
+                    elif prev_e_voc in ('alii', 'atua', 'tama'):
+                        is_vocative_e = True  # Core vocative nouns (even without punct)
+                if is_vocative_e:
+                    pass  # Vocative "e" — keep with preceding noun
+                elif i + 1 < len(words):
                     next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if next_e == 'tele':
                         pass  # "e tele" = many, keep with noun
@@ -2113,7 +2185,11 @@ def chunk_grammatical(text):
                     else:
                         start_new = True
                 else:
-                    start_new = True
+                    # "e" at end of text — likely vocative if after content word
+                    if current and prev_e_voc not in _FUNC_E:
+                        pass  # Vocative at end of text
+                    else:
+                        start_new = True
             # "o" before article or possessive pronoun -> new predicate/possessive NP
             # BUT: "o le a [verb]" is future tense — don't split
             elif w_clean == 'o' and i + 1 < len(words):
@@ -2160,6 +2236,16 @@ def chunk_grammatical(text):
             # "nai" comparison marker (nai lo = more than)
             elif w_clean == 'nai':
                 start_new = True
+            # Possessive pronouns start new possessive NP
+            # "lona" = his/her (O-class sg), "lana" = his/her (A-class sg)
+            # "lo'u" = my (O-class sg), "la'u" = my (A-class sg)
+            # "lou" = your sg (O-class), "lau" = your sg (A-class)
+            elif w_clean in ('lona', 'lana', "lo'u", "la'u", 'lou', 'lau'):
+                # Don't break if preceded by preposition (o/a/i/e/mo keep with possessive)
+                if prev_clean in ('o', 'a', 'i', 'e', 'mo', 'ma'):
+                    pass  # "o lona" / "i lana" = prep + possessive, keep together
+                else:
+                    start_new = True
 
         # --- Forced break after "e ao ina" (must needs) or "sa oo ina" (it came to pass) ---
         if not start_new and len(current) >= 3:
@@ -2185,15 +2271,49 @@ def chunk_grammatical(text):
             if c3 == ['ia', 'te', 'ia']:
                 start_new = True
 
-        # --- Forced break after vocative "e" (e.g. "Le Alii e" = O Lord) ---
-        if not start_new and len(current) >= 3:
-            prev_e = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
-            prev_title = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
-            if prev_e == 'e' and prev_title in ('alii', 'atua'):
+        # --- Break after "foi" (also/too) — ends a phrase, next word starts new one ---
+        if not start_new and len(current) >= 2:
+            last_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if last_c == 'foi':
                 start_new = True
 
-        # --- Forced break at 4+ words after pronoun ---
-        if not start_new and len(current) >= 4:
+        # --- Break after anaphoric "ai" — ends a verb phrase ---
+        if not start_new and len(current) >= 2:
+            last_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if last_c == 'ai':
+                start_new = True
+
+        # --- Break after demonstratives (lenei, lena, lea) — ends a noun phrase ---
+        if not start_new and len(current) >= 2:
+            last_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if last_c in ('lenei', 'lena', 'lea'):
+                start_new = True
+
+        # --- VSO break: after TAM + verb phrase (3+ words), break for subject ---
+        # Samoan is VSO: verb phrase first (TAM + verb + directionals), then subject
+        # After a complete verb phrase, any non-directional word starts a new constituent
+        if not start_new and len(current) >= 3:
+            first_w = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if first_w in ('ua', 'na', 'sa', "ole'a", "olo'o"):
+                # TAM-initiated verb phrase — break unless next word is directional/modifier
+                _DIRECTIONALS = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese',
+                                 'iai', 'nei', 'lava', 'foi'}
+                if w_clean not in _DIRECTIONALS:
+                    start_new = True
+
+        # --- Forced break after vocative "e" (e.g. "Le lagi e," = O heavens!) ---
+        if not start_new and len(current) >= 3:
+            prev_e = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if prev_e == 'e':
+                prev_title = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+                _FUNC_VOC = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
+                             'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
+                             'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+                if prev_title not in _FUNC_VOC:
+                    start_new = True  # Break after vocative "[noun] e"
+
+        # --- Forced break at 3+ words after pronoun ---
+        if not start_new and len(current) >= 3:
             prev_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e').replace('\u02bb', "'").replace('\u02bc', "'")
             if prev_c in ("a'u", 'au', 'oe', "'oe", 'ia', 'tatou', 'matou',
                           'latou', 'outou', 'laua', 'oulua', "ta'ua", "ma'ua", "la'ua"):
@@ -2210,23 +2330,31 @@ def chunk_grammatical(text):
                 else:
                     start_new = True
 
-        # --- Forced break at 5+ words on any function word ---
+        # --- Forced break at 3+ words on any function word ---
         # BUT: don't break "o ia" pronoun apart
-        if not start_new and len(current) >= 5:
+        if not start_new and len(current) >= 3:
             prev_fw = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
             if w_clean == 'ia' and prev_fw == 'o':
                 pass  # "o ia" = he/she, keep together
             elif w_clean == 'ia' and prev_fw == 'te':
                 pass  # "ia te ia" = unto him, keep together
             elif w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia', 'mo', 'mai',
-                           'a', 'ae', 'ona', 'ua', 'na', 'sa', 'foi', 'lava'):
+                           'a', 'ae', 'ona', 'ua', 'na', 'sa', 'lava'):
                 start_new = True
 
-        # --- Vocative "e" after title/name: "Le Alii e" = O Lord ---
+        # --- Vocative "e" after content word: "Le lagi e" = O heavens! ---
         if start_new and w_clean == 'e' and current:
-            prev_voc = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
-            if prev_voc in ('alii', 'atua'):
-                start_new = False  # vocative "e", keep with title
+            prev_voc = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            _FUNC_VOC2 = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
+                         'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
+                         'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+            if prev_voc not in _FUNC_VOC2:
+                # Check if raw "e" has trailing punctuation (strong vocative signal)
+                raw_e_voc = w.rstrip(')')
+                if any(raw_e_voc.endswith(p) for p in (',', ';', '.', ':', '!')):
+                    start_new = False  # Vocative "e" with punctuation
+                elif prev_voc in ('alii', 'atua', 'tama'):
+                    start_new = False  # Core vocative nouns
 
         # --- Override: don't split if words belong to a known compound phrase ---
         # (unless it's a punctuation break)
@@ -2256,6 +2384,7 @@ WHOLE_PHRASES = {
     # ============================================================
     # Directional verb compounds (ae=up, ifo=down, atu=forth/away)
     # ============================================================
+    "o ae": 'go up',
     "alu ae": 'go up',
     "alu ifo": 'go down',
     "alu atu": 'go forth',
@@ -2294,6 +2423,14 @@ WHOLE_PHRASES = {
     "nofo ane": 'dwell there',
     "savavali ane": 'walk along',
     "iloa atu": 'see',
+    "afua mai": 'beginning from / starting from',
+    "tauia mai": 'repaid / requited',
+    "finau atu": 'contend toward',
+    "finau mai": 'contend',
+    "tautala atu": 'speak toward',
+    "tuuina atu": 'given / delivered',
+    "tipieseina": 'cut off / severed',
+    "tuliloa": 'pursue / chase',
 
     # Compound noun phrases
     "galu teine": 'maidens',
@@ -3103,7 +3240,13 @@ WHOLE_PHRASES = {
     "faauta foi": 'and behold',
     "ua fetalai atu": 'said',
     "ua faapea atu": 'and said',
-    "se a le mea": 'what',
+    "se a le mea": 'what / why',
+    "se a ea le mea": 'why? / what is the matter?',
+    "se a ea": 'what indeed? / why?',
+    "pe a": 'even though / although',
+    "pe a ou": 'even though I',
+    "po o ai": 'who?',
+    "tau ina": 'yet / nevertheless',
     "o ai ea": 'who',
     "o le mea lea": 'therefore',
     "i le faitotoa": 'at the door',
