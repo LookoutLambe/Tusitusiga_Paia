@@ -1,7 +1,7 @@
 (function() {
 var _3jn_ch_1_Verses = [
   {num:1,words:[["O a'u", "I am"], ["le toeaina,", "the elder"], ["o la'u tusi lenei", "this letter"], ["ia Kaio,", "to Kaio"], ["o le pele,", "the dear"], ["o le ou te alofa faamaoni", "the I will love faithful"], ["i ai.", "therein"]]},
-  {num:2,words:[["Le pele e,", "the dear by"], ["ia", "to"], ["e manuia", "to peace"], ["i mea uma,", "in all things"], ["ma ia", "and to"], ["e malolo,", "to rest"], ["faapei", "like"], ["ona manuia", "and peace"], ["o lou agaga.", "your spirit"]]},
+  {num:2,words:[["Le pele e,", "the dear by"], ["ia e manuia", "to to peace"], ["i mea uma,", "in all things"], ["ma ia", "and to"], ["e malolo,", "to rest"], ["faapei", "like"], ["ona manuia", "and peace"], ["o lou agaga.", "your spirit"]]},
   {num:3,words:[["Auā", "for"], ["ua tele lava", "great indeed"], ["lo'u fiafia", "my competition"], ["ina", "so that"], ["ua o mai le au", "of from the me"], ["uso,", "brother"], ["ma faailoa mai", "and revealed from"], ["lou faamaoni,", "your faithful"], ["ina", "so that"], ["ua e savali", "you walked"], ["i le upu moni.", "in the word true"]]},
   {num:4,words:[["E leai so'u fiafia", "there is not so'u competition"], ["e sili", "to most"], ["i lenei,", "in this"], ["pe a ou faalogo", "even though I hearken"], ["ua savavali", "walked"], ["la'u fanau", "my born"], ["i le upu moni.", "in the word true"]]},
   {num:5,words:[["Le pele e,", "the dear by"], ["ua e faamaoni lava", "you faithful indeed"], ["i mea uma", "in all things"], ["o faia e", "made by"], ["oe", "you"], ["i le au", "in the me"], ["uso", "brother"], ["atoa ma tagata ese,", "and man away"]]},

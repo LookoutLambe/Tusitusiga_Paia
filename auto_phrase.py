@@ -2182,6 +2182,8 @@ def chunk_grammatical(text):
                     pass  # Vocative "e" — keep with preceding noun
                 elif prev_clean in ('ua', 'na', 'sa', "ole'a", "olo'o", 'oloo', 'loo'):
                     pass  # TAM + e = 2nd person pronoun "you" (ua e silafia = you have known)
+                elif prev_clean == 'ia' and len(current) <= 1:
+                    pass  # Subjunctive/imperative "ia e VERB" (ia e vavaeeseina = cut them off!)
                 elif i + 1 < len(words):
                     next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if next_e == 'tele':
@@ -2314,7 +2316,7 @@ def chunk_grammatical(text):
         if not start_new and len(current) >= 3:
             first_w = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
             # Check for multi-word TAM "o loo" (progressive)
-            is_tam_start = first_w in ('ua', 'na', 'sa', "ole'a", "olo'o")
+            is_tam_start = first_w in ('ua', 'na', 'sa', "ole'a", "olo'o", 'ia')
             if not is_tam_start and first_w == 'o' and len(current) >= 4:
                 second_w = current[1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
                 if second_w in ('loo', "lo'o"):
@@ -2361,7 +2363,7 @@ def chunk_grammatical(text):
         if not start_new and len(current) >= 3:
             prev_fw = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
             first_fw = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
-            _is_tam_fw = first_fw in ('ua', 'na', 'sa', "ole'a", "olo'o")
+            _is_tam_fw = first_fw in ('ua', 'na', 'sa', "ole'a", "olo'o", 'ia')
             _TAM_KEEP = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese', 'ia', 'te',
                          "a'u", 'au', 'oe', "'oe", 'lava', 'foi'}
             if w_clean == 'ia' and prev_fw == 'o':
@@ -3335,7 +3337,8 @@ WHOLE_PHRASES = {
     # Negative constructions
     "e le vaaia": 'he shall not see',
     "e vavaeeseina": 'shall be cut off',
-    "ia e vavaeeseina": 'let them be cut off',
+    "ia e vavaeeseina": 'cut them off!',
+    "ia e vavaeeseina i latou": 'cut them off!',
 
     # TAM verb patterns
     "e faanoanoa ai": 'shall mourn',
