@@ -2736,6 +2736,8 @@ def chunk_grammatical(text):
                     pass  # TAM + e = 2nd person pronoun "you" (ua e silafia = you have known)
                 elif prev_clean == 'ia' and len(current) <= 1:
                     pass  # Subjunctive/imperative "ia e VERB" (ia e vavaeeseina = cut them off!)
+                elif prev_clean == 'o' and len(current) <= 1:
+                    pass  # "o e" = relative pronoun "who" (ō ē), keep together
                 elif i + 1 < len(words):
                     next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if next_e == 'tele':
@@ -10610,6 +10612,11 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                 display = _re.sub(r"(?<!')\bAu\b", 'A\u02bbu', display)
                 display = _re.sub(r"(?<!')\bAU\b", 'A\u02bbU', display)
             # else: possessive "your" — leave as 'au' (no glottal)
+            # Context-aware modernization: 'e' as relative pronoun → 'ē' (macron)
+            # "o e" = "who/those who" — ē distinguishes relative from tense marker
+            if _gloss_lower == 'who' or _gloss_lower.startswith('who '):
+                display = _re.sub(r'\be\b', 'ē', display)
+                display = _re.sub(r'\bE\b', 'Ē', display)
             result.append([display, gloss])
     return result
 
