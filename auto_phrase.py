@@ -71,9 +71,9 @@ FUNC_WORDS = {
     'maia': '(dir)',
     # Common words
     'foi': 'also',
-    'lava': 'indeed',
+    'lava': 'very/indeed/self',
     'uma': 'all',
-    'atoa': 'together with',
+    'atoa': 'together with/including',
     'a': 'but',
     # 'ae' handled contextually in gloss_phrase (up/but)
     'pe': 'or',
@@ -87,17 +87,17 @@ FUNC_WORDS = {
     'lana': 'his/her',
     'ana': 'his/her',
     'lau': 'your',
-    'laua': 'they/them (two)',
-    "la'ua": 'they/them (two)',
-    "la\u02bbua": 'they/them (two)',
-    "ta'ua": 'us (two, incl)',
-    "ta\u02bbua": 'us (two, incl)',
-    "ma'ua": 'us (two, excl)',
-    "ma\u02bbua": 'us (two, excl)',
-    'oulua': 'you (two)',
-    'outou': 'you (all)',
-    'matou': 'we/us (excl)',
-    'tatou': 'we/us (incl)',
+    'laua': 'them both',
+    "la'ua": 'them both',
+    "la\u02bbua": 'them both',
+    "ta'ua": 'us two',
+    "ta\u02bbua": 'us two',
+    "ma'ua": 'us two',
+    "ma\u02bbua": 'us two',
+    'oulua': 'you two',
+    'outou': 'you all',
+    'matou': 'we/us',
+    'tatou': 'we/us',
     'taitasi': 'each',
     'faauta': 'behold',
     'faapea': 'thus/so',
@@ -113,7 +113,7 @@ FUNC_WORDS = {
     'lua': 'two',
     'tolu': 'three',
     'fa': 'four',
-    'lima': 'five',
+    # 'lima' removed — means both 'five' and 'hand'; handled by WHOLE_PHRASES for hand contexts
     'ono': 'six',
     'fitu': 'seven',
     'valu': 'eight',
@@ -184,7 +184,7 @@ EXTENDED_VOCAB = {
     'foliga': 'likeness',
     'faatusa': 'image',
     'faailoga': 'sign',
-    'tau': 'season',
+    'tau': 'fight/war',
     'tausaga': 'year',
     'va': 'expanse',
     'nimonimo': 'firmament',
@@ -197,7 +197,7 @@ EXTENDED_VOCAB = {
     'alo': 'Son',
     'tagata': 'man',
     'tane': 'man',
-    'fafine': 'woman',
+    'fafine': 'women',
     'tama': 'child',
     'atalii': 'son',
     'afafine': 'daughter',
@@ -270,6 +270,8 @@ EXTENDED_VOCAB = {
     # 'ifo' handled as directional 'down' in FUNC_WORDS
     'galue': 'work',
     'tofi': 'lot/portion/inheritance',
+    'tofito': 'limit/restrict/confine',
+    'itutaua': 'battle line/army',
     'filifili': 'choose',
     'alualu': 'pursue',
     'sola': 'flee',
@@ -287,7 +289,7 @@ EXTENDED_VOCAB = {
     'foai': 'give',
     'maua': 'received',
     'tali': 'answer',
-    'aai': 'city',
+    'aai': 'cities/towns',
     "a'ai": 'eat',
     "a\u02bbai": 'eat',
     "'aina": 'edible',
@@ -397,7 +399,7 @@ EXTENDED_VOCAB = {
     'atoniga': 'atonement',
     'siufofoga': 'voice',
     'fofoga': 'face/mouth',
-    'afio': 'dwell (respectful)',
+    'afio': 'dwell',
     'faafofoga': 'listen/hearken',
     'motu': 'island',
     # Exodus vocabulary
@@ -444,7 +446,7 @@ EXTENDED_VOCAB = {
     'faatusa': 'image/likeness',
     'foliga': 'likeness/form',
     'faailoga': 'sign/token',
-    'tau': 'season/count/fight',
+    'tau': 'fight/war',
     'tausaga': 'year',
     'gafa': 'genealogy',
 
@@ -676,22 +678,20 @@ EXTENDED_VOCAB = {
     'oe': 'you',
     "'oe": 'you',
     'ia': 'he/she/him/her',
-    'ita': 'we (excl)',
     # Plural pronouns (3+)
-    'tatou': 'we/us (incl)',
-    'matou': 'we/us (excl)',
-    'outou': 'you (all)',
+    'tatou': 'we/us',
+    'matou': 'we/us',
+    'outou': 'you all',
     'latou': 'they/them',
     # Dual pronouns (2)
-    "ta'ua": 'us (two, incl)',
-    "ta\u02bbua": 'us (two, incl)',
-    "ma'ua": 'us (two, excl)',
-    "ma\u02bbua": 'us (two, excl)',
-    'oulua': 'you (two)',
-    'laua': 'they/them (two)',
-    "la'ua": 'they/them (two)',
-    "la\u02bbua": 'they/them (two)',
-    'oulua': 'you (two)',
+    "ta'ua": 'us two',
+    "ta\u02bbua": 'us two',
+    "ma'ua": 'us two',
+    "ma\u02bbua": 'us two',
+    'oulua': 'you two',
+    'laua': 'them both',
+    "la'ua": 'them both',
+    "la\u02bbua": 'them both',
     # Short pronoun forms (used with tense markers)
     "'ou": 'I',
     "o\u02bbu": 'I',
@@ -826,7 +826,7 @@ EXTENDED_VOCAB = {
     # Particles / connectors
     'auā': 'for/because',
     'aua': 'for/because',
-    'loo': '(progressive)',
+    'loo': '',
     'tusa': 'according to',
     'pea': 'continually',
     'nisi': 'some/others',
@@ -863,10 +863,12 @@ EXTENDED_VOCAB = {
     'aauina': 'sent',
     'foaiina': 'given/bestowed',
     'talia': 'received/accepted',
+    'sui': 'replace/change',
+    'suia': 'replaced/changed',
 
     # Actions - movement / state
-    'ō': 'go (plural)',
-    'o\u0304': 'go (plural)',
+    'ō': 'go',
+    'o\u0304': 'go',
     'avea': 'become',
     'nonofo': 'dwelling',
     'tulai': 'arise/rise up',
@@ -894,7 +896,7 @@ EXTENDED_VOCAB = {
     'tofotofoina': 'tested/tried/examined',
     'faalogologo': 'listen',
     'pepelo': 'false/lie',
-    'olioli': 'rejoice',
+    'olioli': 'joy/rejoicing',
 
     # Actions - building / doing
     'faatuina': 'built/established',
@@ -926,7 +928,7 @@ EXTENDED_VOCAB = {
     'uaina': 'wine',
     'kupita': 'cubit',
     'ipu': 'cup/vessel',
-    'aao': 'hand (extended)',
+    'aao': 'hand',
     'vaitafe': 'river',
     'nofoaga': 'place/dwelling',
     'tupua': 'idol',
@@ -948,7 +950,7 @@ EXTENDED_VOCAB = {
     'asiasi': 'visit/inspect',
     'petavene': 'Beth-aven',
     'tiga': 'grieved/pain',
-    'toatinoagafulu': 'ten (people)',
+    'toatinoagafulu': 'ten people',
     'ino': 'evil/harm',
 
     # Specific biblical terms
@@ -997,7 +999,7 @@ EXTENDED_VOCAB = {
     'faasevasevaloaina': 'wanderer',
     'maumausolo': 'fugitive',
     'aapa': 'reach out',
-    'faaūū': 'fallen (countenance)',
+    'faaūū': 'fallen',
     'lavalavā': 'naked',
     'uai': 'desire',
     'faatu': 'pitch/build',
@@ -1050,7 +1052,7 @@ EXTENDED_VOCAB = {
     'faoa': 'seized/taken captive',
     'taia': 'struck/smitten',
     'alalaga': 'cry out/shout',
-    'fusi': 'bind/girdle',
+    'fusi': 'belt/girdle',
     'viiga': 'praise',
     'sese': 'wrong/astray',
     'tuugamau': 'grave/tomb',
@@ -1083,7 +1085,7 @@ EXTENDED_VOCAB = {
     'fefefe': 'afraid/terrified',
     'faatauvaa': 'vain/worthless',
     'tiapolo': 'devil',
-    'toatolu': 'three (people)',
+    'toatolu': 'three people',
     'leona': 'lion',
     'maualuluga': 'most high/exalted',
     'aveeseina': 'carried away',
@@ -1128,7 +1130,7 @@ EXTENDED_VOCAB = {
     'faapefea': 'how',
     'talalelei': 'gospel',
     'apoapoai': 'exhort/admonish',
-    'afioga': 'word (divine)',
+    'afioga': 'word',
     'pipiimau': 'hold fast/cling',
     'faaosoosoga': 'temptation',
     'ufanafana': 'fiery dart/arrow',
@@ -1445,22 +1447,22 @@ EXTENDED_VOCAB = {
     'fitugafulu': 'seventy',
     'valugafulu': 'eighty',
     'ivagafulu': 'ninety',
-    'toafitu': 'seven (people)',
-    'toalima': 'five (people)',
-    'toaono': 'six (people)',
-    'toasefulu': 'ten (people)',
-    'toaselau': 'a hundred (people)',
-    'toafitugafulu': 'seventy (people)',
-    'toatolugafulu': 'thirty (people)',
-    'toaluafulu': 'twenty (people)',
-    'toalimagafulu': 'fifty (people)',
-    'toaitiiti': 'few (people)',
-    'toalua': 'two (people)',
-    'toatolu': 'three (people)',
-    'toafa': 'four (people)',
-    'toavalu': 'eight (people)',
-    'toaiva': 'nine (people)',
-    'toafagafulu': 'forty (people)',
+    'toafitu': 'seven people',
+    'toalima': 'five people',
+    'toaono': 'six people',
+    'toasefulu': 'ten people',
+    'toaselau': 'a hundred people',
+    'toafitugafulu': 'seventy people',
+    'toatolugafulu': 'thirty people',
+    'toaluafulu': 'twenty people',
+    'toalimagafulu': 'fifty people',
+    'toaitiiti': 'few people',
+    'toalua': 'two',
+    'toatolu': 'three people',
+    'toafa': 'four people',
+    'toavalu': 'eight people',
+    'toaiva': 'nine people',
+    'toafagafulu': 'forty people',
     'selau': 'hundred',
     'afe': 'thousand',
     'mano': 'ten thousand',
@@ -1619,7 +1621,7 @@ EXTENDED_VOCAB = {
     'pauli': 'blue/purple',
     'efa': 'ephah',
     'savali': 'walk/messenger',
-    'taua': 'precious/costly',
+    'taua': 'war/battle/precious',  # context: war/battle (military), precious (value)
     'ifea': 'where?',
     'fea': 'where?/which?',
 
@@ -1849,6 +1851,333 @@ EXTENDED_VOCAB = {
     'le masani': 'unclean/common',  # Hebrew tame
     'mama': 'clean/pure',  # Hebrew tahor
     'leaga': 'evil/wicked',  # Hebrew ra
+
+    # ============================================================
+    # Narrative / Military / Common vocabulary
+    # Words that appear frequently across OT narratives
+    # ============================================================
+    # Military / war terms
+    'itutaua': 'battle line/army',
+    'maatā': 'sling',
+    'talipupuni': 'shield',
+    'ufifatafata': 'coat of mail',
+    'toa': 'champion/warrior',
+    'faamasiasi': 'defy/reproach',
+    'faifai': 'defy/taunt',
+    'faataalise': 'made haste',
+    'togālauapi': 'camp',
+    'toagalauapi': 'camp',
+    'tulitatao': 'pursued',
+    'tuliloa': 'pursued/chased',
+    'faafetaiai': 'meet/encounter',
+    'sŏlovi': 'shouted',
+    'manunua': 'wounded',
+
+    # Weapons & equipment
+    'pelu': 'sword',
+    'tao': 'spear',
+    'tootoo': 'staff',
+    'maatā': 'sling',
+    'faamoega': 'sheath',
+    'sasau': 'slung',
+
+    # Animals
+    'urosa': 'bear',
+    'leona': 'lion',
+    'ulī': 'dog',
+    'solofanua': 'horse',
+    'asini': 'donkey',
+    'kamela': 'camel',
+
+    # Body terms (expanded)
+    'muaulu': 'forehead',
+    'lauulu': 'hair',
+    "'ava": 'beard',
+
+    # Common verbs missing from vocab
+    "momo'e": 'ran',
+    'malo': 'kingdom',
+    'ta': 'struck/played',
+    'goto': 'sank/sunk',
+    'faaoti': 'killed/slew',
+    'sosola': 'fled',
+    'matatau': 'dismayed',
+    'fefefe': 'afraid/feared',
+    'vaavaai': 'looked around',
+    "'ino'ino": 'disdained/despised',
+    'manaia': 'handsome/fair',
+    'enaenamumū': 'ruddy',
+    'fetuu': 'cursed',
+    'lavea': 'struck/hit',
+    'ofo': 'greeted/amazed',
+    'vetea': 'plundered/spoiled',
+    'lamolemole': 'smooth',
+    'faaofu': 'armed/clothed',
+    'fusi': 'belt/girdle',
+    'faataitai': 'tried/tested',
+    'faalatalata': 'drew near',
+    'fafao': 'put in',
+    'paū': 'fell',
+    'faō': 'face-down',
+    'fesili': 'asked',
+    'valaau': 'cried out/called',
+    'faatamaoaigaina': 'enriched',
+    'faasaolotoina': 'set free',
+    'laveai': 'delivered/rescued',
+
+    # Common nouns
+    'alia': 'brook/stream',
+    'taga': 'bag/scrip',
+    "'ato": 'bag/basket',
+    "'olo": 'trench/rampart',
+    'oa': 'riches/wealth',
+    'puipui': 'gate/door',
+    'uii': 'youngest',
+    'ulumatua': 'firstborn',
+    "ta'utoeaina": 'elderly/old man',
+    'lafu': 'flock/herd',
+    'tufaaga': 'portion/gift',
+    'faapotopotoga': 'assembly/congregation',
+    'peritomeina': 'circumcised',
+    'faamaualuga': 'pride',
+
+    # Verbs commonly garbled by dictionary fallback
+    'pii': 'bound/knit',
+    'pipii': 'clung to/stuck to',
+    'osi': 'made',
+    "to'ese": 'stripped off/removed',
+    "to\u02bbese": 'stripped off/removed',
+    "toese": 'stripped off/removed',
+    'faautauta': 'was prudent',
+    'tofia': 'was chosen',
+    'kitara': 'harp',
+    'oso': 'sit/dwell/enter',
+    'osofi': 'seize/possess/choose',
+    'osofia': 'was possessed/seized',
+    'osofiga': 'choosing/selection',
+    'feosofi': 'rushed upon',
+    "'au": 'troops/armies/hosts',
+    'lamalama': 'watched/eyed',
+    'afua': 'began/started',
+    'pepese': 'sang/singing',
+    'siva': 'dance',
+    'sisiva': 'dancing',
+    'fiafia': 'pleased/delighted',
+    'fetaliai': 'answered one another',
+    'foai': 'gave/gave away',
+    'auina': 'sent',
+    # 'velo' handled by VARIANT_FORMS → 'vealo'
+    'vealo': 'hurled/thrust',
+    'tuilua': 'pinned against',
+    'pa': 'wall',
+    "'alo": 'dodged/evaded',
+    "ʻalo": 'dodged/evaded',
+
+    # Nouns commonly missing
+    # 'ofu talaloa' moved to WHOLE_PHRASES (multi-word)
+    'aufana': 'bow',
+    'fasiga': 'slaughter',
+    'toaafe': 'thousand',
+    # 'sefulu o afe' moved to WHOLE_PHRASES (multi-word)
+    'topa': 'tambourine',
+    # 'ofu tino' moved to WHOLE_PHRASES (multi-word)
+
+    # ============================================================
+    # Nominalized -ga words (verb + -ga = action noun)
+    # Top frequency across Bible — precise glosses
+    # ============================================================
+    'faaleagaga': 'spiritual',
+    'sauaga': 'persecution/affliction',
+    'auaunaga': 'ministry/service',
+    'talosaga': 'prayer/petition',
+    'faamanatuga': 'remembrance/memorial',
+    'mafaufauga': 'thought/intention',
+    'faatonuga': 'commandment/instruction',
+    'faamaufaailoga': 'seal/sign',
+    'afioaga': 'dwelling place',
+    'faasalaga': 'punishment/judgment',
+    'valaauga': 'preaching/declaration',
+    'manaoga': 'need/desire',
+    'fautuaga': 'counsel/advice',
+    'filifiliga': 'choice/election',
+    'faatafunaga': 'foundation',
+    'leoleoga': 'watchman/guard',
+    'maelega': 'earnest/zealous',
+    'savaliga': 'walking/conduct',
+    'aupitoaluga': 'most high/highest',
+    'silafaga': 'vision/seeing',
+    'faatusaga': 'parable/likeness',
+    'molimauaga': 'testimony/witness',
+    'faatulagaga': 'arrangement/order',
+    'tofiga': 'appointment/calling',
+    'galuega': 'work/labor',
+    'tuuga': 'standing/position',
+    'faamasinoga': 'judgment',
+    'faapotopotoga': 'assembly/congregation',
+    'misega': 'desire/longing',
+    'faamamaga': 'cleansing/purification',
+    'faaolataga': 'salvation/deliverance',
+    'faamaualuluga': 'exaltation/pride',
+    'toesega': 'remnant',
+    'faasatauroaga': 'crucifixion',
+    'faatatauaga': 'comparison/likeness',
+    'faatuatua': 'faith/trust',
+    'tuutuuga': 'ordinance/statute',
+    'muliluluga': 'whoring/idolatry',
+    'anapogi': 'fasting',
+    'matuaiga': 'kindred/tribe',
+    'talaga': 'telling/story',
+    'faamaualuga': 'pride/exaltation',
+    'sauga': 'coming/visitation',
+    'tuliga': 'chasing/pursuit',
+    'puipuiga': 'guarding/protection',
+    'tatalaga': 'opening/loosing',
+    'faailoga': 'sign/mark',
+    'faatinoga': 'fulfillment/doing',
+    'soliga': 'transgression',
+    'togafitiga': 'healing/cure',
+    'faalavelavega': 'obstacle/trouble',
+    'faamoemoega': 'hope/expectation',
+    'masalosaloga': 'doubt/suspicion',
+    'faitauga': 'reading/counting',
+    'faaiuga': 'end/conclusion',
+    'faatoagaina': 'planted',
+    'failauga': 'preaching/sermon',
+    'talitonuga': 'belief/faith',
+    'agasala': 'sin/offense',
+    "tala'iga": 'preaching/proclamation',
+    'suega': 'trial/examination',
+    'tooga': 'gift/present',
+    'pologa': 'bondage/slavery',
+    'tigā': 'pain/grief',
+    'tulaga': 'standing/position/place',
+    'manumalo': 'victory/triumph',
+
+    # Second batch — remaining high-frequency -ga words
+    'osifeagaiga': 'covenant-breaker/transgressor',
+    'faupuega': 'plan/scheme',
+    'togitogiga': 'carving/engraving',
+    'faigaluega': 'workman/laborer',
+    'foafoaga': 'creation/forming',
+    'faamatalaga': 'explanation/declaration',
+    'tausamaaga': 'lamentation/mourning',
+    'sulufaiga': 'refuge/shelter',
+    'mapuitiga': 'tribulation/distress',
+    'taumafataga': 'feast/banquet',
+    'fatafaitaulaga': 'altar',
+    'suitulaga': 'substitute/replacement',
+    'faatuiesega': 'separation/division',
+    'puluvaga': 'council/assembly',
+    'talisuaga': 'reception/welcome',
+    'meafaigaluega': 'tool/instrument',
+    'upuleaga': 'wicked speech/blasphemy',
+    'vaeluaga': 'division/portion',
+    'faaeaga': 'revelation/appearing',
+    'tautiga': 'devotion/dedication',
+    'faasagasaga': 'facing/opposition',
+    'taamilosaga': 'circuit/going around',
+    'gaosiga': 'making/creation',
+    'faalapotopotoga': 'gathering/assembly',
+    'talitonuga': 'belief/faith',
+    'faasologa': 'succession/order',
+    'faamoega': 'sheath/scabbard',
+    'faatauvaaiga': 'promise/oath',
+    'faamamaluaga': 'deliverance/protection',
+    'faamagaloga': 'forgiveness/pardon',
+
+    # Third batch — remaining frequent -ga words
+    'tali-tiga': 'patience/endurance',
+    'augātupulaga': 'generation/age',
+    'laasaga': 'step/footstep',
+    'osofaiga': 'attack/assault',
+    'faiaoga': 'teacher',
+    'fuataga': 'measure/measurement',
+    'noanoataga': 'bond/chain',
+    'laufofoga': 'conspiracy/plot',
+    'puaiga': 'family/offspring',
+    'liuga': 'turn/change',
+    'tolauapiga': 'remnant/posterity',
+    'talifaaaliga': 'revelation/receiving',
+    'faaipoipoga': 'marriage/wedding',
+    'tōtōga': 'price/payment',
+    'tapenapenaga': 'preparation',
+    'tauiviga': 'striving/contention',
+    'faatusatusaga': 'comparison',
+    'olataga': 'salvation/escape',
+    'faamasinotaga': 'condemnation',
+    'tapenaga': 'preparation',
+    'faatauaina': 'valued/esteemed',
+    'saofaiga': 'sitting/session',
+    'paepaega': 'pavement/foundation',
+    'faatagaga': 'permission/authority',
+    'uiga': 'meaning/nature',
+    'mautinoaga': 'surety/certainty',
+    'fesilafia': 'asked/inquired',
+}
+
+# ============================================================
+# Variant form normalization (archaic 1887 Bible → modern Samoan)
+# Maps old/dialectal spellings to standard modern forms so we
+# only need to gloss each word once under its modern spelling.
+# ============================================================
+VARIANT_FORMS = {
+    # Orthographic variants (1887 Bible → modern standard for LOOKUP)
+    'velo': 'vealo',           # hurl/thrust (v/ve alternation)
+    "to'ese": 'toese',         # stripped off (glottal stop variants consolidated)
+    "to\u02bbese": 'toese',
+    # Add more as discovered: 'old_form': 'modern_form',
+}
+
+# ============================================================
+# Modern spelling corrections (display text modernization)
+# Maps bare/archaic forms → proper modern Samoan with macrons/glottal stops
+# Applied to the displayed Samoan text so readers see correct orthography
+# ============================================================
+MODERN_SPELLING = {
+    # ============================================================
+    # Pronouns with macrons (very common, unambiguous)
+    # The 1887 text omits macrons on these; modern orthography requires them
+    # ============================================================
+    'tatou': 'tātou',          # we (inclusive) — e.g. "tatou faia" → "tātou faia"
+    'matou': 'mātou',          # we (exclusive)
+    'latou': 'lātou',          # they (three or more)
+
+    # ============================================================
+    # People/kinship terms (high frequency, unambiguous)
+    # NOTE: tamā/tinā/avā already have macrons in 1887 source text
+    # ============================================================
+    'tane': 'tāne',            # male/husband
+    'fanau': 'fānau',          # born/children
+    'maliu': 'māliu',          # died/passed away
+    'matua': 'mātua',          # parents/elders
+    'tina': 'tinā',            # mother (catches inconsistent source text)
+    'atalii': "atali'i",       # son (glottal stop between i's)
+    'alii': "ali'i",           # lord/chief (glottal stop between i's)
+    'taulealea': "taule'ale'a", # young man/untitled man
+
+    # ============================================================
+    # Common nouns with glottal stops
+    # ============================================================
+    'upu': "'upu",             # word, speech
+    'aiga': "'āiga",           # family/household
+    'vaa': "va'a",             # canoe/boat
+    'laau': "lā'au",           # tree/plant/medicine
+
+    # ============================================================
+    # Common verbs/adjectives with macrons
+    # ============================================================
+    'savali': 'sāvali',        # walk
+    'malo': 'mālō',            # kingdom/government
+    'ta': 'tā',                # struck/played
+
+    # ============================================================
+    # Specific corrections from earlier sessions
+    # ============================================================
+    'toese': "to'ese",         # stripped off/removed
+
+    # NOTE: faa- prefix → fa'a- handled by prefix rule in modernize_samoan()
+    # NOTE: ambiguous words (alo, tama, le/lē, ma/mā, mana/māna) are
+    #       intentionally EXCLUDED — they require context to disambiguate
 }
 
 # ============================================================
@@ -1861,6 +2190,14 @@ def lookup_word(word):
         return ""
     # Normalize apostrophe variants for lookups
     w_norm = w.replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'").replace('\u02bb', "'")
+    # Normalize macrons (ā→a, ē→e, etc.) — 1887 Bible inconsistently uses them
+    w_norm = w_norm.replace('\u0101','a').replace('\u0113','e').replace('\u012b','i').replace('\u014d','o').replace('\u016b','u')
+    w_norm = w_norm.replace('\u0100','a').replace('\u0112','e').replace('\u012a','i').replace('\u014c','o').replace('\u016a','u')
+
+    # Normalize archaic/variant forms to modern spelling
+    if w_norm in VARIANT_FORMS:
+        w_norm = VARIANT_FORMS[w_norm]
+
     # Check normalized form in function words
     if w_norm in FUNC_WORDS:
         return FUNC_WORDS[w_norm]
@@ -1886,7 +2223,7 @@ def lookup_word(word):
             return g
         return dictionary[w].split(';')[0].split(',')[0].strip()
 
-    # Try without glottal stops
+    # Try without glottal stops (1887 Bible inconsistently marks them)
     w2 = w.replace('\u02bb', "'").replace('\u02bc', "'")
     if w2 in EXTENDED_VOCAB:
         return EXTENDED_VOCAB[w2]
@@ -1897,6 +2234,15 @@ def lookup_word(word):
         return EXTENDED_VOCAB[w3]
     if w3 in dictionary:
         return dictionary[w3].split(';')[0].split(',')[0].strip()
+    # Also try macron-normalized form with glottal stops stripped
+    w_bare = w_norm.replace("'", '')
+    if w_bare != w3 and w_bare != w_norm:
+        if w_bare in FUNC_WORDS:
+            return FUNC_WORDS[w_bare]
+        if w_bare in EXTENDED_VOCAB:
+            return EXTENDED_VOCAB[w_bare]
+        if w_bare in dictionary:
+            return dictionary[w_bare].split(';')[0].split(',')[0].strip()
 
     # ============================================================
     # Morphological decomposition fallbacks (Samoan grammar rules)
@@ -1950,6 +2296,64 @@ def lookup_word(word):
     # from literal decomposition (tausisi="cling to" not "engage in cheese",
     # tautai="fisherman" not "engage in heart"). Add specific tau- words to
     # EXTENDED_VOCAB instead of using morphological decomposition.
+
+    # 4. Reduplication: doubled root = plurality / intensity / habituality
+    # Full reduplication: tuputupu → tupu ("grow"), lagalaga → laga ("weave")
+    # Enables chaining: faatuputupuga → -ga → faatuputupu → faa- → tuputupu → REDUP → tupu
+    if len(w_norm) >= 4 and len(w_norm) % 2 == 0:
+        half = len(w_norm) // 2
+        if w_norm[:half] == w_norm[half:] and half >= 2:
+            root_g = lookup_word(w_norm[:half])
+            if root_g and root_g.lower() not in _skip_glosses:
+                return root_g
+
+    # Partial reduplication: first CV prefix doubled
+    # sisiva → siva ("dance"), tatagi → tagi ("cry"), pepese → pese ("sing")
+    if len(w_norm) >= 5:
+        # Check if first 2 chars match first 2 chars of the remainder
+        possible_root = w_norm[2:]
+        if len(possible_root) >= 3 and w_norm[:2] == possible_root[:2]:
+            root_g = lookup_word(possible_root)
+            if root_g and root_g.lower() not in _skip_glosses:
+                return root_g
+
+    # 5. Nominalization suffix: root + -ga = action noun ("-ing" / "-tion")
+    # Samoan -ga is a productive suffix added to verbs to derive nouns:
+    #   fasi (kill) → fasiga (slaying), galue (work) → galuega (work/job),
+    #   tuli (chase) → tuliga (chasing), valaau (call) → valaauga (calling)
+    # Only fires as fallback when the word isn't in any dictionary.
+    if w_norm.endswith('ga') and len(w_norm) > 4:
+        root = w_norm[:-2]  # strip -ga
+        if len(root) >= 2:
+            root_g = lookup_word(root)
+            if root_g and root_g.lower() not in _skip_glosses:
+                return root_g
+        # Try stripping -aga (some nominalizations add -aga not just -ga)
+        if w_norm.endswith('aga') and len(w_norm) > 5:
+            root2 = w_norm[:-3]
+            if len(root2) >= 2:
+                root_g = lookup_word(root2)
+                if root_g and root_g.lower() not in _skip_glosses:
+                    return root_g
+
+    # 6. Passive suffix: root + -a/-ia = "was [verb]ed"
+    # Samoan passives: osofi + -a → osofia ("was chosen"),
+    # fasi + -a → fasia ("was killed"), ave + -a → avea ("was taken")
+    # Check -ia first (more specific) before -a
+    # Skip: words ending in -ga (nominalization), capitalized words (proper names)
+    if not word[0].isupper():
+        if w_norm.endswith('ia') and not w_norm.endswith('ga') and len(w_norm) > 4:
+            root = w_norm[:-2]  # strip -ia
+            if len(root) >= 3:
+                root_g = lookup_word(root)
+                if root_g and root_g.lower() not in _skip_glosses:
+                    return f"was {root_g}"
+        if w_norm.endswith('a') and not w_norm.endswith('ga') and not w_norm.endswith('ia') and len(w_norm) > 4:
+            root = w_norm[:-1]  # strip -a
+            if len(root) >= 3:
+                root_g = lookup_word(root)
+                if root_g and root_g.lower() not in _skip_glosses:
+                    return f"was {root_g}"
 
     return ""
 
@@ -2664,7 +3068,8 @@ WHOLE_PHRASES = {
     "le ali\u02bbi sili": 'the Lord Most High',
 
     # Common Book of Mormon phrases
-    "foi mai": 'return',
+    "foi mai": 'returned',
+    "ina ua": 'when',
     "sa ou miti se miti": 'I dreamed a dream',
     "na poloaiina ai a'u": 'I was commanded',
     "e lei talitonu foi i laua": 'they also did not believe',
@@ -3293,7 +3698,7 @@ WHOLE_PHRASES = {
     'o lona': 'his/her',
     'o lo latou': 'their',
     'o lo tatou': 'our',
-    'o lo matou': 'our (excl)',
+    'o lo matou': 'our',
 
     # Common verbal expressions
     'ua ou tuuina atu': 'I have given',
@@ -3323,6 +3728,114 @@ WHOLE_PHRASES = {
     # Psalms common
     'e leai se mea ou te mativa ai': 'I shall not want',
     'o lo\'u leoleo mamoe o ia': 'he is my shepherd',
+
+    # ============================================================
+    # Common Samoan structural phrases — split as separate chunks globally
+    # ============================================================
+    'O le a le mea': 'why / what is the reason',
+
+    # Speech / narrative formulas (very high frequency)
+    'Ua fai mai le': 'said the',
+    'Ua fai mai': 'said',
+    'Ona fai mai lea': 'And he said',
+    'Ona fai atu lea': 'And he said',
+    'ua faapea mai': 'saying',
+    'ua faapea atu': 'saying',
+
+    # Verb ō (go) + directional — plain "o" often lacks macron in 1887 text
+    'o mai': 'came',
+    'o atu': 'went',
+    'o ae': 'went up',
+    'o ifo': 'went down',
+    'o ane': 'went',
+    'ua o mai': 'came',
+    'na o mai': 'came',
+    'sa o mai': 'was coming',
+    'ua o atu': 'went',
+    'na o atu': 'went',
+    'sa o atu': 'was going',
+    'ua o ae': 'went up',
+    'na o ae': 'went up',
+    'ua o ifo': 'went down',
+    'na o ifo': 'went down',
+    'e o mai': 'shall come',
+    'e o atu': 'shall go',
+
+    # Military / battle phrases — tau = fight/war
+    'e tau': 'to fight',
+    'ma te tau': 'that we may fight',
+    'o loo tau': 'was fighting',
+    'tau ma': 'fight against',
+    'e tau ma': 'to fight against',
+    'na tau': 'fought',
+    'ua tau': 'fought',
+    'sa tau': 'were fighting',
+    'ma tau ai': 'and fought against it',
+    'ma tau': 'and fought',
+    'le taua': 'the battle',
+    'i le taua': 'in the battle',
+    'itu taua': 'army/battle line',
+    'le itu taua': 'the army/battle line',
+    'tao leoleo': 'javelin',
+    "pulou 'apa memea": 'bronze helmet',
+    'ufifatafata uamea': 'iron coat of mail',
+    'manu felelei': 'birds of the air',
+    'manu feai': 'wild beasts',
+    'manu tataa': 'beasts of the field',
+    'tama itiiti': 'youth/young man',
+    'le Atua soifua': 'the living God',
+    'Atua soifua': 'living God',
+    'fale ie': 'tent',
+    'le fale ie': 'the tent',
+    "tama'i mamoe": 'lamb',
+    'maa lamolemole': 'smooth stones',
+    "paū faō": 'fell face-down',
+    'pii mau': 'was knit/bound together',
+
+    # ============================================================
+    # Samoan grammar patterns — reflexive, comparative, common constructions
+    # ============================================================
+    'pei ona': 'as/just as',
+    'ia te ia lava': 'himself',
+    'ia te i latou lava': 'themselves',
+    'ia te oe lava': 'yourself',
+    'ia te au lava': 'myself',
+    'ia te i matou lava': 'ourselves',
+    'ia te i tatou lava': 'ourselves',
+    'pei o ia': 'like him',
+    'pei ona alofa o ia': 'as he loved',
+    'alofa o ia': 'he loved',
+    'ua alofa ia te ia': 'he loved him',
+    'alofa ia te ia': 'loved him',
+    'alofa ia te oe': 'loved you',
+    'alofa ia te au': 'loved me',
+    'alofa ia te i latou': 'loved them',
+    'alofa ia te ia lava': 'loved himself',
+    'alofa o ia ia te ia': 'he loved him',
+    'alofa o ia ia te ia lava': 'he loved himself',
+
+    # Covenant / agreement phrases
+    'le feagaiga': 'the covenant',
+    'ua osi le feagaiga': 'made a covenant',
+
+    # Time / place / common clause patterns
+    'i lea aso': 'on that day',
+    'i le aso nei': 'this day',
+    'i le aso lea': 'on that day',
+    'i ona aso': 'in his days',
+    'i ona po': 'in his nights',
+    'i le po': 'at night',
+    'i le taeao': 'in the morning',
+    'i le afiafi': 'in the evening',
+    'le mafai lava': 'not able at all',
+    'le mafai': 'not able',
+    'ina ia toe foi': 'to return again',
+    'ia toe foi': 'to return again',
+    'toe foi': 'returned again',
+    'i le aiga o lona tamā': "to his father's house",
+    'le aiga o lona tamā': "his father's house",
+    'o lona tamā': 'of his father',
+    'o lona tinā': 'of his mother',
 
     # ============================================================
     # Hebrew Masoretic theological phrase corrections
@@ -3428,8 +3941,8 @@ WHOLE_PHRASES = {
     "sa mavae lea mea": 'after that',
     "a e peitai": 'but',
     "i luma o ieova": 'before the LORD',
-    "o loo": 'is/are (progressive)',
-    "o loo e": 'you are (progressive)',
+    "o loo": 'is/are',
+    "o loo e": 'you are',
     "o loo e silafia": 'you know',
     "ua ia te oe": 'it is yours',
     "ua e sisila mai": 'you have looked upon',
@@ -3491,7 +4004,61 @@ WHOLE_PHRASES = {
     "ma lau avā": 'and your wife',
     "lona atalii": 'his son',
     "o atalii": 'sons',
+    "to ese": 'stripped off/removed',
+    "Ua to ese": 'stripped off',
+    "Ua to'ese": 'stripped off',
+    # lima = "hand" (not "five") in possessive/prepositional contexts
+    "lona lima": 'his hand',
+    "lana lima": 'his hand',
+    "le lima": 'the hand',
+    "i lona lima": 'with his hand',
+    "i le lima": 'in the hand',
+    "o le lima": 'of the hand',
+    "i ona lima": 'in his hands',
+    "lima taumatau": 'right hand',
+    "lima agavale": 'left hand',
+    "lima malosi": 'strong hand',
+    # lima = "five" in number contexts
+    "lima sefulu": 'fifty',
+    "lima selau": 'five hundred',
+    "lima afe": 'five thousand',
+    "e lima": 'five',
+    "lima kupita": 'five cubits',
+    # evil spirit
+    "agaga leaga": 'evil spirit',
+    "le agaga leaga": 'the evil spirit',
+    "e le agaga leaga": 'by the evil spirit',
+    "o fafine": 'the women',
     "o tagata": 'of men',
+    "o fafine mai": 'the women from',
+    "'apa tagitagi": 'instruments of music',
+    "ma 'apa tagitagi": 'and instruments of music',
+    "ofu talaloa": 'robe',
+    "lona ofu talaloa": 'his robe',
+    "lana ofu talaloa": 'his robe',
+    "ofu tino": 'garment',
+    "lona ofu tino": 'his garment',
+    "lana ofu tino": 'his garment',
+    "nai ia te ia": 'from him',
+    "nai ia te ia,": 'from him',
+    # A-class possessive: a + pronoun = "their/his/her/our/your"
+    "a latou": 'their',
+    "a ia": 'his/her',
+    "a matou": 'our',
+    "a tatou": 'our',
+    "a outou": 'your',
+    "a laua": 'their',
+    "a la'ua": 'their',
+    "a oulua": 'your',
+    "a lo latou": 'their',
+    "a la latou": 'their',
+    "sefulu o afe": 'ten thousand',
+    "aai uma": 'every city',
+    "mai aai uma": 'from every city',
+    "ona o atu ai lea": 'and went out',
+    "ona o mai ai lea": 'and came',
+    "ona o ae ai lea": 'and went up',
+    "ona o ifo ai lea": 'and went down',
     "la'u feagaiga": 'my covenant',
     "o le feagaiga": 'the covenant',
     "le nuanua": 'the rainbow',
@@ -3554,9 +4121,19 @@ WHOLE_PHRASES = {
     "ia te au": 'unto me',
     "ia te ia": 'to him',
     "ia te i latou": 'unto them',
-    "ia te i laua": 'unto them',
-    "ia te outou": 'unto you',
+    "ia te i laua": 'unto them both',
+    "ia te outou": 'unto you all',
     "ia te i tatou": 'unto us',
+    "ia te i matou": 'unto us',
+
+    # Object pronoun phrases (i + pronoun = object marker, NOT "in")
+    "i matou": 'us',
+    "i tatou": 'us',
+    "i latou": 'them',
+    "i laua": 'them both',
+    "i outou": 'you all',
+    "e sui a'i": 'in its place',
+    "sui a'i": 'in its place',
 
     # Common name patterns
     "ia noa": 'to Noah',
@@ -3981,6 +4558,12 @@ def gloss_phrase(phrase_text):
                     glosses.append('by his')
                     skip_next = True
                     continue
+                # "e" before a proper noun (capitalized) → "by" (agent/ergative)
+                # e.g., "e Saulo" = "by Saul", "e Tavita" = "by David"
+                next_raw = words[idx+1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+                if next_raw and next_raw[0].isupper():
+                    glosses.append('by')
+                    continue
                 # "e" before a verb → "to" (purpose/infinitive)
                 next_g = lookup_word(clean_words[idx+1])
                 if next_g and next_g not in FUNC_WORDS.values():
@@ -4177,6 +4760,10 @@ def gloss_phrase(phrase_text):
     result = ' '.join(glosses)
     # Clean up
     result = re.sub(r'\s+', ' ', result).strip()
+    # Fix Samoan→English word order: "the X all" → "all the X" (uma follows noun in Samoan)
+    result = re.sub(r'\b(the \w+) all\b', r'all \1', result)
+    # Strip any parenthetical annotations that leaked through (e.g., "(excl)", "(dir)", "(progressive)")
+    result = re.sub(r'\s*\([^)]*\)', '', result).strip()
     # Use first option from slash alternatives for cleaner output
     result = re.sub(r'(\w+)/\w+(?:/\w+)*', r'\1', result)
     # Clean up double spaces
@@ -6747,9 +7334,13 @@ MANUAL_CHUNK_OVERRIDES = {
     'Genesis|12|16': [
         ['Ona agalelei atu lea o ia ia Aperamo', 'he showed kindness to Abram'],
         ['ona o ia;', 'because of her'],
-        ['sa ia te ia foi o mamoe, ma povi, ma asini poa', 'he had sheep, oxen, donkeys'],
-        ['ma auauna tane, ma auauna fafine,', 'male and female servants'],
-        ['ma asini fafine, ma kamela.', 'female donkeys and camels'],
+        ['sa ia te ia foi o mamoe,', 'he had sheep'],
+        ['ma povi,', 'and oxen'],
+        ['ma asini poa', 'and donkeys'],
+        ['ma auauna tane,', 'and male servants'],
+        ['ma auauna fafine,', 'and female servants'],
+        ['ma asini fafine,', 'and female donkeys'],
+        ['ma kamela.', 'and camels'],
     ],
     'Genesis|12|17': [
         ['A ua faatigaina e Ieova', 'the LORD plagued'],
@@ -6765,13 +7356,14 @@ MANUAL_CHUNK_OVERRIDES = {
         ['ia te au o lau avā ia?', 'that she was your wife'],
     ],
     'Genesis|12|19': [
-        ['O le a le mea na e faapea mai ai,', 'why did you say'],
-        ["O lo'u tuafafine ia?", 'she is my sister'],
-        ["Na fai a'u mao avea o ia", 'so that I took her'],
-        ["e fai ma'u avā;", 'as my wife'],
-        ['o lenei foi, faauta,', 'now here is your wife'],
-        ['o lau avā lea,', 'your wife'],
-        ['ina ave ia, ma lua o.', 'take her and go'],
+        ['O le a le mea', 'why'],
+        ['na e faapea mai ai,', 'did you say'],
+        ["O lo'u tuafafine ia?", 'She is my sister?'],
+        ["Na fai a'u mao avea o ia", 'so I might have taken her'],
+        ["e fai ma'u avā;", 'to be my wife'],
+        ['o lenei foi, faauta,', 'now therefore, behold'],
+        ['o lau avā lea,', 'here is your wife'],
+        ['ina ave ia, ma lua o.', 'take her and go your way'],
     ],
     'Genesis|12|20': [
         ['Ona poloai atu lea o Farao', 'Pharaoh commanded'],
@@ -7149,8 +7741,10 @@ MANUAL_CHUNK_OVERRIDES = {
         ['E faapea lava lau fanau.', 'so shall your offspring be'],
     ],
     'Genesis|15|6': [
-        ['Ua faatuatua foi o ia ia Ieova,', 'he believed the LORD'],
-        ["ona ia ta'uamiotonuina mai ai lea ia te ia.", 'and He counted it to him as righteousness'],
+        ['Ua faatuatua foi o ia', 'he had faith/trusted'],
+        ['ia Ieova,', 'in the LORD'],
+        ["ona ia ta'uamiotonuina mai ai lea", 'and He counted it'],
+        ['ia te ia.', 'to him as righteousness'],
     ],
     'Genesis|15|7': [
         ['Ua ia fetalai mai foi ia te ia,', 'He also said to him'],
@@ -8645,6 +9239,585 @@ MANUAL_CHUNK_OVERRIDES = {
         ['i tama tane', 'sons'],
         ['e toatinoagafulu?', 'ten?'],
     ],
+    # Goliath's challenge — 1 Samuel 17:8-9
+    # tau = fight/battle (not season), malo = prevail (not government)
+    '1 Samuel|17|9': [
+        ['afai na te mafaia', 'if he is able'],
+        ['ona ma tau,', 'to fight with me'],
+        ['ma fasi ia te au,', 'and to kill me'],
+        ['matou te fai ma auauna', 'we will be your servants'],
+        ['ia te outou;', 'to you'],
+        ['a e afai ou te malo', 'but if I prevail'],
+        ['ia te ia,', 'against him'],
+        ['ma ou fasi ia te ia,', 'and I kill him'],
+        ['ona fai lea o outou', 'then you shall become'],
+        ['ma a matou auauna,', 'our servants'],
+        ['e auauna mai ia te i matou.', 'and serve us'],
+    ],
+    '1 Samuel|18|3': [
+        ['Ua osi', 'made'],
+        ['e Ionatana', 'by Jonathan'],
+        ['le feagaiga', 'the covenant'],
+        ['ma Tavita,', 'with David'],
+        ['auā', 'for'],
+        ['ua alofa ia te ia,', 'he loved him'],
+        ['pei ona', 'as'],
+        ['alofa o ia', 'he loved'],
+        ['ia te ia lava.', 'himself'],
+    ],
+    '1 Samuel|18|4': [
+        ['Ua to ese foi', 'has also removed/stripped off'],
+        ['e Ionatana', 'by Jonathan'],
+        ['lona ofu talaloa', 'his upper robe/robe'],
+        ['nai ia te ia,', 'and gave it to him'],
+        ['ua foai atu ai', 'he gave away'],
+        ['ia Tavita,', 'to David'],
+        ['ma lona ofu tino,', 'and his garment'],
+        ['atoa ma', 'together with'],
+        ['lana pelu,', 'his sword'],
+        ['ma lana aufana,', 'and his bow'],
+        ['atoa ma lona fusi.', 'together with his belt/girdle'],
+    ],
+    '1 Samuel|18|5': [
+        ['Ua alu atu', 'went out'],
+        ['Tavita', 'David'],
+        ['i mea uma', 'to all matters'],
+        ['ua auina ai', 'that were sent'],
+        ['o ia', 'he'],
+        ['e Saulo,', 'by Saul'],
+        ['ua faautauta', 'was prudent'],
+        ['i lana amio;', 'in his conduct'],
+        ['ua tofia foi', 'was also chosen'],
+        ['o ia', 'he'],
+        ['e Saulo', 'by Saul'],
+        ['e pule', 'to command'],
+        ["i 'au;", 'over the troops'],
+        ['ua fiafia ia te ia', 'were pleased with him'],
+        ['le nuu uma,', 'all the people'],
+        ['atoa ma auauna', 'together with the servants'],
+        ['a Saulo.', 'of Saul'],
+    ],
+    '1 Samuel|18|10': [
+        ['Ua oo i le taeao,', 'it came to pass in the morning'],
+        ['ona osofia ai lea', 'then was possessed'],
+        ['o Saulo', 'Saul'],
+        ['e le agaga leaga', 'by the evil spirit'],
+        ['mai le Atua,', 'from God'],
+        ['ua perofeta ane ai', 'he prophesied wildly'],
+        ['o ia', 'he'],
+        ['i lona fale;', 'in his house'],
+        ['a o Tavita,', 'but David'],
+        ['na ta e ia', 'struck/played'],
+        ['i le kitara', 'on the harp'],
+        ['i lona lima,', 'with his hand'],
+        ['pei ona fai', 'as was done'],
+        ['i lea aso ma lea aso;', 'day after day'],
+        ['sa i ai', 'there was'],
+        ['le tao', 'the spear'],
+        ['i le lima o Saulo.', 'in the hand of Saul'],
+    ],
+    '1 Samuel|18|7': [
+        ['Ua lagi fetaliai', 'answered one another'],
+        ['fafine', 'the women'],
+        ['i a latou siva,', 'in their dancing'],
+        ['ua fai ane,', 'saying'],
+        ['Ua fasia', 'has slain'],
+        ['e Saulo', 'by Saul'],
+        ['aua toaafe,', 'his thousands'],
+        ['a o Tavita', 'but of David'],
+        ['ana sefulu o afe.', 'his tens of thousands'],
+    ],
+    '1 Samuel|18|8': [
+        ['Ua ita tele ai', 'was very angry'],
+        ['Saulo,', 'Saul'],
+        ['ua leaga ia te ia', 'was displeasing to him'],
+        ['ia upu;', 'this saying'],
+        ['ua fai ane,', 'and said'],
+        ['Ua latou tuu atu ia Tavita', 'They gave David'],
+        ['o sefulu o afe,', 'ten thousand'],
+        ['a o a\u02bbu', 'but to me'],
+        ['ua tuu mai ia te au', 'they have given me'],
+        ['na o afe;', 'only a thousand'],
+        ['ua toe lava', 'what more'],
+        ['ona ave ia te ia', 'can he have'],
+        ['o le malo.', 'but the kingdom'],
+    ],
+    '1 Samuel|18|6': [
+        ['Ua o mai', 'came'],
+        ['i latou', 'them'],
+        ['ina ua', 'when'],
+        ['foi mai', 'returned'],
+        ['Tavita', 'David'],
+        ['nai le fasiga', 'from the slaying'],
+        ['o le Filisitia,', 'of the Philistine'],
+        ['ona o atu ai lea', 'then went out'],
+        ['o fafine', 'the women'],
+        ['mai aai uma', 'from all the cities'],
+        ['o Isaraelu', 'of Israel'],
+        ['ua pepese,', 'singing'],
+        ['ma sisiva,', 'and dancing'],
+        ['e faafetaiai', 'to meet'],
+        ['i le tupu', 'King'],
+        ['o Saulo,', 'Saul'],
+        ['ma topa,', 'with tambourines'],
+        ['ma le olioli,', 'with joy'],
+        ["ma 'apa tagitagi.", 'and with instruments of music'],
+    ],
+    '1 Samuel|18|1': [
+        ['Ua uma atu ana upu ia Saulo,', 'When he had finished speaking to Saul'],
+        ['ona pii mau lea', 'was knit together'],
+        ['o le loto o Ionatana', 'the heart of Jonathan'],
+        ['i le loto o Tavita,', 'with the heart of David'],
+        ['ua alofa Ionatana ia te ia,', 'and Jonathan loved him'],
+        ['pei ona alofa o ia', 'as he loved'],
+        ['ia te ia lava.', 'himself'],
+    ],
+    '1 Samuel|18|2': [
+        ['Ua ave e Saulo ia te ia', 'Saul took him'],
+        ['i lea aso,', 'on that day'],
+        ['ua ia le mafai lava', 'and would not let him'],
+        ['ina ia toe foi', 'return again'],
+        ['i le aiga', 'to the house'],
+        ['o lona tamā.', 'of his father'],
+    ],
+    '1 Samuel|17|8': [
+        ['Ua tu o ia', 'He stood'],
+        ['ma valaau', 'and cried out'],
+        ['i le itutaua a Isaraelu,', 'to the battle lines of Israel'],
+        ['ua faapea mai ia te i latou,', 'and said to them'],
+        ['O le a le mea', 'What is the thing'],
+        ['tou te omai ai', 'that you come with'],
+        ['e tofito', 'to limit/restrict'],
+        ['le taua?', 'the battle?'],
+        ['E le o a\u02bbu ea', 'Am I not'],
+        ['le Filisitia,', 'a Philistine'],
+        ['a o outou', 'and you'],
+        ['o auauna a Saulo outou?', 'servants of Saul?'],
+        ['Filifili ia e outou', 'Choose for yourselves'],
+        ['se tagata', 'a man'],
+        ['e alu ifo', 'to come down'],
+        ['ia te au;', 'to me'],
+    ],
+    # 1 Samuel 17:10-54 — David and Goliath narrative
+    '1 Samuel|17|10': [
+        ['Ua fai mai le Filisitia,', 'And the Philistine said'],
+        ["O a\u02bbu nei,", 'I'],
+        ['ou te faamasiasi', 'I defy'],
+        ['i le itu taua a Isaraelu', 'the armies of Israel'],
+        ['i le aso nei;', 'this day'],
+        ['tuu mai ia te au se tagata', 'give me a man'],
+        ['ma te tau.', 'that we may fight'],
+    ],
+    '1 Samuel|17|11': [
+        ['Ua faalogo Saulo', 'When Saul heard'],
+        ['ma Isaraelu uma', 'and all Israel'],
+        ['i nei upu a le Filisitia,', 'those words of the Philistine'],
+        ['ona matatau ai lea,', 'they were dismayed'],
+        ['ma fefefe tele i latou.', 'and greatly afraid'],
+    ],
+    '1 Samuel|17|12': [
+        ['O Tavita o le atalii ia', 'Now David was the son'],
+        ['o le tasi tagata o Efarata,', 'of that Ephrathite'],
+        ['o Peteleema o Iuta,', 'of Bethlehem-judah'],
+        ['ua igoa ia Iese,', 'whose name was Jesse'],
+        ['e toavalu ona atalii;', 'and he had eight sons'],
+        ["na ta\u02bbutoeaina o ia e tagata", 'and the man was considered an old man'],
+        ['i ona aso o Saulo.', 'in the days of Saul'],
+    ],
+    '1 Samuel|17|13': [
+        ['O atalii o Iese e toatolu', 'And the three sons of Jesse'],
+        ['e na matutua', 'who were eldest'],
+        ['ua latou ō ma Saulo i le taua;', 'went and followed Saul to the battle'],
+        ['o igoa nei o ona atalii e toatolu', 'and the names of his three sons'],
+        ['na o i le taua,', 'that went to the battle'],
+        ['o Eliapo le ulumatua,', 'were Eliab the firstborn'],
+        ['o le aupito ane i ai o Apinatapa,', 'and next unto him Abinadab'],
+        ['o lona toatolu o Sama.', 'and the third Shammah'],
+    ],
+    '1 Samuel|17|14': [
+        ['O Tavita o le uii ia;', 'And David was the youngest'],
+        ['a o le toatolu na matutua', 'and the three eldest'],
+        ['ua latou mulimuli ia Saulo.', 'followed Saul'],
+    ],
+    '1 Samuel|17|15': [
+        ['Ua alu Tavita,', 'But David went'],
+        ['ua foi atu nai ia Saulo', 'and returned from Saul'],
+        ['e leoleo mamoe a lona tamā', 'to feed his father\u2019s sheep'],
+        ['i Peteleema.', 'at Bethlehem'],
+    ],
+    '1 Samuel|17|16': [
+        ['Ua faalatalata mai le Filisitia', 'And the Philistine drew near'],
+        ['i le taeao ma le afiafi,', 'morning and evening'],
+        ['ua tu mai', 'and presented himself'],
+        ['i aso e fagafulu.', 'forty days'],
+    ],
+    '1 Samuel|17|17': [
+        ['Ua fai mai Iese', 'And Jesse said'],
+        ['ia Tavita lona atalii,', 'unto David his son'],
+        ['Ina avatu ia i ou uso', 'Take now for thy brethren'],
+        ['o lenei efa o saito tunu,', 'an ephah of this parched corn'],
+        ['ma potoi areto nei e fuagafulu,', 'and these ten loaves'],
+        ["ma ē momo\u02bee atu i ou uso", 'and run to thy brethren'],
+        ['i le togālauapi.', 'to the camp'],
+    ],
+    '1 Samuel|17|18': [
+        ['Ave foi nei tufaaga', 'And carry these ten'],
+        ['a suāsusu maaa e sefulu', 'cheeses'],
+        ['i le alii o lo latou toaafe,', 'unto the captain of their thousand'],
+        ['ma ia e asiasi i ou uso', 'and look how thy brethren fare'],
+        ['po ua manuia,', 'whether they are well'],
+        ['ma ia au mai', 'and take'],
+        ['so latou faamaoni.', 'their pledge'],
+    ],
+    '1 Samuel|17|19': [
+        ['O Saulo, ma i latou,', 'Now Saul and they'],
+        ['ma tagata Isaraelu uma', 'and all the men of Israel'],
+        ['sa i le vanu o le tapeneto', 'were in the valley of Elah'],
+        ['i latou,', 'they'],
+        ['o loo tau ma Filisitia.', 'fighting with the Philistines'],
+    ],
+    '1 Samuel|17|20': [
+        ['Ona tulai lea o Tavita i le taeao,', 'And David rose up early in the morning'],
+        ['ua tuuina atu mamoe i se leoleo,', 'and left the sheep with a keeper'],
+        ['ua ia ave mea ,', 'and took'],
+        ['ua alu foi ia', 'and went'],
+        ['pei ona poloai mai o Iese ia te ia;', 'as Jesse had commanded him'],
+        ["ua oo atu ia i le \u02bbolo", 'and he came to the trench'],
+        ["o le a ō \u02bbau i le taua,", 'as the host was going forth to the fight'],
+        ['ua pa le alaga', 'and shouted'],
+        ['o le a tau.', 'for the battle'],
+    ],
+    '1 Samuel|17|21': [
+        ['Auā na tofi le taua', 'For Israel had put the battle in array'],
+        ['a Isaraelu ma Filisitia,', 'Israel and the Philistines'],
+        ['ma ua fesagai itu taua.', 'and army against army'],
+    ],
+    '1 Samuel|17|22': [
+        ['Ona tuu atu lea e Tavita', 'And David left'],
+        ['o mea na ia te ia', 'his carriage'],
+        ['i le lima o le leoleo i mea,', 'in the hand of the keeper of the carriage'],
+        ["ua momo\u02bee atu i \u02bbau,", 'and ran into the army'],
+        ['ua alu ma ofo atu', 'and came and saluted'],
+        ['i ona uso.', 'his brethren'],
+    ],
+    '1 Samuel|17|23': [
+        ['O loo tautala o ia ma i latou,', 'And as he talked with them'],
+        ['faauta,', 'behold'],
+        ['ua alu ae le toa,', 'there came up the champion'],
+        ['o Koliata lona igoa,', 'Goliath by name'],
+        ['o le Filisitia, o le Kata,', 'the Philistine of Gath'],
+        ["ai \u02bbau a Filisitia,", 'out of the armies of the Philistines'],
+        ['ua tautala o ia', 'and he spake'],
+        ['pei o ana upu na luai fai ;', 'according to the same words'],
+        ['ua faalogo ai Tavita.', 'and David heard them'],
+    ],
+    '1 Samuel|17|24': [
+        ['O tagata uma o Isaraelu', 'And all the men of Israel'],
+        ['ua latou vaai atu i le tagata,', 'when they saw the man'],
+        ['ona latou sosola lea', 'fled'],
+        ['i ona luma,', 'from him'],
+        ['ma ua latou matuā fefefe ai.', 'and were sore afraid'],
+    ],
+    '1 Samuel|17|25': [
+        ['Ua fai ane le tasi tagata o Isaraelu,', 'And a man of Israel said'],
+        ['Ua outou iloa ea', 'Have ye seen'],
+        ['lenei tagata ua alu ae?', 'this man that is come up'],
+        ['Auā ua alu ae ia', 'surely he is come up'],
+        ['e faifai ia Isaraelu;', 'to defy Israel'],
+        ['o le tagata foi', 'and it shall be that the man'],
+        ['na te fasioti ia te ia,', 'who killeth him'],
+        ['e faatamaoaigaina o ia e le tupu', 'the king will enrich him'],
+        ['i le oa tele,', 'with great riches'],
+        ['e avatu foi lona afafine', 'and will give him his daughter'],
+        ['e fai mana avā ,', 'to be his wife'],
+        ['e faasaolotoina foi e ia', 'and make free'],
+        ['le aiga o lona tamā', "his father\u2019s house"],
+        ['ia Isaraelu.', 'in Israel'],
+    ],
+    '1 Samuel|17|26': [
+        ['Ua fesili atu Tavita', 'And David spake'],
+        ['i tagata na tutū faatasi ma ia,', 'to the men that stood by him'],
+        ['ua faapea,', 'saying'],
+        ['Se a se mea e avatu', 'What shall be done'],
+        ['ma le tagata', 'to the man'],
+        ['na te fasia lenei Filisitia,', 'that killeth this Philistine'],
+        ['e galo ifo ai le faifai', 'and taketh away the reproach'],
+        ['ia Isaraelu?', 'from Israel'],
+        ['Auā po o ai', 'for who is'],
+        ['lenei Filisitia lē peritomeina', 'this uncircumcised Philistine'],
+        ["na te faifai ai i \u02bbau", 'that he should defy the armies'],
+        ['a le Atua soifua?', 'of the living God'],
+    ],
+    '1 Samuel|17|27': [
+        ['Ona tali mai lea o le nuu', 'And the people answered him'],
+        ['ia te ia', 'to him'],
+        ['e tusa ma ia upu na muamua ,', 'after this manner'],
+        ['ua faapea,', 'saying'],
+        ['E faapea ona faia', 'So shall it be done'],
+        ['i le tagata', 'to the man'],
+        ['na te fasi ia te ia.', 'that killeth him'],
+    ],
+    '1 Samuel|17|28': [
+        ['Ua faalogo Eliapo lona uso e matua', 'And Eliab his eldest brother heard'],
+        ['i lana fesili i tagata,', 'when he spake unto the men'],
+        ['ona tupu ai lea o le ita o Eliapo', 'and Eliab\u2019s anger was kindled'],
+        ['ia Tavita,', 'against David'],
+        ['ua fai mai foi,', 'and he said'],
+        ['Se a le mea ua e sau ai?', 'Why camest thou down hither'],
+        ['Ua e tuuina atu foi', 'and with whom hast thou left'],
+        ['ia te ai', 'to whom'],
+        ['o nā mamoe itiiti i le vao?', 'those few sheep in the wilderness'],
+        ['Ua ou iloa lava', 'I know'],
+        ['lou faamaualuga', 'thy pride'],
+        ['ma le leaga o lou loto,', 'and the naughtiness of thine heart'],
+        ['auā o le fia matamata i le taua', 'for thou art come down to see the battle'],
+        ['ua e sau ai.', 'thou art come'],
+    ],
+    '1 Samuel|17|29': [
+        ['Ona fai atu lea o Tavita,', 'And David said'],
+        ['O le a ea le mea', 'What have I'],
+        ['ua ou faia nei?', 'now done'],
+    ],
+    '1 Samuel|17|30': [
+        ['Ua fai fua ea', 'Is there not a cause'],
+        ["la\u02bbu mea?", 'my thing'],
+        ['Ua liliu ese o ia ia te ia,', 'And he turned from him'],
+        ['ua faasaga atu i le tasi,', 'toward another'],
+        ['ua fai atu foi', 'and spake'],
+        ['pei o na upu;', 'after the same manner'],
+        ['ona tali mai lea o le nuu', 'and the people answered him'],
+        ['pei o le luai upu.', 'again after the former manner'],
+    ],
+    '1 Samuel|17|31': [
+        ['Ua latou faalogologo', 'And when the words were heard'],
+        ['i upu na fai mai ai Tavita,', 'which David spake'],
+        ['ona latou ta\u02bbuina atu ai lea', 'they rehearsed them'],
+        ['ia Saulo.', 'before Saul'],
+        ['Ona aami ai lea o ia', 'And he sent for him'],
+        ['ia te ia.', 'to him'],
+    ],
+    '1 Samuel|17|32': [
+        ['Ua fai mai Tavita ia Saulo,', 'And David said to Saul'],
+        ["Aua ne\u02bbi vaivai le loto", 'Let no man\u2019s heart fail'],
+        ['o se tasi tagata', 'of any man'],
+        ['ona o ia;', 'because of him'],
+        ['e alu lava lau auauna', 'thy servant will go'],
+        ['e tau ma lena Filisitia.', 'and fight with this Philistine'],
+    ],
+    '1 Samuel|17|33': [
+        ['Ona fai mai lea o Saulo ia Tavita,', 'And Saul said to David'],
+        ['E te le lavā', 'Thou art not able'],
+        ['ona oulua tau', 'to fight'],
+        ['ma lena Filisitia,', 'with this Philistine'],
+        ['auā o oe le tama itiiti,', 'for thou art but a youth'],
+        ['a o ia o le toa', 'and he a man of war'],
+        ['talu ona tama itiiti.', 'from his youth'],
+    ],
+    '1 Samuel|17|34': [
+        ['Ona tali atu lea o Tavita ia Saulo,', 'And David said unto Saul'],
+        ['Sa leoleo lau auauna', 'Thy servant kept'],
+        ['i mamoe a lona tamā;', "his father\u2019s sheep"],
+        ['ona alu atu lea o le leona', 'and there came a lion'],
+        ['ma le urosa,', 'and a bear'],
+        ["ua ave le tama\u02bbi mamoe", 'and took a lamb'],
+        ['nai le lafu;', 'out of the flock'],
+    ],
+    '1 Samuel|17|35': [
+        ['Ona ou tuliloa lea ia te ia,', 'And I went out after him'],
+        ['ma ou fasi ia te ia,', 'and smote him'],
+        ['ma segi mai le mea', 'and delivered it'],
+        ['nai lona gutu;', 'out of his mouth'],
+        ['na tu mai o ia ia te au,', 'and when he arose against me'],
+        ["ona ou tago ai lea i lana \u02bbava,", 'I caught him by his beard'],
+        ['ma fasi ia te ia,', 'and smote him'],
+        ['ua mate ai.', 'and slew him'],
+    ],
+    '1 Samuel|17|36': [
+        ['Na fasia e lau auauna', 'Thy servant slew'],
+        ['le leona atoa ma le urosa;', 'both the lion and the bear'],
+        ['e faapea foi lena Filisitia', 'and this uncircumcised Philistine'],
+        ['lē peritomeina,', 'shall be'],
+        ['e pei o so laua,', 'as one of them'],
+        ['ina ua ia faifai', 'seeing he hath defied'],
+        ['i le itu taua', 'the armies'],
+        ['a le Atua soifua.', 'of the living God'],
+    ],
+    '1 Samuel|17|37': [
+        ['Ua fai atu foi Tavita,', 'David said moreover'],
+        ['O Ieova na ia laveai ia te au', 'The LORD that delivered me'],
+        ['nai le lima o le leona', 'out of the paw of the lion'],
+        ['ma le lima o le urosa,', 'and out of the paw of the bear'],
+        ['o ia lava na te laveai ia te au', 'he will deliver me'],
+        ['ai le lima o lena Filisitia.', 'out of the hand of this Philistine'],
+        ['Ona fai mai lea o Saulo ia Tavita,', 'And Saul said unto David'],
+        ['Alu ia oe,', 'Go'],
+        ['ia ia te oe foi Ieova.', 'and the LORD be with thee'],
+    ],
+    '1 Samuel|17|38': [
+        ['Ona faaofu lea e Saulo', 'And Saul armed'],
+        ['i Tavita i ona ofu,', 'David with his armour'],
+        ['ua faapulouina lona ulu', 'and he put upon his head'],
+        ["i le pulou \u02bbapa memea,", 'a helmet of brass'],
+        ['ua faaofu foi ia te ia', 'also he armed him'],
+        ['i le ufifatafata uamea.', 'with a coat of mail'],
+    ],
+    '1 Samuel|17|39': [
+        ['Ua fusi e Tavita lana pelu', 'And David girded his sword'],
+        ['i luga o ona ofu;', 'upon his armour'],
+        ['ona faataitai lea o ia ona alu,', 'and he assayed to go'],
+        ['auā na ia le masani ai.', 'for he had not proved it'],
+        ['Ona fai mai lea o Tavita ia Saulo,', 'And David said unto Saul'],
+        ['Ou te le mafai ona alu', 'I cannot go'],
+        ['ma nei mea,', 'with these'],
+        ['auā ou te lei masani ai.', 'for I have not proved them'],
+        ['Ona tuu ese ai lea e Tavita', 'And David put them off'],
+        ['o mea nai ia te ia.', 'from him'],
+    ],
+    '1 Samuel|17|40': [
+        ['Ua ia ave lona tootoo', 'And he took his staff'],
+        ['i lona lima,', 'in his hand'],
+        ['ma ua filifili', 'and chose him'],
+        ['i maa lamolemole e lima', 'five smooth stones'],
+        ['mai le alia,', 'out of the brook'],
+        ["ua fafao ai i le \u02bbato", 'and put them in the bag'],
+        ['o le leoleo mamoe sa ia te ia,', 'of the shepherd which he had'],
+        ['(o le taga foi lea,)', 'even in a scrip'],
+        ['ma le maatā i lona lima;', 'and his sling was in his hand'],
+        ['ona faalatalata atu lea o ia', 'and he drew near'],
+        ['i le Filisitia.', 'to the Philistine'],
+    ],
+    '1 Samuel|17|41': [
+        ['Ua sau foi le Filisitia,', 'And the Philistine came on'],
+        ['ua faalatalata mai ia Tavita,', 'and drew near unto David'],
+        ['ua muamua i ona luma', 'and went before him'],
+        ['le tagata sa ave lona talipupuni.', 'the man that bare the shield'],
+    ],
+    '1 Samuel|17|42': [
+        ['Ua vaavaai mai le Filisitia,', 'And when the Philistine looked about'],
+        ['ua na iloa atu ia Tavita,', 'and saw David'],
+        ["ona \u02bbino\u02bbino ai lea ia te ia;", 'he disdained him'],
+        ['auā o le tama itiiti o ia,', 'for he was but a youth'],
+        ['ua enaenamumū lona lauulu ,', 'and ruddy'],
+        ['ua manaia foi ona mata.', 'and of a fair countenance'],
+    ],
+    '1 Samuel|17|43': [
+        ['Ua fai mai le Filisitia ia Tavita,', 'And the Philistine said unto David'],
+        ["Ou te se ulī ea a\u02bbu,", 'Am I a dog'],
+        ['ina ua e sau ia te au', 'that thou comest to me'],
+        ['ma tootoo?', 'with staves'],
+        ['Ona fetuu lea le Filisitia', 'And the Philistine cursed'],
+        ['ia Tavita i ona atua.', 'David by his gods'],
+    ],
+    '1 Samuel|17|44': [
+        ['Ua fai mai foi le Filisitia ia Tavita,', 'And the Philistine said to David'],
+        ['Sau ia ia te au,', 'Come to me'],
+        ['ou te foai atu ai lou tino', 'and I will give thy flesh'],
+        ['i manu felelei', 'unto the fowls of the air'],
+        ['ma manu tataa.', 'and to the beasts of the field'],
+    ],
+    '1 Samuel|17|45': [
+        ['Ona tali atu lea o Tavita', 'Then said David'],
+        ['i le Filisitia,', 'to the Philistine'],
+        ['Ua e sau ia te au', 'Thou comest to me'],
+        ['ma le pelu,', 'with a sword'],
+        ['ma le tao,', 'and with a spear'],
+        ['ma le tao leoleo;', 'and with a shield'],
+        ["a o a u,", 'but I'],
+        ['ou te alu atu ia te oe', 'I come to thee'],
+        ["i le suafa o Ieova o \u02bbau,", 'in the name of the LORD of hosts'],
+        ['o le Atua', 'the God'],
+        ['o le itu taua a Isaraelu', 'of the armies of Israel'],
+        ['ua e faifai i ai.', 'whom thou hast defied'],
+    ],
+    '1 Samuel|17|46': [
+        ['O le aso nei', 'This day'],
+        ['e tuuina mai ai oe e Ieova', 'will the LORD deliver thee'],
+        ["i lo\u02bbu lima,", 'into mine hand'],
+        ['ou te fasi ia te oe,', 'and I will smite thee'],
+        ['ma ave ese lou ulu;', 'and take thine head from thee'],
+        ['ou te foai atu foi', 'and I will give'],
+        ["tino oti o \u02bbau a Filisitia", 'the carcases of the host of the Philistines'],
+        ['i lenei aso', 'this day'],
+        ['i manu felelei', 'unto the fowls of the air'],
+        ['ma manu feai e tataa;', 'and to the wild beasts of the earth'],
+        ['e iloa ai le lalolagi uma,', 'that all the earth may know'],
+        ['o i ai le Atua ia Isaraelu.', 'that there is a God in Israel'],
+    ],
+    '1 Samuel|17|47': [
+        ['E iloa ai foi', 'And all this assembly shall know'],
+        ['e lenei faapotopotoga uma,', 'that'],
+        ['e le faaolaina tagata e Ieova', 'the LORD saveth not'],
+        ['i se pelu ma se tao;', 'with sword and spear'],
+        ['auā o loo ia Ieova le taua,', 'for the battle is the LORD\u2019s'],
+        ['na te tuuina mai outou', 'and he will give you'],
+        ['i o matou lima.', 'into our hands'],
+    ],
+    '1 Samuel|17|48': [
+        ['Ua tulai le Filisitia,', 'And it came to pass when the Philistine arose'],
+        ['ua alu ane,', 'and came'],
+        ['ma faalatalata', 'and drew nigh'],
+        ['e faafetaiai ia Tavita;', 'to meet David'],
+        ['ona faataalise lea o Tavita,', 'that David hasted'],
+        ["ua momo\u02bee atu i le itu tauā", 'and ran toward the army'],
+        ['e faafetaiai i le Filisitia.', 'to meet the Philistine'],
+    ],
+    '1 Samuel|17|49': [
+        ['Ona tago ifo lea o Tavita', 'And David put his hand'],
+        ["i le \u02bbato,", 'in his bag'],
+        ['ua avea ai se maa,', 'and took thence a stone'],
+        ['na sasau e ia le maatā,', 'and slang it'],
+        ['ua lavea le Filisitia', 'and smote the Philistine'],
+        ['i lona muaulu,', 'in his forehead'],
+        ['ua goto le maa', 'that the stone sunk'],
+        ['i lona muaulu,', 'into his forehead'],
+        ['ona paū faō ai lea o ia', 'and he fell upon his face'],
+        ['i le eleele.', 'to the earth'],
+    ],
+    '1 Samuel|17|50': [
+        ['Ua malo Tavita i le Filisitia', 'So David prevailed over the Philistine'],
+        ['i le maatā ma le maa;', 'with a sling and with a stone'],
+        ['ua na fasi le Filisitia,', 'and smote the Philistine'],
+        ['ua oti ai,', 'and slew him'],
+        ['a e leai se pelu', 'but there was no sword'],
+        ['i le lima o Tavita;', 'in the hand of David'],
+    ],
+    '1 Samuel|17|51': [
+        ["ona momo\u02bee atu ai lea Tavita,", 'therefore David ran'],
+        ['ua tu i luga o le Filisitia,', 'and stood upon the Philistine'],
+        ['ua tago i lana pelu,', 'and took his sword'],
+        ['ua to ae nai lona faamoega,', 'and drew it out of the sheath thereof'],
+        ['ua na faaoti ai ia te ia,', 'and slew him'],
+        ['ma vavae ai lona ulu.', 'and cut off his head therewith'],
+        ['Ua vaai Filisitia', 'And when the Philistines saw'],
+        ['ua oti lo latou toa,', 'their champion was dead'],
+        ['ona sosola ai lea o i latou.', 'they fled'],
+    ],
+    '1 Samuel|17|52': [
+        ['Ua tutū lea', 'And arose'],
+        ['o tagata o Isaraelu ma Iuta,', 'the men of Israel and of Judah'],
+        ['ua sŏlovi,', 'and shouted'],
+        ['ma tuliloa ia Filisitia', 'and pursued the Philistines'],
+        ['e oo atu i le vanu,', 'until thou come to the valley'],
+        ['ua oo foi i puipui o Ekerona.', 'and to the gates of Ekron'],
+        ['Ua pauu e na manunua o Filisitia', 'And the wounded of the Philistines fell down'],
+        ['i le ala o Saraima,', 'by the way to Shaaraim'],
+        ['ua oo i Kata,', 'even unto Gath'],
+        ['na oo foi i Ekerona.', 'and unto Ekron'],
+    ],
+    '1 Samuel|17|53': [
+        ['Ua foi atu le fanauga a Isaraelu', 'And the children of Israel returned'],
+        ['sa tulitatao ia Filisitia,', 'from chasing after the Philistines'],
+        ['ona latou vetea lea', 'and they spoiled'],
+        ['o latou togālauapi.', 'their tents'],
+    ],
+    '1 Samuel|17|54': [
+        ['Ua ave e Tavita', 'And David took'],
+        ['le ulu o le Filisitia,', 'the head of the Philistine'],
+        ['ua au mai i Ierusalema,', 'and brought it to Jerusalem'],
+        ['a o ana mea', 'but he put his armour'],
+        ['ua tuu e ia', 'he placed'],
+        ['i lona fale ie.', 'in his tent'],
+    ],
     'Genesis|35|1': [
         ['Ua fetalai mai le Atua', 'God spoke'],
         ['ia Iakopo,', 'to Jacob'],
@@ -9062,6 +10235,56 @@ MANUAL_CHUNK_OVERRIDES = {
 }
 
 
+def modernize_samoan(text):
+    """Apply modern spelling corrections to displayed Samoan text.
+    Adds proper macrons and glottal stops via:
+    1. MODERN_SPELLING dict (exact word matches)
+    2. Prefix rules: faa- → fa'a- (causative prefix always needs glottal stop)
+    """
+    if not text:
+        return text
+    words = text.split(' ')
+    result = []
+    punct_chars = '.,;:!?()\u201c\u201d\u201e\u2018\u2019"\''
+    for w in words:
+        # Strip trailing/leading punctuation to match
+        stripped = w.strip(punct_chars)
+        if not stripped:
+            result.append(w)
+            continue
+        key = stripped.lower()
+        modern = None
+
+        # 1. Check exact match in MODERN_SPELLING dict
+        if key in MODERN_SPELLING:
+            modern = MODERN_SPELLING[key]
+
+        # 2. Apply faa- → fa'a- prefix rule (causative prefix)
+        #    All faa- compound words in Samoan use the fa'a- causative prefix
+        #    e.g. faapea→fa'apea, faamasino→fa'amasino, faalogo→fa'alogo
+        elif key.startswith('faa') and len(key) >= 3:
+            modern = "fa'a" + stripped[3:]
+
+        if modern is not None:
+            # Preserve original capitalization: capitalize first ALPHA char
+            # (handles glottal-stop-initial words like 'upu → 'Upu when capitalized)
+            if stripped[0].isupper():
+                chars = list(modern)
+                for idx, c in enumerate(chars):
+                    if c.isalpha():
+                        chars[idx] = c.upper()
+                        break
+                modern = ''.join(chars)
+
+            # Re-attach punctuation
+            prefix = w[:len(w) - len(w.lstrip(punct_chars))]
+            suffix = w[len(w.rstrip(punct_chars)):]
+            result.append(prefix + modern + suffix)
+        else:
+            result.append(w)
+    return ' '.join(result)
+
+
 def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     Generate phrase annotations for a verse.
@@ -9074,7 +10297,7 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
 
     # Use manual chunk overrides if available (bypasses chunker entirely)
     if verse_key in MANUAL_CHUNK_OVERRIDES:
-        return [list(pair) for pair in MANUAL_CHUNK_OVERRIDES[verse_key]]
+        return [[modernize_samoan(pair[0]), pair[1]] for pair in MANUAL_CHUNK_OVERRIDES[verse_key]]
 
     # First split at punctuation boundaries (commas, semicolons, colons, periods)
     punct_segments = _split_at_punctuation(samoan_text)
@@ -9094,7 +10317,7 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                     gloss = chunk
                 else:
                     gloss = chunk.lower()
-            result.append([chunk, gloss])
+            result.append([modernize_samoan(chunk), gloss])
     return result
 
 
@@ -9569,7 +10792,7 @@ def main():
         '1 Nephi|2|11': {
             'ua maaa o Lamana': 'the stiffneckedness of Laman',
             'Ma sa fai mai': 'and they said',
-            'i laua': 'unto them (two)',
+            'i laua': 'unto them both',
             'ua faia e ia': 'he did',
             'ona o mafaufauga valea': 'because of the foolish imaginations',
             'o lona loto.': 'of his heart',
