@@ -83,7 +83,7 @@ FUNC_WORDS = {
     'lo': '',
     'la': 'sun',
     'latou': 'they/them',
-    'lona': 'his/her',
+    'lona': 'his/her/its',
     'lana': 'his/her',
     'ana': 'his/her',
     'lau': 'your',
@@ -101,7 +101,7 @@ FUNC_WORDS = {
     'taitasi': 'each',
     'faauta': 'behold',
     'faapea': 'thus/so',
-    'nei': 'this/these',
+    'nei': 'these',
     'isi': 'other/some',
     'lenei': 'this',
     'lena': 'that',
@@ -158,6 +158,7 @@ EXTENDED_VOCAB = {
     'fatu': 'seed',
     'timu': 'rain',
     'matagi': 'wind',
+    'agi': 'blow/sound',
     'afi': 'fire',
     'maa': 'stone',
     # Compass directions (override bad dictionary entries)
@@ -183,7 +184,7 @@ EXTENDED_VOCAB = {
     'meaola': 'living creature',
     'foliga': 'likeness',
     'faatusa': 'image',
-    'faailoga': 'sign',
+    'faailoga': 'signs',
     'tau': 'fight/war',
     'tausaga': 'year',
     'va': 'expanse',
@@ -228,8 +229,8 @@ EXTENDED_VOCAB = {
     'muai': 'first',
     "ta'uina": 'was told',
     'tauina': 'was told',
-    'faia': 'made',
-    'fai': 'make',
+    'faia': 'do/make',
+    'fai': 'do/make',
     'fetalai': 'said',
     'faaigoa': 'called',
     'silasila': 'saw',
@@ -334,6 +335,10 @@ EXTENDED_VOCAB = {
     'matamata': 'observe',
     'silafia': 'know/known/perceived',
     'mafai': 'able',
+    'tatau': 'ought/should',
+    'finagalo': 'will/desire',
+    'totoe': 'remaining/left over',
+    'toetoe': 'still remaining',
     'tatala': 'open',
     'pupuni': 'shut',
     'tapena': 'prepare',
@@ -429,7 +434,7 @@ EXTENDED_VOCAB = {
     'la\u02bcu': 'my',
     "la'u": 'my',
     'lau': 'your',
-    'lona': 'his/her',
+    'lona': 'his/her/its',
     'lo\u02bbu': 'my',
     "lo'u": 'my',
     "o'u": 'my',
@@ -450,10 +455,14 @@ EXTENDED_VOCAB = {
     'fefe': 'afraid/terrified',
     'faatusa': 'image/likeness',
     'foliga': 'likeness/form',
-    'faailoga': 'sign/token',
+    'faailoga': 'signs',
     'tau': 'fight/war',
     'tausaga': 'year',
     'gafa': 'genealogy',
+    'rapi': 'Rabbi',
+    "a'oa'o": 'teacher/master',
+    "a\u02bboa\u02bbo": 'teacher/master',
+    'aoao': 'teacher/master',
 
     # ============================================================
     # Biblical Proper Names (Samoan transliterations → English)
@@ -1766,7 +1775,7 @@ EXTENDED_VOCAB = {
 
     # ---- From "Se a ea le mea" grammar document ----
     # Interrogative / emphatic particles
-    'ea': 'indeed?/really?',
+    'ea': '',
     # Military / action verbs
     'pelu': 'sword',
     'tuliloa': 'pursue/chase',
@@ -1914,7 +1923,7 @@ EXTENDED_VOCAB = {
     'enaenamumū': 'ruddy',
     'fetuu': 'cursed',
     'lavea': 'struck/hit',
-    'ofo': 'greeted/amazed',
+    'ofo': 'marvel/wonder',
     'vetea': 'plundered/spoiled',
     'lamolemole': 'smooth',
     'faaofu': 'armed/clothed',
@@ -2037,7 +2046,7 @@ EXTENDED_VOCAB = {
     'tuliga': 'chasing/pursuit',
     'puipuiga': 'guarding/protection',
     'tatalaga': 'opening/loosing',
-    'faailoga': 'sign/mark',
+    'faailoga': 'signs',
     'faatinoga': 'fulfillment/doing',
     'soliga': 'transgression',
     'togafitiga': 'healing/cure',
@@ -2584,7 +2593,7 @@ def chunk_grammatical(text):
                     start_new = True
             # Conjunctions (but NOT "a" when part of "o le a" future tense)
             # "ae" is separate: conjunction "but" at 3+ words, directional "up" at 1-2
-            elif w_clean in ('ma', 'a', 'atoa'):
+            elif w_clean in ('ma', 'a', 'atoa', 'aua', 'auā'):
                 if w_clean == 'a' and len(current) >= 2:
                     c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     c_prev2 = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e')
@@ -2969,6 +2978,7 @@ WHOLE_PHRASES = {
 
     # Pronoun + tense compounds
     "ou te": 'I will',
+    "e te": 'you',
     "tatou te": 'we will',
     "latou te": 'they will',
     "lua te": 'you two will',
@@ -2989,6 +2999,8 @@ WHOLE_PHRASES = {
     "sa oo ina": 'it came to pass',
     "a oo foi": 'and also came to pass',
     "ina seia": 'until',
+    "o ia": 'it/he/she',
+    "o ia ia": 'he unto',
     "ia te ia": 'to him/her',
     "sa i lea mea foi": 'and there were also',
     "i lea mea foi": 'there were also',
@@ -3032,12 +3044,22 @@ WHOLE_PHRASES = {
     "o lenei": 'now',
 
     "e tusa ma": 'according to',
-    "e ao ina": 'must needs',
+    "e ao ina": 'it is necessary',
     "loto atoa lava": 'wholeheartedly',
     "e ui i lea": 'nevertheless',
     "a'o faapea ona": 'and while thus',
     "e tatau ona": 'should',
+    "e le mafai ona": 'cannot',
+    "le mafai ona": 'cannot',
+    "mafai ona": 'able to',
+    "tatau ona": 'should',
     "ua uma ona": 'finished',
+    "faapea ona": 'thus',
+    "lava ona": 'just/enough to',
+    "mavae ona": 'after',
+    "ou te fai atu ia te oe": 'I say unto you',
+    "ou te fai atu": 'I say',
+    "fai atu": 'say/tell',
     "nai lo": 'more than',
     "i lo": 'than',
     "sili atu": 'better/greater',
@@ -3067,7 +3089,7 @@ WHOLE_PHRASES = {
     "sa alofagia tele a\u02bbu": 'I was highly favored',
     "o'u aso uma": 'all my days',
     "o\u02bbu aso uma": 'all my days',
-    "e ao ina": 'must needs',
+    "e ao ina": 'it is necessary',
     "e matua lelei": 'goodly parents',
     "matua lelei": 'goodly parents',
     "le tala lelei": 'the gospel',
@@ -3800,11 +3822,35 @@ WHOLE_PHRASES = {
     'maa lamolemole': 'smooth stones',
     "paū faō": 'fell face-down',
     'pii mau': 'was knit/bound together',
-    'rapi e': 'Rabbi',
-
+    'na sau ai': 'whence it came',
+    'e alu atu i ai': 'where it goes',
+    'fanau mai': 'born of',
+    'e faapea': 'so it is',
+    'e loto i ai': 'is fixed/settled therein',
+    'e loto': 'is fixed/stationed',
+    'lona agi': 'its sound',
+    'loto i ai': 'fixed/settled therein',
+    'nei mea': 'these things',
+    'i mea': 'things',
+    # Agent/pronoun patterns
+    'e outou': 'by you all',
+    'e latou': 'by them',
+    'e matou': 'by us',
+    'e tatou': 'by us all',
+    # Negative verb patterns
+    'e le talia mai': 'not received',
+    'e le talia': 'not received',
     # ============================================================
     # Samoan grammar patterns — reflexive, comparative, common constructions
     # ============================================================
+    'maliu mai': 'come from',
+    'ana le': 'unless',
+    'a le': 'if not/unless',
+    'a le toe fanau': 'if not born again',
+    'toe fanau': 'born again',
+    'toe fanau mai': 'be born again',
+    'na ou fai atu ia te oe': 'I said to you',
+    'ana le ia te ia': 'unless with him',
     'pei ona': 'as/just as',
     'pei ona fai': 'as was done',
     'ai lea': 'then',
@@ -4460,6 +4506,9 @@ def gloss_phrase(phrase_text):
     if i >= len(clean_lower):
         result = ' '.join(glosses)
         result = re.sub(r'\s+', ' ', result).strip()
+        result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result)
+        result = re.sub(r'\s*\([^)]*\)', '', result).strip()
+        result = re.sub(r'(\w+)/\w+(?:/\w+)*', r'\1', result)
         return result
 
     # If we partially matched, gloss the rest word-by-word
@@ -4486,6 +4535,18 @@ def gloss_phrase(phrase_text):
             continue
 
         cl = clean.lower()
+
+        # Vocative 'e': when 'e' follows a proper name/title, it's the
+        # direct address particle (like English "O Lord!" or "Rabbi!")
+        # Skip it — the name carries the meaning, 'e' adds no English gloss
+        _NOT_VOCATIVE = {'ua','ona','ia','na','le','o','a','e','i','ma','aua',
+                         'afai','ina','pe','sei',"se'i",'ae','ana','sa','au',
+                         'ou','oe','tatou','matou','latou','outou'}
+        if cl == 'e' and idx > 0:
+            prev = clean_words[idx-1]
+            if prev and prev[0].isupper() and prev.lower().rstrip('.,;:') not in _NOT_VOCATIVE:
+                # Vocative e — skip (no English equivalent)
+                continue
 
         # "o le a" → future tense "will" when followed by a verb (not article/noun)
         # Must check BEFORE sub-phrase matching (which would catch it as "what")
@@ -4553,11 +4614,20 @@ def gloss_phrase(phrase_text):
             if pos_in_remainder == 0 and idx + 1 < len(clean_words):
                 next_cl_e = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                 if next_cl_e == 'le' and idx + 2 < len(clean_words):
+                    after_raw = words[idx+2].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
                     after_g = lookup_word(clean_words[idx+2])
-                    if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+                    # Only "shall not" if followed by a VERB (not a capitalized noun/name)
+                    # e.g., "e le iloa" = "shall not know" but "e le Agaga" = "by the Spirit"
+                    if (after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from')
+                            and not (after_raw and after_raw[0].isupper())):
                         glosses.append('shall not')
                         skip_next = True  # skip "le"
                         continue
+                # "e" at phrase start before a verb → TAM marker (habitual/non-past)
+                # Suppress it — e.g., "E agi le matagi" = "blows the wind"
+                next_g_start = lookup_word(clean_words[idx+1])
+                if next_g_start and next_g_start not in FUNC_WORDS.values():
+                    continue  # suppress TAM "e" at phrase start
             if idx + 1 < len(clean_words):
                 next_cl = clean_words[idx+1].lower()
                 # "e le" → "by the" (agent)
@@ -4575,6 +4645,13 @@ def gloss_phrase(phrase_text):
                     glosses.append('by his')
                     skip_next = True
                     continue
+                # "e" before a number word → suppress (numeral marker)
+                _NUMBER_WORDS = {'tasi','lua','tolu','fa','lima','ono','fitu',
+                                 'valu','iva','sefulu','luasefulu','tolugafulu',
+                                 'fagafulu','limagafulu','onogafulu','fitugafulu',
+                                 'valugafulu','ivagafulu','selau','afe'}
+                if next_cl in _NUMBER_WORDS:
+                    continue  # suppress "e" before numbers
                 # "e" before a proper noun (capitalized) → "by" (agent/ergative)
                 # e.g., "e Saulo" = "by Saul", "e Tavita" = "by David"
                 next_raw = words[idx+1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
@@ -4692,28 +4769,64 @@ def gloss_phrase(phrase_text):
                 tam_context = 'past'
             continue
 
-        # "aua le" / "auā le" = prohibitive "do not" (not "for the")
-        if cl in ('aua', 'auā') and idx + 1 < len(clean_words):
-            next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
-            if next_cl == 'le':
-                if idx + 2 < len(clean_words):
-                    after_le = clean_words[idx+2].lower().strip('.,;:!?()\u201c\u201d\u201e')
-                    after_g = lookup_word(clean_words[idx+2])
-                    if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+        # "aua" / "auā" — context-dependent:
+        # At phrase start before pronoun/verb → prohibitive "do not"
+        # Mid-sentence → "for/because"
+        if cl in ('aua', 'auā'):
+            # "aua le" = prohibitive "do not"
+            if idx + 1 < len(clean_words):
+                next_cl = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                if next_cl == 'le':
+                    if idx + 2 < len(clean_words):
+                        after_le = clean_words[idx+2].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                        after_g = lookup_word(clean_words[idx+2])
+                        if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+                            glosses.append('do not')
+                            skip_next = True
+                            continue
+                    else:
                         glosses.append('do not')
                         skip_next = True
                         continue
-                else:
-                    glosses.append('do not')
-                    skip_next = True
-                    continue
+            # At sentence start (capitalized) → prohibitive "do not"
+            # Mid-sentence (lowercase) → "for/because"
+            raw_word = words[idx].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            if raw_word and raw_word[0].isupper():
+                glosses.append('do not')
+                continue
+            glosses.append('for')
+            continue
+
+        # "le" at start of chunk before a verb → negation "not" (not article "the")
+        # e.g., chunk "le iloa" = "not know", "le mafai" = "not able"
+        # But "le tagata" = "the man" (article + noun)
+        if cl == 'le' and pos_in_remainder == 0 and idx + 1 < len(clean_words):
+            next_w = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            next_g = lookup_word(clean_words[idx+1])
+            next_raw = words[idx+1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            # If followed by a known verb (gloss is not a function word gloss)
+            # and the word is NOT capitalized (not a proper noun/title)
+            _VERB_GLOSSES = {'know', 'see', 'go', 'come', 'do', 'make', 'able', 'say',
+                            'hear', 'take', 'give', 'put', 'stand', 'sit', 'walk',
+                            'live', 'die', 'eat', 'drink', 'sleep', 'fear', 'love',
+                            'keep', 'save', 'send', 'tell', 'call', 'seek', 'find',
+                            'leave', 'turn', 'arise', 'fall', 'fight', 'kill', 'rule',
+                            'judge', 'serve', 'worship', 'believe', 'repent', 'pray',
+                            'hearken', 'observe', 'dwell', 'build', 'destroy', 'gather',
+                            'open', 'shut', 'prepare', 'declare', 'overcome', 'wait',
+                            'pursue', 'flee', 'deliver', 'heal', 'born', 'received'}
+            if (next_g and next_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from')
+                    and not (next_raw and next_raw[0].isupper())
+                    and any(v in (next_g or '').lower() for v in _VERB_GLOSSES)):
+                glosses.append('not')
+                continue
 
         if cl == 'ona' and pos_in_remainder == 0:
             glosses.append('and')
             continue
 
         # Common particles — skip in gloss
-        if cl in ('ai', "a'i", 'lea', 'te'):
+        if cl in ('ai', "a'i", 'lea', 'te', 'ea'):
             continue
 
         # "o" — at start of phrase = predicate marker (skip), mid-phrase = "of"
@@ -4777,6 +4890,8 @@ def gloss_phrase(phrase_text):
     result = ' '.join(glosses)
     # Clean up
     result = re.sub(r'\s+', ' ', result).strip()
+    # Remove doubled words: "to to" → "to", "the the" → "the", "he he" → "he", etc.
+    result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result)
     # Fix Samoan→English word order: "the X all" → "all the X" (uma follows noun in Samoan)
     result = re.sub(r'\b(the \w+) all\b', r'all \1', result)
     # Strip any parenthetical annotations that leaked through (e.g., "(excl)", "(dir)", "(progressive)")
@@ -10260,6 +10375,10 @@ def modernize_samoan(text):
     """
     if not text:
         return text
+    # Multi-word normalizations (before word-by-word processing)
+    text = text.replace('maliu mai mai', 'maliu mai')
+    text = text.replace('Maliu mai mai', 'Maliu mai')
+    text = text.replace('MALIU MAI MAI', 'MALIU MAI')
     words = text.split(' ')
     result = []
     punct_chars = '.,;:!?()\u201c\u201d\u201e\u2018\u2019"\''
@@ -10311,6 +10430,10 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
     """
     if not samoan_text:
         return []
+
+    # Normalize redundant patterns in source text before chunking/glossing
+    samoan_text = samoan_text.replace('maliu mai mai', 'maliu mai')
+    samoan_text = samoan_text.replace('Maliu mai mai', 'Maliu mai')
 
     # Use manual chunk overrides if available (bypasses chunker entirely)
     if verse_key in MANUAL_CHUNK_OVERRIDES:
