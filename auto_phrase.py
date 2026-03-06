@@ -330,7 +330,7 @@ EXTENDED_VOCAB = {
     'faasino': 'declare',
     'faasinotonuina': 'declared',
     'matamata': 'observe',
-    'silafia': 'seen',
+    'silafia': 'know/known/perceived',
     'mafai': 'able',
     'tatala': 'open',
     'pupuni': 'shut',
@@ -363,6 +363,7 @@ EXTENDED_VOCAB = {
     # Animals
     'manu': 'animal',
     'manulele': 'bird',
+    'mamoe': 'sheep',
     'i\'a': 'fish',
     'tanimo': 'whale',
     'mea': 'thing',
@@ -879,6 +880,7 @@ EXTENDED_VOCAB = {
     # Actions - destruction / conflict
     'fasioti': 'killed',
     'fasia': 'struck/slain',
+    'fafasi': 'slaughter',
     'autau': 'fought/army',
     'fano': 'perish',
 
@@ -887,6 +889,8 @@ EXTENDED_VOCAB = {
     'mafaufau': 'think/mind',
     'manatua': 'remember',
     'saili': 'seek',
+    'sisila': 'look/gaze/watch',
+    'tofotofoina': 'tested/tried/examined',
     'faalogologo': 'listen',
     'pepelo': 'false/lie',
     'olioli': 'rejoice',
@@ -979,7 +983,6 @@ EXTENDED_VOCAB = {
     'malaia': 'cursed',
     'leoleo': 'guard',
     'ala': 'way',
-    'silafia': 'known',
     'pepeti': 'fat portions',
 
     # Missing words from Genesis overrides
@@ -2147,8 +2150,11 @@ def chunk_grammatical(text):
             # "mai" as preposition (after 3+ words to preserve verb+directional)
             elif w_clean == 'mai' and len(current) >= 3:
                 c_prev1 = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                first_w_mai = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
                 if c_prev1 == 'fai':
                     pass  # "sa fai mai" = said, keep together
+                elif first_w_mai in ('ua', 'na', 'sa', "ole'a", "olo'o"):
+                    pass  # TAM-initiated: mai is directional (ua e sisila mai = you look at)
                 else:
                     start_new = True
             # Agent marker "e" OR vocative "e" (direct address: "le lagi e," = O heavens!)
@@ -2159,7 +2165,7 @@ def chunk_grammatical(text):
                 e_has_punct = any(raw_e.endswith(p) for p in (',', ';', '.', ':', '!'))
                 _FUNC_E = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
                            'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
-                           'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+                           'foi', 'lava', 'atoa', 'pe', 'nai', 'ina', 'loo', 'oloo'}
                 prev_e_voc = prev_clean
                 is_vocative_e = False
                 if current and prev_e_voc not in _FUNC_E:
@@ -2170,6 +2176,8 @@ def chunk_grammatical(text):
                         is_vocative_e = True  # Core vocative nouns (even without punct)
                 if is_vocative_e:
                     pass  # Vocative "e" — keep with preceding noun
+                elif prev_clean in ('ua', 'na', 'sa', "ole'a", "olo'o", 'oloo', 'loo'):
+                    pass  # TAM + e = 2nd person pronoun "you" (ua e silafia = you have known)
                 elif i + 1 < len(words):
                     next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if next_e == 'tele':
@@ -2301,10 +2309,17 @@ def chunk_grammatical(text):
         # After a complete verb phrase, any non-directional word starts a new constituent
         if not start_new and len(current) >= 3:
             first_w = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
-            if first_w in ('ua', 'na', 'sa', "ole'a", "olo'o"):
+            # Check for multi-word TAM "o loo" (progressive)
+            is_tam_start = first_w in ('ua', 'na', 'sa', "ole'a", "olo'o")
+            if not is_tam_start and first_w == 'o' and len(current) >= 4:
+                second_w = current[1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+                if second_w in ('loo', "lo'o"):
+                    is_tam_start = True
+            if is_tam_start:
                 # TAM-initiated verb phrase — break unless next word is directional/modifier
                 _DIRECTIONALS = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese',
-                                 'iai', 'nei', 'lava', 'foi'}
+                                 'iai', 'nei', 'lava', 'foi', 'te',
+                                 "a'u", 'au', 'oe', "'oe", 'ia'}
                 if w_clean not in _DIRECTIONALS:
                     start_new = True
 
@@ -2315,7 +2330,7 @@ def chunk_grammatical(text):
                 prev_title = current[-2].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
                 _FUNC_VOC = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
                              'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
-                             'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+                             'foi', 'lava', 'atoa', 'pe', 'nai', 'ina', 'loo', 'oloo'}
                 if prev_title not in _FUNC_VOC:
                     start_new = True  # Break after vocative "[noun] e"
 
@@ -2338,13 +2353,19 @@ def chunk_grammatical(text):
                     start_new = True
 
         # --- Forced break at 3+ words on any function word ---
-        # BUT: don't break "o ia" pronoun apart
+        # BUT: don't break "o ia" pronoun apart, and don't break directionals in TAM chunks
         if not start_new and len(current) >= 3:
             prev_fw = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+            first_fw = current[0].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
+            _is_tam_fw = first_fw in ('ua', 'na', 'sa', "ole'a", "olo'o")
+            _TAM_KEEP = {'mai', 'atu', 'ifo', 'ane', 'ae', 'ai', 'ese', 'ia', 'te',
+                         "a'u", 'au', 'oe', "'oe", 'lava', 'foi'}
             if w_clean == 'ia' and prev_fw == 'o':
                 pass  # "o ia" = he/she, keep together
             elif w_clean == 'ia' and prev_fw == 'te':
                 pass  # "ia te ia" = unto him, keep together
+            elif _is_tam_fw and w_clean in _TAM_KEEP:
+                pass  # Don't break directionals/complements in TAM-initiated verb phrases
             elif w_clean in ('le', 'o', 'se', 'e', 'i', 'ma', 'ia', 'mo', 'mai',
                            'a', 'ae', 'ona', 'ua', 'na', 'sa', 'lava'):
                 start_new = True
@@ -2354,7 +2375,7 @@ def chunk_grammatical(text):
             prev_voc = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
             _FUNC_VOC2 = {'le', 'se', 'o', 'i', 'e', 'ma', 'mo', 'la', 'a', 'ia', 'lo',
                          'ua', 'na', 'sa', 'ae', 'mai', 'atu', 'ai', 'te', 'ona',
-                         'foi', 'lava', 'atoa', 'pe', 'nai', 'ina'}
+                         'foi', 'lava', 'atoa', 'pe', 'nai', 'ina', 'loo', 'oloo'}
             if prev_voc not in _FUNC_VOC2:
                 # Check if raw "e" has trailing punctuation (strong vocative signal)
                 raw_e_voc = w.rstrip(')')
@@ -3291,6 +3312,8 @@ WHOLE_PHRASES = {
     "sa mavae lea mea": 'after that',
     "a e peitai": 'but',
     "i luma o ieova": 'before the LORD',
+    "o loo": 'is/are (progressive)',
+    "o loo e": 'you are (progressive)',
     "o loo faapea": 'saying',
     "le laueleele": 'the ground',
     "na fai atu": 'said',
