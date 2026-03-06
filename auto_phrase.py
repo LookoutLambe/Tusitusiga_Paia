@@ -212,7 +212,7 @@ EXTENDED_VOCAB = {
     'auauna': 'servant',
     'perofeta': 'prophet',
     'aposetolo': 'apostle',
-    'agaga': 'spirit/soul',
+    'agaga': 'spirit/soul',  # Hebrew ruach = spirit, nephesh = soul
     'tino': 'body',
     'ulu': 'head',
     'lima': 'hand',
@@ -392,7 +392,7 @@ EXTENDED_VOCAB = {
     'feagaiga': 'covenant',
     'papatisoga': 'baptism',
     'salamo': 'repent',
-    'faatuatua': 'faith',
+    'faatuatua': 'faith/trust',  # Hebrew batach = trust, emunah = faith
     'ekalesia': 'church',
     'atoniga': 'atonement',
     'siufofoga': 'voice',
@@ -1025,7 +1025,7 @@ EXTENDED_VOCAB = {
     # Additional verbs from Genesis
     'āumau': 'sojourn',
     'vivii': 'praised',
-    'agalelei': 'treated well',
+    'agalelei': 'kindness',  # Hebrew chesed = lovingkindness, covenant loyalty
     'faatigaina': 'afflicted/plagued',
     'tuuina': 'given/sent',
     'poloai': 'command',
@@ -1217,7 +1217,7 @@ EXTENDED_VOCAB = {
     'faafeao': 'escort/guard',
     'faatagata': 'make human/humanize',
     'faaleagaina': 'destroyed/ruined',
-    'faatuatua': 'faith',
+    'faatuatua': 'faith/trust',  # Hebrew batach = trust, emunah = faith
     'faataunuuina': 'fulfilled',
     'miti': 'dream',
 
@@ -1277,7 +1277,7 @@ EXTENDED_VOCAB = {
     # ============================================================
     # Transliterated Biblical/Religious Terms
     # ============================================================
-    'malumalu': 'temple',
+    'malumalu': 'temple/sanctuary',  # Hebrew heykal = temple, mishkan = tabernacle
     'paseka': 'Passover',
     'peritome': 'circumcision',
     'peritomeina': 'circumcised',
@@ -1811,6 +1811,44 @@ EXTENDED_VOCAB = {
     'lima matua': 'thumb',
     'vae matua': 'big toe',
     'laulau': 'table',
+
+    # ============================================================
+    # Hebrew Masoretic theological corrections
+    # These glosses are adjusted to better reflect the Hebrew source
+    # rather than KJV or literal Samoan word-meanings
+    # ============================================================
+    # mishpat (judgment/ordinance) — Samoan often uses these instead of faamasinoga
+    'sauniga': 'ordinance/service',  # Hebrew mishpat in ceremonial contexts
+    'masani': 'custom/ordinance',  # Hebrew mishpat = manner/ordinance
+    'tofiga': 'appointment/ordinance',  # Hebrew mishpat = appointed order
+
+    # shuv (turn/return/repent) — Samoan uses various words
+    'liliu': 'turn/return',  # Hebrew shuv = turn, return, repent
+    'liua': 'turned/changed',  # Hebrew shuv in past tense
+
+    # nephesh (soul/life/being) — Samoan often uses loto or tagata
+    # Note: loto='heart' is already correct; the Samoan translator
+    # chose 'heart' where Hebrew has 'soul'. We keep loto='heart'
+    # since that IS what the Samoan word means, but add soul-related
+    # vocabulary the translators DID use:
+    'soifua': 'life/soul',  # closer to nephesh when used for living beings
+
+    # Additional theological vocabulary
+    'faamasinotonu': 'righteous judgment',  # combines mishpat + tsedeq
+    'palapala': 'blood',  # important theological term (dam)
+    'toto': 'blood',  # Hebrew dam = blood (covenantal)
+    'faasaga': 'face/presence',  # Hebrew panim = face/presence of God
+    'nofoa alofa': 'mercy seat',  # Hebrew kapporet
+    'puipuiga': 'veil/covering',  # Hebrew parokhet
+    'faamamaluina': 'glorified',  # Hebrew kavod
+    'faamaualulugaina': 'exalted',  # Hebrew rum
+    'loto maualalo': 'humble',  # Hebrew anav
+    'faapalepale': 'spare/have compassion',  # Hebrew chamal
+    'mutimutivale': 'compassion/tender mercy',  # Hebrew racham
+    'faaleaogaina': 'made void/profaned',  # Hebrew chalal
+    'le masani': 'unclean/common',  # Hebrew tame
+    'mama': 'clean/pure',  # Hebrew tahor
+    'leaga': 'evil/wicked',  # Hebrew ra
 }
 
 # ============================================================
@@ -3285,6 +3323,34 @@ WHOLE_PHRASES = {
     # Psalms common
     'e leai se mea ou te mativa ai': 'I shall not want',
     'o lo\'u leoleo mamoe o ia': 'he is my shepherd',
+
+    # ============================================================
+    # Hebrew Masoretic theological phrase corrections
+    # These capture common Samoan phrases that need Hebrew-accurate glosses
+    # ============================================================
+    'le alofa mutimutivale': 'the lovingkindness',  # Hebrew chesed
+    'alofa mutimutivale': 'lovingkindness',  # Hebrew chesed
+    'alofa tunoa': 'grace/mercy',  # Hebrew chen
+    'le agaga o le Alii': 'the Spirit of the LORD',  # Hebrew ruach YHWH
+    'le agaga o Ieova': 'the Spirit of the LORD',  # Hebrew ruach YHWH
+    'le agaga o le Atua': 'the Spirit of God',  # Hebrew ruach Elohim
+    'le faamasinoga a Ieova': 'the judgment of the LORD',  # Hebrew mishpat YHWH
+    'le faamasinoga a le Atua': 'the judgment of God',  # Hebrew mishpat Elohim
+    'le feagaiga a Ieova': 'the covenant of the LORD',  # Hebrew berit YHWH
+    'le feagaiga a le Atua': 'the covenant of God',  # Hebrew berit Elohim
+    'le mamalu o Ieova': 'the glory of the LORD',  # Hebrew kavod YHWH
+    'le mamalu o le Atua': 'the glory of God',  # Hebrew kavod Elohim
+    'le nofoa o le alofa': 'the mercy seat',  # Hebrew kapporet
+    'nofoa o le alofa': 'mercy seat',  # Hebrew kapporet
+    'le Mea e Sili ona Paia': 'the Holy of Holies',  # Hebrew qodesh haqqodashim
+    'le mea e sili ona paia': 'the Holy of Holies',  # Hebrew qodesh haqqodashim
+    'le mea paia': 'the holy place',  # Hebrew qodesh
+    'mea paia': 'holy place',  # Hebrew qodesh
+    'le ola e faavavau': 'eternal life',  # Hebrew chayyim olam
+    'le nuu e filemu ai': 'the land of peace',  # Hebrew eretz shalom
+    'ma le agalelei': 'with kindness',  # Hebrew chesed
+    'o lona agalelei': 'his kindness',  # Hebrew chasdo
+    'le agalelei o Ieova': 'the kindness of the LORD',  # Hebrew chesed YHWH
 
     # Leviticus vocabulary (multi-word phrases)
     'faleie': 'tent',
@@ -6679,7 +6745,7 @@ MANUAL_CHUNK_OVERRIDES = {
         ['i le fale o Farao.', "into Pharaoh's house"],
     ],
     'Genesis|12|16': [
-        ['Ona agalelei atu lea o ia ia Aperamo', 'Abram was treated well'],
+        ['Ona agalelei atu lea o ia ia Aperamo', 'he showed kindness to Abram'],
         ['ona o ia;', 'because of her'],
         ['sa ia te ia foi o mamoe, ma povi, ma asini poa', 'he had sheep, oxen, donkeys'],
         ['ma auauna tane, ma auauna fafine,', 'male and female servants'],

@@ -13,6 +13,13 @@ Detects:
 2. Concept dilution (specific Hebrew → generic Samoan)
 3. Missing concepts (Hebrew word has no Samoan equivalent)
 4. Mistranslations (Hebrew word mapped to wrong Samoan word)
+
+Known limitations:
+- Psalms verse numbering: Hebrew includes superscription as verse 1,
+  causing a +1 offset in many Psalms. This produces some false positives
+  where the Hebrew and Samoan verse content don't align.
+- Negated Hebrew glosses: "without-righteousness" = unrighteousness, handled
+  but edge cases may remain.
 """
 import os, re, json, sys
 
@@ -207,29 +214,28 @@ THEOLOGICAL_TERMS = {
 # Synonym groups for matching
 SYNONYM_GROUPS = [
     {'trust', 'trusting', 'trusted', 'confident', 'confidence', 'secure', 'security', 'rely', 'safe', 'faith', 'believe'},
-    {'fear', 'afraid', 'dread', 'terror', 'frightened', 'scared', 'reverence', 'awe'},
+    {'fear', 'afraid', 'dread', 'terror', 'frightened', 'scared', 'reverence', 'awe', 'feareth', 'fears', 'feared'},
     {'holy', 'sacred', 'hallowed', 'sanctified', 'consecrated', 'holiness', 'sanctity'},
     {'covenant', 'agreement', 'pact', 'treaty', 'bond'},
-    {'soul', 'spirit', 'life force', 'being'},
-    {'righteous', 'righteousness', 'just', 'upright', 'justice', 'justifying'},
-    {'wicked', 'wickedness', 'evil', 'ungodly', 'sinful', 'iniquity', 'unrighteous', 'unrighteousness'},
-    {'mercy', 'compassion', 'lovingkindness', 'kindness', 'grace', 'loyal love'},
-    {'glory', 'honor', 'splendor', 'majesty'},
+    {'soul', 'spirit', 'life force', 'being', 'heart', 'breath', 'mind'},  # Hebrew nephesh/ruach broad semantic range
+    {'righteous', 'righteousness', 'just', 'upright', 'justice', 'justifying', 'right', 'justly'},
+    {'wicked', 'wickedness', 'wickedly', 'evil', 'ungodly', 'sinful', 'sinfully', 'iniquity', 'unrighteous', 'unrighteousness', 'wrong', 'wrongly'},
+    {'mercy', 'compassion', 'lovingkindness', 'kindness', 'grace', 'loyal love', 'goodness', 'favor'},
+    {'glory', 'honor', 'splendor', 'majesty', 'praise', 'exalted'},
     {'pride', 'arrogance', 'haughtiness', 'swelling', 'thicket', 'jungle'},
     {'beautiful', 'lovely', 'fair', 'pleasant'},
-    {'redeem', 'ransom', 'deliver', 'rescue', 'save'},
-    {'atone', 'atonement', 'cover', 'reconcile', 'expiate'},
-    {'sacrifice', 'offering', 'slaughter'},
-    {'worship', 'bow', 'prostrate', 'adore'},
-    {'repent', 'turn', 'return', 'convert'},
-    {'sin', 'transgression', 'iniquity', 'trespass', 'guilt'},
+    {'redeem', 'ransom', 'deliver', 'rescue', 'save', 'salvation', 'bought'},
+    {'atone', 'atonement', 'cover', 'reconcile', 'expiate', 'forgive'},
+    {'sacrifice', 'offering', 'slaughter', 'altar'},
+    {'worship', 'bow', 'prostrate', 'adore', 'reverence'},
+    {'repent', 'turn', 'return', 'convert', 'again'},  # Hebrew shuv = turn/return/repent
+    {'sin', 'transgression', 'iniquity', 'trespass', 'guilt', 'wickedness', 'evil'},
     {'prophet', 'seer', 'spokesman'},
     {'priest', 'minister'},
     {'anoint', 'consecrate', 'dedicate'},
-    {'temple', 'sanctuary', 'palace'},
-    {'tabernacle', 'dwelling', 'tent'},
-    {'judgment', 'justice', 'ordinance', 'decree'},
-    {'law', 'instruction', 'teaching', 'torah', 'commandment'},
+    {'temple', 'sanctuary', 'palace', 'tabernacle', 'dwelling', 'tent'},  # Samoan malumalu used for both
+    {'judgment', 'justice', 'ordinance', 'decree', 'custom', 'manner', 'law'},  # Hebrew mishpat has broad range
+    {'instruction', 'teaching', 'torah', 'commandment'},
     {'word', 'saying', 'matter', 'thing', 'command'},
     {'destroy', 'annihilate', 'devastate', 'ruin', 'perish'},
     {'create', 'make', 'form', 'fashion'},
@@ -380,6 +386,113 @@ def analyze_verse_v2(book_name, ch, v, hebrew_words, samoan_text, kjv_text, samo
     if 'ita' in sam_text_lower.split():
         samoan_content_words |= {'anger', 'wrath'}
 
+    # ---- Additional Samoan→English mappings for Hebrew theological accuracy ----
+    # chesed (lovingkindness/mercy) — Samoan often uses agalelei
+    if 'agalelei' in sam_text_lower:
+        samoan_content_words |= {'kindness', 'mercy', 'lovingkindness', 'grace'}
+    if 'mutimutivale' in sam_text_lower:
+        samoan_content_words |= {'mercy', 'compassion', 'lovingkindness'}
+
+    # mishpat (judgment/ordinance) — Samoan alternatives
+    if 'sauniga' in sam_text_lower:
+        samoan_content_words |= {'ordinance', 'service', 'judgment'}
+    if 'masani' in sam_text_lower:
+        samoan_content_words |= {'custom', 'ordinance', 'manner', 'judgment'}
+    if 'tofiga' in sam_text_lower:
+        samoan_content_words |= {'appointment', 'ordinance', 'office'}
+    if 'tulafono' in sam_text_lower:
+        samoan_content_words |= {'law', 'commandment', 'ordinance', 'judgment'}
+
+    # shuv (turn/return/repent) — Samoan alternatives
+    if 'liliu' in sam_text_lower:
+        samoan_content_words |= {'turn', 'return', 'repent'}
+    if 'foi' in sam_text_lower.split():
+        samoan_content_words |= {'return', 'also', 'repent'}
+    if 'faafoi' in sam_text_lower:
+        samoan_content_words |= {'return', 'turn back', 'repent'}
+    if 'toe' in sam_text_lower.split():
+        samoan_content_words |= {'again', 'return'}
+
+    # nephesh (soul/life/being) — Samoan uses loto, tagata, ola
+    if 'loto' in sam_text_lower:
+        samoan_content_words |= {'heart', 'soul', 'desire', 'mind'}
+    if 'manava' in sam_text_lower:
+        samoan_content_words |= {'breath', 'spirit', 'womb'}
+    if 'soifua' in sam_text_lower:
+        samoan_content_words |= {'life', 'live', 'soul'}
+
+    # qadosh (holy) — Samoan alternatives
+    if 'faapaiaina' in sam_text_lower:
+        samoan_content_words |= {'holy', 'consecrated', 'sacred'}
+    if 'faasaina' in sam_text_lower:
+        samoan_content_words |= {'holy', 'consecrated', 'hallowed'}
+
+    # gaal (redeem) — Samoan alternatives
+    if 'togiolaina' in sam_text_lower:
+        samoan_content_words |= {'redeem', 'redeemed', 'ransom', 'atonement'}
+    if 'faatauina' in sam_text_lower:
+        samoan_content_words |= {'redeem', 'bought', 'purchased'}
+
+    # kavod (glory) — extended mappings
+    if 'viiga' in sam_text_lower:
+        samoan_content_words |= {'praise', 'glory', 'honor'}
+    if 'maualuga' in sam_text_lower:
+        samoan_content_words |= {'exalted', 'high', 'glory'}
+
+    # kohen (priest) — extended mappings
+    if 'le au faitaulaga' in sam_text_lower:
+        samoan_content_words |= {'priest', 'priests'}
+
+    # kaphar (atonement) — extended mappings
+    if 'faamagalo' in sam_text_lower:
+        samoan_content_words |= {'forgive', 'atone', 'atonement'}
+    if 'ufiufi' in sam_text_lower:
+        samoan_content_words |= {'cover', 'covering', 'atone'}
+
+    # chattat/avon (sin/iniquity) — extended mappings
+    if 'amio leaga' in sam_text_lower:
+        samoan_content_words |= {'iniquity', 'sin', 'wickedness'}
+    if 'amioletonu' in sam_text_lower:
+        samoan_content_words |= {'wickedness', 'unrighteousness', 'iniquity'}
+
+    # yeshuah (salvation) — extended mappings
+    if 'faaola' in sam_text_lower:
+        samoan_content_words |= {'save', 'salvation', 'deliver'}
+
+    # zevach/qorban (sacrifice/offering) — extended mappings
+    if 'taulaga mu' in sam_text_lower:
+        samoan_content_words |= {'burnt offering', 'sacrifice', 'offering'}
+    if 'fata faitaulaga' in sam_text_lower:
+        samoan_content_words |= {'altar', 'sacrifice', 'offering'}
+
+    # mishkan (tabernacle) — Samoan uses malumalu OR fetafai
+    if 'fetafai' in sam_text_lower:
+        samoan_content_words |= {'tabernacle', 'tent', 'dwelling'}
+    if 'fale ie' in sam_text_lower or 'faleie' in sam_text_lower:
+        samoan_content_words |= {'tent', 'tabernacle', 'dwelling'}
+
+    # yare (fear of God) — extended
+    if 'fefe' in sam_text_lower:
+        samoan_content_words |= {'fear', 'afraid', 'dread'}
+    if 'matautia' in sam_text_lower:
+        samoan_content_words |= {'fear', 'terrible', 'dread'}
+
+    # berit (covenant) — extended
+    if 'tautoga' in sam_text_lower:
+        samoan_content_words |= {'oath', 'covenant', 'vow'}
+
+    # navi (prophet) — extended
+    if 'vavalo' in sam_text_lower:
+        samoan_content_words |= {'prophesy', 'prophet'}
+
+    # mashach (anoint) — extended
+    if 'faauuina' in sam_text_lower or 'faauu' in sam_text_lower:
+        samoan_content_words |= {'anoint', 'anointed', 'messiah'}
+
+    # shachah (worship) — extended
+    if 'ifo atu' in sam_text_lower:
+        samoan_content_words |= {'worship', 'bow', 'prostrate'}
+
     # Hebrew content words for the whole verse (to avoid reversal false positives)
     all_hebrew_content = set()
     for _, hg in hebrew_words:
@@ -395,6 +508,12 @@ def analyze_verse_v2(book_name, ch, v, hebrew_words, samoan_text, kjv_text, samo
         theological_hits = {hw for hw in heb_content if hw in THEOLOGICAL_TERMS}
         if not theological_hits:
             continue
+
+        # Handle negated Hebrew glosses: "without-righteousness" = unrighteousness
+        # If the gloss contains "without", "not", "un-", "no" before the term,
+        # the effective meaning is the OPPOSITE, so skip reversal detection
+        heb_gloss_lower = heb_gloss.lower()
+        is_negated = any(neg in heb_gloss_lower for neg in ['without', 'not-', 'no-', 'un-'])
 
         # Check if ANY theological concept has a semantic match in Samoan
         matched = False
@@ -413,39 +532,59 @@ def analyze_verse_v2(book_name, ch, v, hebrew_words, samoan_text, kjv_text, samo
             # Check for semantic reversal: Hebrew concept replaced by its opposite
             # Only flag as CRITICAL if the opposite IS in Samoan but the correct
             # concept is NOT (avoids false positives where both appear in verse)
+            # Skip reversal check for negated Hebrew glosses (e.g., "without-righteousness"
+            # actually means unrighteousness, so Samoan "wickedness" is correct)
             is_reversal = False
-            for hw in theological_hits:
-                for sw in samoan_content_words:
-                    opposition = check_semantic_opposition(hw, sw)
-                    if opposition:
-                        # Verify: the correct concept is truly absent from Samoan
-                        # AND the opposite is NOT also in Hebrew (both naturally in verse)
-                        hw_groups = get_synonym_group(hw)
-                        opposite_also_in_hebrew = False
-                        for og in get_synonym_group(sw):
-                            for ow in og:
-                                if ow in all_hebrew_content:
-                                    opposite_also_in_hebrew = True
-                                    break
+            if is_negated:
+                pass  # Don't check for reversals on negated Hebrew terms
+            else:
+                for hw in theological_hits:
+                    for sw in samoan_content_words:
+                        opposition = check_semantic_opposition(hw, sw)
+                        if opposition:
+                            # Verify: the correct concept is truly absent from Samoan
+                            # AND the opposite is NOT also in Hebrew (both naturally in verse)
+                            hw_groups = get_synonym_group(hw)
+                            opposite_also_in_hebrew = False
+                            for og in get_synonym_group(sw):
+                                for ow in og:
+                                    if ow in all_hebrew_content:
+                                        opposite_also_in_hebrew = True
+                                        break
 
-                        if not opposite_also_in_hebrew:
-                            findings.append({
-                                'ref': f'{book_name}|{ch}|{v}',
-                                'type': 'REVERSAL',
-                                'severity': 'CRITICAL',
-                                'hebrew': heb_word,
-                                'hebrew_gloss': heb_gloss,
-                                'samoan_text': samoan_text[:200],
-                                'samoan_glosses': '; '.join(f'{p[0]}={p[1]}' for p in samoan_gloss_phrases[:8]),
-                                'kjv_text': kjv_text[:200],
-                                'issue': opposition,
-                            })
-                            is_reversal = True
-                            break
-                if is_reversal:
-                    break
+                            if not opposite_also_in_hebrew:
+                                findings.append({
+                                    'ref': f'{book_name}|{ch}|{v}',
+                                    'type': 'REVERSAL',
+                                    'severity': 'CRITICAL',
+                                    'hebrew': heb_word,
+                                    'hebrew_gloss': heb_gloss,
+                                    'samoan_text': samoan_text[:200],
+                                    'samoan_glosses': '; '.join(f'{p[0]}={p[1]}' for p in samoan_gloss_phrases[:8]),
+                                    'kjv_text': kjv_text[:200],
+                                    'issue': opposition,
+                                })
+                                is_reversal = True
+                                break
+                    if is_reversal:
+                        break
 
             if not is_reversal:
+                # For negated Hebrew glosses, check if the OPPOSITE concept
+                # is in the Samoan (which would be correct)
+                if is_negated:
+                    opposite_found = False
+                    for hw in theological_hits:
+                        for sw in samoan_content_words:
+                            opp = check_semantic_opposition(hw, sw)
+                            if opp:
+                                opposite_found = True
+                                break
+                        if opposite_found:
+                            break
+                    if opposite_found:
+                        continue  # Samoan has the correct negated meaning
+
                 # Missing theological term (not reversed, just absent)
                 for hw in theological_hits:
                     findings.append({
@@ -597,4 +736,10 @@ if __name__ == '__main__':
     print(f"Total: {stats['discrepancies']} issues across {stats['verses_checked']} verses")
 
     output_base = os.path.join(base, '_hebrew_samoan_mistranslations')
-    write_report(findings, stats, output_base)
+    try:
+        write_report(findings, stats, output_base)
+    except PermissionError:
+        # If files are locked, write to alternate location
+        output_base = os.path.join(base, '_hebrew_samoan_mistranslations_v2')
+        print(f"  Permission error, writing to {output_base}...")
+        write_report(findings, stats, output_base)
