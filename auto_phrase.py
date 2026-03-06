@@ -355,7 +355,7 @@ EXTENDED_VOCAB = {
     'uluai': 'first',
     'matua': 'great/primary/very',
     'matu\u0101': 'very',
-    'sili': 'most',
+    'sili': 'most/best/greatest',
     'ogaoga': 'fierce',
     'malolo': 'rest',
     'saogalemu': 'safe',
@@ -915,6 +915,7 @@ EXTENDED_VOCAB = {
     'vaega': 'portion/part',
     'auro': 'gold',
     'ario': 'silver',
+    'siliva': 'silver',
     'saito': 'wheat',
     'areto': 'bread',
     'uaina': 'wine',
@@ -2271,6 +2272,12 @@ def chunk_grammatical(text):
             if c3 == ['ia', 'te', 'ia']:
                 start_new = True
 
+        # --- Break after comparison particles "nai lo" and "i lo" (than) ---
+        if not start_new and len(current) >= 2:
+            c2_cmp = [c.lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019') for c in current[-2:]]
+            if c2_cmp == ['nai', 'lo'] or c2_cmp == ['i', 'lo']:
+                start_new = True
+
         # --- Break after "foi" (also/too) — ends a phrase, next word starts new one ---
         if not start_new and len(current) >= 2:
             last_c = current[-1].lower().strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
@@ -2509,7 +2516,21 @@ WHOLE_PHRASES = {
     "e tatau ona": 'should',
     "ua uma ona": 'finished',
     "nai lo": 'more than',
-    "sili atu i lo": 'exceeded',
+    "i lo": 'than',
+    "sili atu": 'better/greater',
+    "sili atu i lo": 'exceeded/better than',
+    "sili atu nai lo": 'better/greater than',
+    "e sili atu": 'is better/is greater',
+    "e tele atu": 'is more/is greater in number',
+    "e mamao atu": 'is far/is much more',
+    "e lelei atu": 'is better/preferable',
+    "lelei atu": 'better/preferable',
+    "tele atu": 'more/greater in number',
+    "atu nai lo": 'more than/exceeding',
+    "i luma o": 'before/in front of',
+    "ai lea": 'then/and then',
+    "mea e ai": 'food/things eaten',
+    "o e": 'those who',
     "tuu mai": 'gave',
     "e uiga ia": 'concerning',
     "e uiga i": 'concerning',
