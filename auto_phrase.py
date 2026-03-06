@@ -3886,6 +3886,11 @@ WHOLE_PHRASES = {
     'loto i ai': 'fixed/settled therein',
     'nei mea': 'these things',
     'i mea': 'things',
+    # Vocative address patterns
+    'le au uso e': 'brethren',
+    'le au uso uma': 'all the brethren',
+    'au uso e': 'brethren',
+    'au uso': 'brethren',
     # Copula/adjective patterns
     'e leaga': 'are evil',
     'e sili': 'preferred',
