@@ -1785,8 +1785,28 @@ EXTENDED_VOCAB = {
     'taufetuli': 'running/racing',  # tau- (engage in) + fetuli (running about)
     'femoei': 'move about/running around',
     'lailoa': 'weary/exhausted',
-    'tausinio': 'contend/compete',
+    'tausinio': 'contend/compete',  # tau- (contend in) + sinio (race/strive)
     'solofanua': 'horse',
+    # Common tau- compound verbs (tau- = engage in / contend in / strive)
+    'tausisi': 'strive for',  # tau- (contend in) + sisi (strive/exert)
+    'taumamao': 'keep far from',
+    'tautalatala': 'speak',
+    'tautatala': 'speak',
+    'taumafai': 'try',
+    'tauave': 'carry',
+    'tausaili': 'seek',
+    'tausuai': 'stumble',
+    'tausiusi': 'obey',
+    'tauemu': 'mock',
+    'taufaasese': 'deceive',
+    'tautuu': 'offer',
+    'tautago': 'grope',
+    'taufeasogi': 'greet',
+    'tautino': 'testify',
+    'taupulepule': 'conspire',
+    'taulima': 'handle',
+    'tauleagaina': 'speak evil of',
+    'taufaasua': 'offend',
     # Additional body/family terms
     'lima matua': 'thumb',
     'vae matua': 'big toe',
@@ -1886,6 +1906,12 @@ def lookup_word(word):
                 # Don't apply "make X" if X is a proper noun
                 if not root_g[0].isupper():
                     return f"make {root_g}"
+
+    # Note: tau- prefix (purposeful action/contest) is a real Samoan grammar
+    # pattern, but too many tau- compounds have idiomatic meanings that differ
+    # from literal decomposition (tausisi="cling to" not "engage in cheese",
+    # tautai="fisherman" not "engage in heart"). Add specific tau- words to
+    # EXTENDED_VOCAB instead of using morphological decomposition.
 
     return ""
 
