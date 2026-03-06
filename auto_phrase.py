@@ -235,7 +235,7 @@ EXTENDED_VOCAB = {
     'faaigoa': 'called',
     'silasila': 'saw',
     'iloa': 'know',
-    'faalogo': 'hearken',
+    'faalogo': 'listen',
     'tuu': 'put',
     'ave': 'take',
     'sau': 'come',
@@ -1425,7 +1425,8 @@ EXTENDED_VOCAB = {
     'faaalia': 'revealed',
     'faatulagaina': 'appointed',
     'faafiti': 'denied',
-    'faaumatia': 'destroyed',
+    'faaumatia': 'destroy',
+    'liaiina': 'pluck up',
     'faasaoina': 'spared',
     'faasao': 'spare',
     'faatali': 'wait',
@@ -2255,6 +2256,17 @@ MODERN_SPELLING = {
     'nuu': "nu'u",              # nation/village (glottal stop)
     'paala': "Pa'ala",          # Baal (glottal stop)
     'afai': "'āfai",            # if/although (leading glottal + macron)
+
+    # ============================================================
+    # TAM markers and common particles with glottal stops
+    # ============================================================
+    'oloo': "'o lo'o",          # progressive aspect (is/are ...ing)
+    'loo': "lo'o",              # progressive (short form after o)
+    'oe': "'oe",                # you (singular) — leading glottal
+    'outou': "'outou",          # you (plural) — leading glottal
+    'oulua': "'oulua",          # you (dual) — leading glottal
+    # NOTE: 'ona' omitted — too ambiguous (then vs his/her possessive)
+    # NOTE: "ole'a" omitted — changes word count, could break chunking
 
     # ============================================================
     # Specific corrections from earlier sessions
@@ -3585,7 +3597,12 @@ WHOLE_PHRASES = {
     'sola ese': 'flee away/escape',
     'atua ese': 'foreign gods',
     'fetalai mai': 'said',
+    'fetalai mai ai': 'says',
     'fetalai atu': 'said to',
+    'faalogo mai': 'listen',
+    "fa'alogo mai": 'listen',
+    'o loo fetalai mai ai': 'says',
+    "o lo'o fetalai mai ai": 'says',
     'silasila atu': 'looked',
     'silasila mai': 'looked',
     'tu mai': 'stood',
@@ -3975,7 +3992,8 @@ WHOLE_PHRASES = {
     # ============================================================
     'maliu mai': 'come from',
     'ana le': 'unless',
-    'a le': 'if not/unless',
+    # NOTE: 'a le' removed — too ambiguous.  'a le NOUN' = "of the NOUN" (genitive),
+    # only 'a le VERB' = "if not VERB" (conditional negation).  Handled contextually.
     'a le toe fanau': 'if not born again',
     'toe fanau': 'born again',
     'toe fanau mai': 'be born again',
@@ -4938,10 +4956,17 @@ def gloss_phrase(phrase_text):
             glosses.append('for')
             continue
 
-        # "le" at start of chunk before a verb → negation "not" (not article "the")
-        # e.g., chunk "le iloa" = "not know", "le mafai" = "not able"
-        # But "le tagata" = "the man" (article + noun)
-        if cl == 'le' and pos_in_remainder == 0 and idx + 1 < len(clean_words):
+        # "le" as negation "not" (not article "the"):
+        # 1. At chunk start before a verb: "le iloa" = "not know"
+        # 2. After "te" (negative marker): "te le fa'alogo" = "not listen"
+        # 3. After TAM markers: "ua le", "na le", "sa le" = "did not"
+        _prev_gl = glosses[-1].lower() if glosses else ''
+        _prev_cl = clean_words[idx-1].lower().strip('.,;:!?') if idx > 0 else ''
+        _le_after_neg = _prev_cl in ('te', 'le') or _prev_gl in ('not', 'do not')
+        _le_after_tam = _prev_cl in ('ua', 'na', 'sa') or _prev_gl in ('(perf)', '(past)')
+        # 4. After conditional "a" (conjunction "if"): "a le iloa" = "if not know"
+        _le_after_cond = _prev_cl == 'a' and _prev_gl in ('but', 'if')
+        if cl == 'le' and (pos_in_remainder == 0 or _le_after_neg or _le_after_tam or _le_after_cond) and idx + 1 < len(clean_words):
             next_w = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
             next_g = lookup_word(clean_words[idx+1])
             next_raw = words[idx+1].strip('.,;:!?()\u201c\u201d\u201e\u2018\u2019')
@@ -4955,10 +4980,12 @@ def gloss_phrase(phrase_text):
                             'judge', 'serve', 'worship', 'believe', 'repent', 'pray',
                             'hearken', 'observe', 'dwell', 'build', 'destroy', 'gather',
                             'open', 'shut', 'prepare', 'declare', 'overcome', 'wait',
-                            'pursue', 'flee', 'deliver', 'heal', 'born', 'received'}
+                            'pursue', 'flee', 'deliver', 'heal', 'born', 'received',
+                            'listen', 'obey', 'pluck', 'uproot', 'return', 'remember',
+                            'cease', 'teach', 'learn', 'inquire', 'touch', 'speak'}
             if (next_g and next_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from')
                     and not (next_raw and next_raw[0].isupper())
-                    and any(v in (next_g or '').lower() for v in _VERB_GLOSSES)):
+                    and any(w in _VERB_GLOSSES for w in (next_g or '').lower().split())):
                 glosses.append('not')
                 continue
 
@@ -10545,6 +10572,11 @@ def modernize_samoan(text):
     text = text.replace('maliu mai mai', 'maliu mai')
     text = text.replace('Maliu mai mai', 'Maliu mai')
     text = text.replace('MALIU MAI MAI', 'MALIU MAI')
+    # Progressive marker: "o loo" / "O loo" → "'o lo'o" / "'O lo'o"
+    import re as _re_mod
+    text = _re_mod.sub(r'\bO loo\b', "\u02bbO lo\u02bbo", text)
+    text = _re_mod.sub(r'\bo loo\b', "\u02bbo lo\u02bbo", text)
+    text = _re_mod.sub(r'\bO LOO\b', "\u02bbO LO\u02bbO", text)
     words = text.split(' ')
     result = []
     punct_chars = '.,;:!?()\u201c\u201d\u201e\u2018\u2019"\''
@@ -10666,6 +10698,41 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                     or _gloss_lower.startswith('whose ')):
                 display = _re.sub(r'\be\b', 'ē', display)
                 display = _re.sub(r'\bE\b', 'Ē', display)
+            # Context-aware modernization: 'le' as negation → 'lē' (macron)
+            # "le" meaning "not" gets macron; "le" meaning "the" stays plain
+            # Only apply when 'le' is actually the negation word, not article "the":
+            #   - chunk starts with 'le' and gloss starts with 'not' → negation
+            #   - 'le' follows 'te' (negative marker) in display
+            #   - 'le' follows TAM (ua/na/sa) in display
+            if _re.search(r'\bnot\b', _gloss_lower):
+                _disp_lower = display.lower()
+                _disp_words = _disp_lower.split()
+                # Case 1: chunk starts with 'le' and gloss starts with 'not'
+                _le_is_neg = (_disp_words and _disp_words[0].rstrip('.,;:!?') == 'le'
+                              and _gloss_lower.startswith('not'))
+                # Case 2: 'te le' pattern (negative construction)
+                if not _le_is_neg:
+                    for _wi in range(len(_disp_words) - 1):
+                        _w_clean = _disp_words[_wi].rstrip('.,;:!?')
+                        _w_next = _disp_words[_wi + 1].rstrip('.,;:!?')
+                        if _w_clean in ('te',) and _w_next == 'le':
+                            _le_is_neg = True
+                            break
+                        # 'ua le', 'na le', 'sa le' — TAM + negation
+                        if _w_clean in ('ua', 'na', 'sa') and _w_next == 'le':
+                            _le_is_neg = True
+                            break
+                if _le_is_neg:
+                    # Only replace 'le' that is the negation, not article
+                    # If starts with 'le' → replace first occurrence only
+                    if _disp_words[0].rstrip('.,;:!?') == 'le' and _gloss_lower.startswith('not'):
+                        display = _re.sub(r'\ble\b', 'lē', display, count=1)
+                        display = _re.sub(r'\bLe\b', 'Lē', display, count=1)
+                    else:
+                        # Replace 'le' after te/TAM marker
+                        display = _re.sub(r'\b(te|ua|na|sa)\s+le\b', r'\1 lē', display)
+                        display = _re.sub(r'\b(Te|Ua|Na|Sa)\s+le\b', r'\1 lē', display)
+                        display = _re.sub(r'\b(Te|Ua|Na|Sa)\s+Le\b', r'\1 Lē', display)
             result.append([display, gloss])
     return result
 
