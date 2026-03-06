@@ -130,7 +130,7 @@ EXTENDED_VOCAB = {
     # Creation / nature
     'atua': 'God',
     'lagi': 'heaven',
-    'lalolagi': 'earth',
+    'lalolagi': 'world',
     'eleele': 'earth',
     'laueleele': 'ground',
     'sami': 'sea',
@@ -196,7 +196,7 @@ EXTENDED_VOCAB = {
 
     # People / body
     'alo': 'Son',
-    'tagata': 'man',
+    'tagata': 'man/people',
     'tane': 'man',
     'fafine': 'women',
     'tama': 'child',
@@ -337,12 +337,66 @@ EXTENDED_VOCAB = {
     'mafai': 'able',
     'tatau': 'ought/should',
     'finagalo': 'will/desire',
+    'faasala': 'judgment/condemnation',
+    "fa'asala": 'judgment/condemnation',
+    'fili': 'enemy',
+    'perofeta': 'prophet',
     'totoe': 'remaining/left over',
     'toetoe': 'still remaining',
     'tatala': 'open',
     'pupuni': 'shut',
     'tapena': 'prepare',
     'saunia': 'prepared',
+    'fesoasoani': 'help',
+    'lagona': 'feel/perceive',
+    'tutu': 'burn',
+    'tauto': 'swear/take oath',
+    'faitau': 'count/read',
+    'gaoi': 'steal',
+    'fao': 'seize',
+    'faititili': 'thunder',
+    'soli': 'tread upon',
+    'misa': 'quarrel',
+    'fouvale': 'rebel',
+    'mitamita': 'boast',
+    'muimui': 'murmur',
+    'popole': 'anxious/troubled',
+    "fa'avalea": 'act foolishly',
+    "fa'aputuina": 'gather together',
+    "fa'aatoatoaina": 'complete/fulfill',
+    "fa'aliliuina": 'turn around',
+    # Truncated/broken dictionary entry fixes
+    'mona': 'for him/her',
+    'saua': 'cruel/fierce',
+    'sauaina': 'persecuted',
+    'atuatuvale': 'greatly distressed',
+    'mafatia': 'afflicted/oppressed',
+    'popoto': 'short/brief',
+    'maga': 'branch',
+    'ena': 'that/those',
+    'gugu': 'mute/dumb',
+    'g\u016bg\u016b': 'mute/dumb',
+    'aotelega': 'assembly/gathering',
+    'faapaleina': 'rewarded/crowned',
+    "fa'apaleina": 'rewarded/crowned',
+    'valoia': 'esteemed/valued',
+    'atoaga': 'gifts/property',
+    'faanofo': 'seat/settle',
+    "fa'anofo": 'seat/settle',
+    'faanofoina': 'seated/settled',
+    "fa'anofoina": 'seated/settled',
+    'pula': 'shine/glow',
+    "papa'e": 'white/bright',
+    'papae': 'white/bright',
+    "mo'omo'o": 'fragment/scrap',
+    'fafano': 'wash/cleanse',
+    'faamafola': 'spread out',
+    "fa'amafola": 'spread out',
+    'tulula': 'basket',
+    'faatatagaina': 'consecrated',
+    "fa'atatagaina": 'consecrated',
+    'faaatoaga': 'plantation',
+    "fa'aatoaga": 'plantation',
 
     # Qualities / adjectives
     'lelei': 'good',
@@ -969,7 +1023,7 @@ EXTENDED_VOCAB = {
 
     # Specific biblical terms
     'faatoina': 'accursed thing',
-    'amio': 'conduct/behavior',
+    'amio': 'deeds/conduct',
     'amioletonu': 'wickedness',
     'faasaga': 'toward/facing',
     'taimi': 'time/period',
@@ -3832,6 +3886,10 @@ WHOLE_PHRASES = {
     'loto i ai': 'fixed/settled therein',
     'nei mea': 'these things',
     'i mea': 'things',
+    # Copula/adjective patterns
+    'e leaga': 'are evil',
+    'e sili': 'preferred',
+    'pei ona': 'as',
     # Agent/pronoun patterns
     'e outou': 'by you all',
     'e latou': 'by them',
@@ -3970,7 +4028,6 @@ WHOLE_PHRASES = {
     "o atalii ma afafine": 'sons and daughters',
     "o ona tausaga ia": 'years',
     "ona oti ai lea": 'and he died',
-    "i le lalolagi": 'on the earth',
     "faauta foi": 'and behold',
     "ua fetalai atu": 'said',
     "ua faapea atu": 'and said',
@@ -4092,7 +4149,7 @@ WHOLE_PHRASES = {
     "le agaga leaga": 'the evil spirit',
     "e le agaga leaga": 'by the evil spirit',
     "o fafine": 'the women',
-    "o tagata": 'of men',
+    "o tagata": 'men',
     "o fafine mai": 'the women from',
     "'apa tagitagi": 'instruments of music',
     "ma 'apa tagitagi": 'and instruments of music',
@@ -4506,7 +4563,7 @@ def gloss_phrase(phrase_text):
     if i >= len(clean_lower):
         result = ' '.join(glosses)
         result = re.sub(r'\s+', ' ', result).strip()
-        result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result)
+        result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result, flags=re.IGNORECASE)
         result = re.sub(r'\s*\([^)]*\)', '', result).strip()
         result = re.sub(r'(\w+)/\w+(?:/\w+)*', r'\1', result)
         return result
@@ -4829,13 +4886,17 @@ def gloss_phrase(phrase_text):
         if cl in ('ai', "a'i", 'lea', 'te', 'ea'):
             continue
 
-        # "o" — at start of phrase = predicate marker (skip), mid-phrase = "of"
+        # "o" — predicate marker or possessive "of"
+        # After conjunctions (a, ma, ae, etc.) it's still a predicate marker
         if cl == 'o':
             if pos_in_remainder == 0:
                 continue  # sentence-initial predicate marker
-            else:
-                glosses.append('of')
-                continue
+            # After a conjunction, 'o' is still a predicate marker
+            prev_gl = glosses[-1].lower() if glosses else ''
+            if prev_gl in ('but', 'and', 'also', 'then', 'for', 'or', 'very'):
+                continue  # predicate marker after conjunction
+            glosses.append('of')
+            continue
 
         # "a" before proper noun → possessive "of" (not conjunction "but")
         if cl == 'a' and idx + 1 < len(clean_words):
@@ -4865,6 +4926,13 @@ def gloss_phrase(phrase_text):
         # Dictionary lookup
         g = lookup_word(clean)
         if g and not g.startswith('('):
+            # Take first slash alternative for multi-word glosses:
+            # "cast out/driven out" → "cast out", "one/the One" → "one"
+            if '/' in g:
+                g = g.split('/')[0].strip()
+            # Strip dictionary infinitive "to " prefix: "to choose" → "choose"
+            if g.startswith('to ') and len(g) > 4:
+                g = g[3:]
             # Apply TAM verb tense modification to first verb after marker
             # Only consume TAM context if the word actually changes (is a verb)
             if tam_context == 'past' and not (clean and clean[0].isupper()):
@@ -4890,8 +4958,8 @@ def gloss_phrase(phrase_text):
     result = ' '.join(glosses)
     # Clean up
     result = re.sub(r'\s+', ' ', result).strip()
-    # Remove doubled words: "to to" → "to", "the the" → "the", "he he" → "he", etc.
-    result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result)
+    # Remove doubled words: "to to" → "to", "the the" → "the", "one One" → "one", etc.
+    result = re.sub(r'\b(\w+)\s+\1\b', r'\1', result, flags=re.IGNORECASE)
     # Fix Samoan→English word order: "the X all" → "all the X" (uma follows noun in Samoan)
     result = re.sub(r'\b(the \w+) all\b', r'all \1', result)
     # Strip any parenthetical annotations that leaked through (e.g., "(excl)", "(dir)", "(progressive)")
@@ -10451,6 +10519,11 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
         for chunk in chunks:
             gloss = gloss_phrase(chunk)
             if not gloss:
+                # Check if chunk is entirely suppressed particles (lea, te, ea, ai)
+                _SUPPRESS_WORDS = {'lea', 'te', 'ea', 'ai', "a'i"}
+                chunk_words = [w.strip('.,;:!?()"\u201c\u201d\u201e').lower() for w in chunk.split()]
+                if all(w in _SUPPRESS_WORDS for w in chunk_words if w):
+                    continue  # skip entirely — these are discourse particles
                 # Preserve capitalization for proper names
                 words_in_chunk = chunk.split()
                 if any(w[0].isupper() for w in words_in_chunk if w):
