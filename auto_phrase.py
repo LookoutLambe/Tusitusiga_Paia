@@ -2743,6 +2743,8 @@ def chunk_grammatical(text):
                     pass  # Subjunctive/imperative "ia e VERB" (ia e vavaeeseina = cut them off!)
                 elif prev_clean == 'o' and len(current) <= 1:
                     pass  # "o e" = relative pronoun "who" (ō ē), keep together
+                elif prev_clean == 'a' and len(current) <= 1:
+                    pass  # "a e [adj]" = "but are [adj]" — conjunction + copula
                 elif i + 1 < len(words):
                     next_e = words[i+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
                     if next_e == 'tele':
@@ -3646,6 +3648,9 @@ WHOLE_PHRASES = {
     "mau a'a": 'taken root',
     'fua mai': 'bore fruit',
     'fua atu': 'bear fruit',
+    # Conjunction + copula patterns
+    'a e mamao': 'but are far',
+    'a e latalata': 'but are near',
     # "o e" = relative pronoun — context-sensitive who/whose:
     # Before TAM markers (ua/na/sa) = verbal relative → "who"
     # Otherwise (adj/noun predicate) = genitive relative → "whose"
