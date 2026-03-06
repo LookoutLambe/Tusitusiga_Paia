@@ -81,7 +81,7 @@ FUNC_WORDS = {
     'tatou': 'us',
     'te': '',
     'lo': '',
-    'la': '',
+    'la': 'sun',
     'latou': 'they/them',
     'lona': 'his/her',
     'lana': 'his/her',
@@ -210,7 +210,7 @@ EXTENDED_VOCAB = {
     'alii': 'lord',
     'matai': 'chief',
     'auauna': 'servant',
-    'perofeta': 'prophet',
+    'perofeta': 'prophesied/prophet',
     'aposetolo': 'apostle',
     'agaga': 'spirit/soul',  # Hebrew ruach = spirit, nephesh = soul
     'tino': 'body',
@@ -249,7 +249,7 @@ EXTENDED_VOCAB = {
     'faatoilalo': 'subdue',
     'iu': 'attain',
     "i'u": 'attain',
-    'anaana': 'his own',
+    'anaana': 'careful/observe',
     'valaauina': 'called',
     'valaau': 'call',
     'tofia': 'chosen',
@@ -442,7 +442,12 @@ EXTENDED_VOCAB = {
     'alofagia': 'favored',
     'faiva': 'ministry/calling',
     'suafa': 'name',
-    'manuia': 'peace/blessing',
+    'manuia': 'prosper/succeed',
+    'alofivae': 'soles of feet',
+    "mata'u": 'afraid/fear',
+    "mata\u02bbu": 'afraid/fear',
+    'faamalosi': 'be strong',
+    'fefe': 'afraid/terrified',
     'faatusa': 'image/likeness',
     'foliga': 'likeness/form',
     'faailoga': 'sign/token',
@@ -1315,7 +1320,7 @@ EXTENDED_VOCAB = {
     'taunuu': 'fulfilled',
     'faataunuuina': 'fulfilled',
     'finau': 'contend/quarrel/strive',
-    'solia': 'despised',
+    'solia': 'trodden upon',
     'aveina': 'taken away',
     'fusifusia': 'bound',
     'faatumauina': 'established',
@@ -2169,6 +2174,7 @@ MODERN_SPELLING = {
     'savali': 'sāvali',        # walk
     'malo': 'mālō',            # kingdom/government
     'ta': 'tā',                # struck/played
+    'la': 'lā',                # sun
 
     # ============================================================
     # Specific corrections from earlier sessions
@@ -2189,9 +2195,13 @@ def lookup_word(word):
     if not w:
         return ""
     # Normalize apostrophe variants for lookups
-    w_norm = w.replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'").replace('\u02bb', "'")
+    w_apos = w.replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'").replace('\u02bb', "'")
+    # Check EXTENDED_VOCAB with macrons INTACT first (ō≠o, ā≠a, etc.)
+    # This preserves meaning distinctions lost by macron normalization
+    if w_apos in EXTENDED_VOCAB:
+        return EXTENDED_VOCAB[w_apos]
     # Normalize macrons (ā→a, ē→e, etc.) — 1887 Bible inconsistently uses them
-    w_norm = w_norm.replace('\u0101','a').replace('\u0113','e').replace('\u012b','i').replace('\u014d','o').replace('\u016b','u')
+    w_norm = w_apos.replace('\u0101','a').replace('\u0113','e').replace('\u012b','i').replace('\u014d','o').replace('\u016b','u')
     w_norm = w_norm.replace('\u0100','a').replace('\u0112','e').replace('\u012a','i').replace('\u014c','o').replace('\u016a','u')
 
     # Normalize archaic/variant forms to modern spelling
@@ -3523,7 +3533,6 @@ WHOLE_PHRASES = {
     'outou uma lava': 'all of you',
     'le alofa tunoa ma le manuia': 'grace and peace',
     'ma le manuia': 'and peace',
-    'manuia': 'peace',
     'alofaina': 'beloved',
     'ua alofaina': 'beloved',
     'atoa ma le alii': 'and the Lord',
@@ -3796,6 +3805,13 @@ WHOLE_PHRASES = {
     # Samoan grammar patterns — reflexive, comparative, common constructions
     # ============================================================
     'pei ona': 'as/just as',
+    'pei ona fai': 'as was done',
+    'ai lea': 'then',
+    'na o': 'only',
+    'loto tele': 'courageous',
+    'loto tetele': 'courageous',
+    'se a se mea': 'what/how',
+    'le oti': 'the death',
     'ia te ia lava': 'himself',
     'ia te i latou lava': 'themselves',
     'ia te oe lava': 'yourself',
