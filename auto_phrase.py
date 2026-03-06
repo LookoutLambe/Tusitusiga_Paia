@@ -363,6 +363,10 @@ EXTENDED_VOCAB = {
     'mitamita': 'boast',
     'muimui': 'murmur',
     'popole': 'anxious/troubled',
+    'mau': 'dwell/settled',
+    'aa': 'roots',
+    "a'a": 'roots',
+    'taofimau': 'hold fast',
     "fa'avalea": 'act foolishly',
     "fa'aputuina": 'gather together',
     "fa'aatoatoaina": 'complete/fulfill',
@@ -2241,6 +2245,7 @@ MODERN_SPELLING = {
     'malo': 'mālō',            # kingdom/government
     'ta': 'tā',                # struck/played
     'la': 'lā',                # sun
+    'mamao': 'māmao',          # far/distant
 
     # ============================================================
     # Specific corrections from earlier sessions
@@ -3628,6 +3633,19 @@ WHOLE_PHRASES = {
     'tagata paia': 'saints',
     "au paia": 'saints',
     "'au paia": 'saints',
+    # Botanical / agricultural
+    # Possessive pronouns: "o/a [pronoun]" = "their/his/her"
+    'o latou': 'their',
+    'a latou': 'their',
+    'o lona': 'his/her',
+    'a lona': 'his/her',
+    'o lana': 'his/her',
+    'a lana': 'his/her',
+    # Botanical / agricultural
+    'mau aa': 'taken root',
+    "mau a'a": 'taken root',
+    'fua mai': 'bore fruit',
+    'fua atu': 'bear fruit',
     # "o e" = relative pronoun — context-sensitive who/whose:
     # Before TAM markers (ua/na/sa) = verbal relative → "who"
     # Otherwise (adj/noun predicate) = genitive relative → "whose"
