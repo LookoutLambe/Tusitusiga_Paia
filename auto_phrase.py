@@ -339,6 +339,8 @@ EXTENDED_VOCAB = {
     'finagalo': 'will/desire',
     'faasala': 'judgment/condemnation',
     "fa'asala": 'judgment/condemnation',
+    'faamasinoga': 'judgments',
+    "fa'amasinoga": 'judgments',
     'fili': 'enemy',
     'perofeta': 'prophet',
     'totoe': 'remaining/left over',
@@ -1461,7 +1463,7 @@ EXTENDED_VOCAB = {
     'amiotonu': 'righteous',
     'amioleaga': 'wickedness',
     'agasala': 'sin',
-    'faamasinoga': 'judgment',
+    'faamasinoga': 'judgments',
     'fetalai': 'said/spoke',
     'faataulaga': 'offering',
     'igoa': 'name',
@@ -2080,7 +2082,7 @@ EXTENDED_VOCAB = {
     'tofiga': 'appointment/calling',
     'galuega': 'work/labor',
     'tuuga': 'standing/position',
-    'faamasinoga': 'judgment',
+    'faamasinoga': 'judgments',
     'faapotopotoga': 'assembly/congregation',
     'misega': 'desire/longing',
     'faamamaga': 'cleansing/purification',
@@ -2209,6 +2211,7 @@ MODERN_SPELLING = {
     'tatou': 'tātou',          # we (inclusive) — e.g. "tatou faia" → "tātou faia"
     'matou': 'mātou',          # we (exclusive)
     'latou': 'lātou',          # they (three or more)
+    "a'u": "a\u02bbu",            # I/me (glottal stop: a'u → aʻu)
 
     # ============================================================
     # People/kinship terms (high frequency, unambiguous)
@@ -4752,10 +4755,22 @@ def gloss_phrase(phrase_text):
             skip_next = True
             continue
 
-        # "o a'u" → "I am" (first person pronoun predicate) — handle all apostrophe variants
+        # "o a'u" → "I am" (with glottal stop = 1st person pronoun, always)
+        # "o au NOUN" → possessive "your NOUN" (without glottal stop, before noun)
         if cl == 'o' and idx + 1 < len(clean_words):
-            next_norm = clean_words[idx+1].lower().replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
-            if next_norm in ("a'u", "au"):
+            next_raw = clean_words[idx+1]
+            next_norm = next_raw.lower().replace('\u02bb', "'").replace('\u2018', "'").replace('\u2019', "'").replace('\u02bc', "'")
+            # "o a'u" (with glottal stop) → always "I am"
+            if next_norm == "a'u":
+                glosses.append('I am')
+                skip_next = True
+                continue
+            # "o au" (without glottal stop) → "I am" UNLESS followed by a noun
+            if next_norm == "au":
+                if idx + 2 < len(clean_words):
+                    after_g = lookup_word(clean_words[idx + 2])
+                    if after_g and after_g.lower() not in ('', 'from', 'and', 'the', 'in', 'to', 'by', 'or', 'but', 'also') and not after_g.startswith('('):
+                        continue  # skip 'o', let 'au' be handled by possessive rule
                 glosses.append('I am')
                 skip_next = True
                 continue
@@ -4890,6 +4905,20 @@ def gloss_phrase(phrase_text):
         # Common particles — skip in gloss
         if cl in ('ai', "a'i", 'lea', 'te', 'ea'):
             continue
+
+        # "au" before a noun → possessive "your" (not pronoun "me")
+        # "le au NOUN" = collective (handled by WHOLE_PHRASES like 'au uso')
+        # "au NOUN" without article = possessive "your NOUN"
+        if cl == 'au' and idx + 1 < len(clean_words):
+            next_g = lookup_word(clean_words[idx + 1])
+            prev_cl = clean_words[idx - 1].lower().strip('.,;:!?') if idx > 0 else ''
+            # If next word is a noun (has a gloss, not a function word)
+            # and previous word is NOT 'le' (which makes it collective "the group of")
+            if (next_g and next_g not in ('', '(dir)', '(past)', '(perf)', '(prog)', '(fut)')
+                    and prev_cl != 'le'
+                    and next_g.lower() not in ('from', 'and', 'the', 'in', 'to', 'by', 'or', 'but', 'also')):
+                glosses.append('your')
+                continue
 
         # "o" — predicate marker or possessive "of"
         # After conjunctions (a, ma, ae, etc.) it's still a predicate marker
