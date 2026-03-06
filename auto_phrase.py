@@ -4052,7 +4052,7 @@ MANUAL_CHUNK_OVERRIDES = {
         ['Ua fetalai mai foi le Atua,', 'And God said also'],
         ['Ia iai', 'Let there be'],
         ['i le vanimonimo o le lagi', 'in the firmament of the heaven'],
-        ["o mea e malamalama a'i,", 'lights'],
+        ["o mea e malamalama a'i,", 'things for giving light'],
         ['e iloga ai', 'to divide'],
         ['le ao ma le po;', 'the day and the night'],
         ['ia fai foi', 'and let them be also'],
