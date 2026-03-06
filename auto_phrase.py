@@ -669,10 +669,10 @@ EXTENDED_VOCAB = {
     'katemonī': 'Kadmonites',
     'repaimā': 'Rephaim',
 
-    # Pronouns (full forms)
-    "a\u02bbu": 'I/me',
-    "a'u": 'I/me',
-    'au': 'I/me',
+    # Pronouns (full forms) — default to object form 'me'; subject 'I' handled by "o a'u" compound
+    "a\u02bbu": 'me',
+    "a'u": 'me',
+    'au': 'me',
     'oe': 'you',
     "'oe": 'you',
     'ia': 'he/she/him/her',
@@ -879,7 +879,8 @@ EXTENDED_VOCAB = {
 
     # Actions - destruction / conflict
     'fasioti': 'killed',
-    'fasia': 'struck/slain',
+    'fasia': 'slaughtered/slain',
+    'f\u0101sia': 'slaughtered',
     'fafasi': 'slaughter',
     'autau': 'fought/army',
     'fano': 'perish',
@@ -1104,6 +1105,9 @@ EXTENDED_VOCAB = {
     'tautalaga': 'talking/speech',
     'lofituina': 'overcome',
     'faanoanoa': 'mourn/grieve',
+    'magumagu': 'withered/dried up',
+    'seia': 'until',
+    'afea': 'when?',
     'faafanoga': 'destruction',
     'finauga': 'disputation/contention',
     'faigata': 'difficult/hard',
@@ -1524,7 +1528,7 @@ EXTENDED_VOCAB = {
     'faatupuina': 'raised up',
     'lata': 'near',
     'sailiili': 'search/inquire',
-    'vavaeeseina': 'separated/set apart',
+    'vavaeeseina': 'cut off/separated',
     'faafefeteina': 'feared/terrified',
     'avae': 'take away/remove',
     'tuliloa': 'pursue/chase',
@@ -2914,7 +2918,7 @@ WHOLE_PHRASES = {
     # Genesis 1:24-26 animal vocabulary
     'manu vaefa fanua': 'cattle',
     'manu vaefa o le vao': 'beast of the field',
-    'manu vaefa': 'beast',
+    'manu vaefa': 'beasts',
     'mea fetolofi': 'creeping thing',
     'mea fetolofi uma': 'every creeping thing',
     'meaola uma': 'every living creature',
@@ -3100,7 +3104,7 @@ WHOLE_PHRASES = {
     'ona fetalai mai lea o Ieova': 'and the LORD said',
     'ona fetalai mai lea o le Alii': 'and the Lord said',
     'ua fetalai mai foi Ieova ia Mose': 'and the LORD spake unto Moses',
-    'Ieova e': 'O LORD',
+    'ieova e': 'O LORD!',
 
     # Pronouns in context
     'ia te outou': 'unto you',
@@ -3314,7 +3318,42 @@ WHOLE_PHRASES = {
     "i luma o ieova": 'before the LORD',
     "o loo": 'is/are (progressive)',
     "o loo e": 'you are (progressive)',
+    "o loo e silafia": 'you know',
+    "ua ia te oe": 'it is yours',
+    "ua e sisila mai": 'you have looked upon',
+    "ua e sisila mai ia te au": 'you have looked upon me',
+    "ua e sisila mai ia te": 'you have looked upon',
+    "ua e tofotofoina foi": 'you have tested also',
     "o loo faapea": 'saying',
+
+    # Comparison / simile
+    "e pei o": 'like',
+    "e pei": 'like',
+    "a f\u0101sia": 'for slaughter',
+    "a fasia": 'for slaughter',
+
+    # Negative constructions
+    "e le vaaia": 'he shall not see',
+    "e vavaeeseina": 'shall be cut off',
+    "ia e vavaeeseina": 'let them be cut off',
+
+    # TAM verb patterns
+    "e faanoanoa ai": 'shall mourn',
+    "ua faaumatia": 'are destroyed',
+    "ua latou fai ane": 'they have said',
+    "e faasaina": 'set apart/prepare',
+    "ia e faasaina": 'set them apart',
+
+    # Time / question patterns
+    "seia afea": 'how long?/until when?',
+
+    # Causal
+    "ona o": 'because of',
+    "ona o le": 'because of the',
+
+    # Nature / environment
+    "vao iti": 'grass/herbs',
+
     "le laueleele": 'the ground',
     "na fai atu": 'said',
     "ua faalogo": 'heard',
@@ -3792,6 +3831,21 @@ def gloss_phrase(phrase_text):
 
         # "e" particle — meaning depends on context
         if cl == 'e':
+            # After TAM marker, 'e' is 2nd person pronoun "you"
+            # e.g., "ua e silafia" = "you have known", "na e alu" = "you went"
+            if tam_context is not None:
+                glosses.append('you')
+                continue
+            # At phrase start, "e le VERB" = future negative "shall not VERB"
+            # e.g., "E le vaaia" = "He shall not see"
+            if pos_in_remainder == 0 and idx + 1 < len(clean_words):
+                next_cl_e = clean_words[idx+1].lower().strip('.,;:!?()\u201c\u201d\u201e')
+                if next_cl_e == 'le' and idx + 2 < len(clean_words):
+                    after_g = lookup_word(clean_words[idx+2])
+                    if after_g and after_g not in ('the', 'a', 'some', 'in', 'by', 'and', 'for', 'to', 'of', 'from'):
+                        glosses.append('shall not')
+                        skip_next = True  # skip "le"
+                        continue
             if idx + 1 < len(clean_words):
                 next_cl = clean_words[idx+1].lower()
                 # "e le" → "by the" (agent)
