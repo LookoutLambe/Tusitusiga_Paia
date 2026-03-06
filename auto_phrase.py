@@ -8987,7 +8987,7 @@ MANUAL_CHUNK_OVERRIDES = {
         ['pe faapefea ona', 'how then'],
         ['e tausinio ma solofanua?', 'can you contend with horses?'],
         ['Afai ua e nofo', 'if you dwell'],
-        ["ma le le mata'u", 'without fear'],
+        ["ma le le mata'u", 'with the fear'],
         ['i le nuu e filemu ai,', 'in the land of peace'],
         ['se a se mea', 'what will'],
         ['e te faia', 'you do'],
