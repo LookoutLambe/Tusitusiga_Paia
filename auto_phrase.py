@@ -3800,6 +3800,7 @@ WHOLE_PHRASES = {
     'maa lamolemole': 'smooth stones',
     "paū faō": 'fell face-down',
     'pii mau': 'was knit/bound together',
+    'rapi e': 'Rabbi',
 
     # ============================================================
     # Samoan grammar patterns — reflexive, comparative, common constructions
