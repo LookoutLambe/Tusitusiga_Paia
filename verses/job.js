@@ -158,7 +158,7 @@ var _job_ch_6_Verses = [
   {num:27,words:[["Ua outou feosofi", "you (all) feosofi"], ["mai i le ua mātuaoti,", "from in the mātuaoti"], ["ua outou elia foi le lua", "you (all) Elijah also the two"], ["mo la outou uo.", "for your uo"]]},
   {num:28,words:[["A o lenei,", "but now"], ["ia outou finagalo", "to you (all) a chiefs will or desire"], ["e silasila mai ia te au;", "to looked unto me"], ["ona outou silafia lea", "and you (all) known"], ["pe afai ou te tala pepelo.", "whether if I will side false"]]},
   {num:29,words:[["Ina foi mai ia o outou,", "so that return to of you (all)"], ["aua ne'i", "for now"], ["i ai", "therein"], ["se amio leaga;", "a iniquity"], ["ina toe foi mai ia o outou,", "so that returned to of you (all)"], ["ua i ai", "therein"], ["i lenei mea la'u amiotonu.", "in this thing my righteous"]]},
-  {num:30,words:[["Po ua", "night"], ["i ai ea", "therein to rise (as a diver to the sur-"], ["se agasala", "a sin"], ["i lo'u laulaufaiva?", "in my tongue"], ["Pe le iloga ea", "whether the divided to rise (as a diver to the sur-"], ["i lo'u gutu", "in my mouth"], ["le mea leaga?", "the thing evil"]]},
+  {num:30,words:[["Po ua", "night"], ["i ai ea", "therein to rise (as a diver to the sur-"], ["se agasala", "a sin"], ["i lo'u laulaufaiva?", "in my tongue"], ["Pe le iloga ea", "whether the distinguish to rise (as a diver to the sur-"], ["i lo'u gutu", "in my mouth"], ["le mea leaga?", "the thing evil"]]},
 ];
 renderVerseSet(_job_ch_6_Verses, 'job-ch6-verses');
 
