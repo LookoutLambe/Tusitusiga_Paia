@@ -10564,7 +10564,15 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                     gloss = chunk
                 else:
                     gloss = chunk.lower()
-            result.append([modernize_samoan(chunk), gloss])
+            display = modernize_samoan(chunk)
+            # Context-aware modernization: 'au' meaning "me/I" → 'aʻu'
+            # Only when gloss indicates pronoun (not possessive "your")
+            if 'your' not in gloss.lower():
+                import re as _re
+                display = _re.sub(r'\bau\b', 'a\u02bbu', display)
+                display = _re.sub(r'\bAu\b', 'A\u02bbu', display)
+                display = _re.sub(r'\bAU\b', 'A\u02bbU', display)
+            result.append([display, gloss])
     return result
 
 
