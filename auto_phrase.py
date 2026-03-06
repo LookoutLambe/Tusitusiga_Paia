@@ -3890,10 +3890,25 @@ WHOLE_PHRASES = {
     'nei mea': 'these things',
     'i mea': 'things',
     # Vocative address patterns
+    # ʻau (collective noun) = hosts/troops/group of people
     'le au uso e': 'brethren',
     'le au uso uma': 'all the brethren',
     'au uso e': 'brethren',
     'au uso': 'brethren',
+    'au auauna': 'servants',
+    'le au auauna': 'the servants',
+    'au pele e': 'beloved',
+    'au pele': 'beloved',
+    'au perofeta': 'prophets',
+    'le au perofeta': 'the prophets',
+    'au soo': 'disciples',
+    'le au soo': 'the disciples',
+    'au feau': 'messengers',
+    'le au feau': 'the messengers',
+    'au malosi': 'mighty men',
+    'le au malosi': 'the mighty men',
+    'au taua': 'army/troops',
+    'le au taua': 'the army',
     # Copula/adjective patterns
     'e leaga': 'are evil',
     'e sili': 'preferred',
@@ -10565,13 +10580,34 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                 else:
                     gloss = chunk.lower()
             display = modernize_samoan(chunk)
-            # Context-aware modernization: 'au' meaning "me/I" → 'aʻu'
-            # Only when gloss indicates pronoun (not possessive "your")
-            if 'your' not in gloss.lower():
-                import re as _re
+            # Context-aware modernization for 'au' — three distinct words:
+            # 1. aʻu (glottal after a) = "I/me" pronoun
+            # 2. au (no glottal) = "your" possessive before nouns
+            # 3. ʻau (leading glottal) = collective noun "hosts/troops/group"
+            import re as _re
+            _gloss_lower = gloss.lower()
+            _COLLECTIVE_GLOSSES = {
+                'brethren', 'servants', 'the servants', 'prophets', 'the prophets',
+                'disciples', 'the disciples', 'messengers', 'the messengers',
+                'mighty men', 'the mighty men', 'army/troops', 'the army',
+                'beloved', 'all the brethren', 'saints', 'the saints',
+                'priests', 'the priests', 'elders', 'the elders',
+                'scribes', 'the scribes', 'pharisees', 'the pharisees',
+                'rulers', 'the rulers', 'captains', 'the captains',
+                'princes', 'the princes', 'soldiers', 'the soldiers',
+                'watchers', 'the watchers', 'singers', 'the singers',
+            }
+            if _gloss_lower in _COLLECTIVE_GLOSSES:
+                # ʻau = collective noun — add leading glottal stop
+                display = _re.sub(r'\bau\b', '\u02bbau', display)
+                display = _re.sub(r'\bAu\b', '\u02bbAu', display)
+                display = _re.sub(r'\bAU\b', '\u02bbAU', display)
+            elif 'your' not in _gloss_lower:
+                # aʻu = pronoun "me/I" — glottal after a
                 display = _re.sub(r'\bau\b', 'a\u02bbu', display)
                 display = _re.sub(r'\bAu\b', 'A\u02bbu', display)
                 display = _re.sub(r'\bAU\b', 'A\u02bbU', display)
+            # else: possessive "your" — leave as 'au' (no glottal)
             result.append([display, gloss])
     return result
 

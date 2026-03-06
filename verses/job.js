@@ -98,7 +98,7 @@ var _job_ch_4_Verses = [
 renderVerseSet(_job_ch_4_Verses, 'job-ch4-verses');
 
 var _job_ch_5_Verses = [
-  {num:1,words:[["Ina valaau atu", "so that cried out"], ["ia,", "he"], ["pe ai", "whether"], ["se tasi", "a one"], ["e tali mai ia te oe?", "respond from you"], ["Po o ai", "who?"], ["foi so", "also so"], ["le aʻu paia", "the saints"], ["e te fa'asaga", "you face"], ["i ai?", "therein"]]},
+  {num:1,words:[["Ina valaau atu", "so that cried out"], ["ia,", "he"], ["pe ai", "whether"], ["se tasi", "a one"], ["e tali mai ia te oe?", "respond from you"], ["Po o ai", "who?"], ["foi so", "also so"], ["le ʻau paia", "the saints"], ["e te fa'asaga", "you face"], ["i ai?", "therein"]]},
   {num:2,words:[["O le ita", "the angry"], ["e fasia ai", "slaughtered"], ["le tagata valea,", "the man foolish"], ["o le mataua foi", "the was ax also"], ["e oti ai", "die"], ["le vale.", "the foolish"]]},
   {num:3,words:[["Na ou iloa", "I knew"], ["le tagata valea", "the man foolish"], ["ua sosolo", "ran"], ["ona aa;", "and aa"], ["a", "but"], ["ua ou fa'afanoloaina", "I faafanoloaina"], ["le mea", "the thing"], ["na mau ai", "opinion"], ["o ia.", "it/he/she"]]},
   {num:4,words:[["Ua mamao", "far"], ["lana fānau", "his born"], ["i le olataga,", "in the salvation"], ["ua solia foi", "trodden upon also"], ["i lātou", "them"], ["i le faitotoa,", "at the door"], ["ae leai se", "but no a"], ["na te laveaiina.", "he delivered"]]},
