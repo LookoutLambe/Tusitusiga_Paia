@@ -1782,6 +1782,11 @@ EXTENDED_VOCAB = {
     "faa'ole'ole": 'treacherous/deceitful',
     "faaleoleole": 'treacherous/deceitful',
     'tautala': 'speak/talk',
+    'taufetuli': 'running/racing',  # tau- (engage in) + fetuli (running about)
+    'femoei': 'move about/running around',
+    'lailoa': 'weary/exhausted',
+    'tausinio': 'contend/compete',
+    'solofanua': 'horse',
     # Additional body/family terms
     'lima matua': 'thumb',
     'vae matua': 'big toe',
@@ -8947,6 +8952,20 @@ MANUAL_CHUNK_OVERRIDES = {
         ['auā ua latou fai ane,', 'because they have said'],
         ['E le vaaia e ia', 'he shall not see'],
         ['lo latou iuga.', 'their end'],
+    ],
+    'Jeremiah|12|5': [
+        ['Afai', 'if'],
+        ['ua e taufetuli ma tagata', 'you are running with people'],
+        ['e femoei i le eleele,', 'who move about on the ground'],
+        ['ma ua e lailoa ia te i latou,', 'and you are weary with them'],
+        ['pe faapefea ona', 'how then'],
+        ['e tausinio ma solofanua?', 'can you contend with horses?'],
+        ['Afai ua e nofo', 'if you dwell'],
+        ["ma le le mata'u", 'without fear'],
+        ['i le nuu e filemu ai,', 'in the land of peace'],
+        ['se a se mea', 'what will'],
+        ['e te faia', 'you do'],
+        ['i le matagofie o Ioritana?', 'in the swelling of Jordan?'],
     ],
 }
 
