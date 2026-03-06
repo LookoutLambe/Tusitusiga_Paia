@@ -3357,6 +3357,8 @@ WHOLE_PHRASES = {
 
     # TAM verb patterns
     "e faanoanoa ai": 'shall mourn',
+    "ae nonofo ai": 'but who will dwell there?',
+    "a e nonofo ai": 'but who will dwell there?',
     "ua faaumatia": 'are destroyed',
     "ua latou fai ane": 'they have said',
     "e faasaina": 'set apart/prepare',
@@ -8928,6 +8930,23 @@ MANUAL_CHUNK_OVERRIDES = {
         ['O lau fanau', 'in thy seed'],
         ['o le a manuia ai', 'shall be blessed'],
         ['aiga uma o le lalolagi.', 'all the kindreds of the earth'],
+    ],
+    # ── Jeremiah ──
+    'Jeremiah|12|4': [
+        ['Seia afea', 'how long?'],
+        ['e faanoanoa ai', 'shall mourn'],
+        ['le nuu,', 'the land'],
+        ['ma magumagu ai', 'and wither'],
+        ['le vao iti', 'the grass'],
+        ['o fanua uma', 'of every field'],
+        ['ona o le amio leaga', 'because of the wickedness'],
+        ['a e nonofo ai?', 'but who will dwell there?'],
+        ['Ua faaumatia', 'are destroyed'],
+        ['manu vaefa', 'beasts'],
+        ['ma manu felelei;', 'and fowl'],
+        ['auā ua latou fai ane,', 'because they have said'],
+        ['E le vaaia e ia', 'he shall not see'],
+        ['lo latou iuga.', 'their end'],
     ],
 }
 
