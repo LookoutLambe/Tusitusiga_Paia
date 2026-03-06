@@ -3628,9 +3628,14 @@ WHOLE_PHRASES = {
     'tagata paia': 'saints',
     "au paia": 'saints',
     "'au paia": 'saints',
-    # "o e" = relative pronoun "who"
-    'o e': 'who',
-    'o e ua valaauina': 'who were called',
+    # "o e" = relative pronoun — context-sensitive who/whose:
+    # Before TAM markers (ua/na/sa) = verbal relative → "who"
+    # Otherwise (adj/noun predicate) = genitive relative → "whose"
+    'o e ua': 'who',
+    'o e na': 'who',
+    'o e sa': 'who',
+    'o e': 'whose',
+    'o e ua valaauina': 'who called',
     # "o le a" / "o le 'a" = future tense marker OR "what"
     "o le a": 'what',
     "o le 'a": 'what',
@@ -10613,8 +10618,10 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
                 display = _re.sub(r"(?<!')\bAU\b", 'A\u02bbU', display)
             # else: possessive "your" — leave as 'au' (no glottal)
             # Context-aware modernization: 'e' as relative pronoun → 'ē' (macron)
-            # "o e" = "who/those who" — ē distinguishes relative from tense marker
-            if _gloss_lower == 'who' or _gloss_lower.startswith('who '):
+            # "o e" = "who/whose" — ē distinguishes relative from tense marker
+            if (_gloss_lower in ('who', 'whose')
+                    or _gloss_lower.startswith('who ')
+                    or _gloss_lower.startswith('whose ')):
                 display = _re.sub(r'\be\b', 'ē', display)
                 display = _re.sub(r'\bE\b', 'Ē', display)
             result.append([display, gloss])
