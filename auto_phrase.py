@@ -10599,14 +10599,16 @@ def annotate_verse(verse_key, samoan_text, english_text=""):
             }
             if _gloss_lower in _COLLECTIVE_GLOSSES:
                 # ʻau = collective noun — add leading glottal stop
-                display = _re.sub(r'\bau\b', '\u02bbau', display)
-                display = _re.sub(r'\bAu\b', '\u02bbAu', display)
-                display = _re.sub(r'\bAU\b', '\u02bbAU', display)
+                # (?<!') prevents matching au inside compound words like tau'au, la'au
+                display = _re.sub(r"(?<!')\bau\b", '\u02bbau', display)
+                display = _re.sub(r"(?<!')\bAu\b", '\u02bbAu', display)
+                display = _re.sub(r"(?<!')\bAU\b", '\u02bbAU', display)
             elif 'your' not in _gloss_lower:
                 # aʻu = pronoun "me/I" — glottal after a
-                display = _re.sub(r'\bau\b', 'a\u02bbu', display)
-                display = _re.sub(r'\bAu\b', 'A\u02bbu', display)
-                display = _re.sub(r'\bAU\b', 'A\u02bbU', display)
+                # (?<!') prevents matching au inside compound words like tau'au, la'au
+                display = _re.sub(r"(?<!')\bau\b", 'a\u02bbu', display)
+                display = _re.sub(r"(?<!')\bAu\b", 'A\u02bbu', display)
+                display = _re.sub(r"(?<!')\bAU\b", 'A\u02bbU', display)
             # else: possessive "your" — leave as 'au' (no glottal)
             result.append([display, gloss])
     return result
