@@ -100,7 +100,7 @@ FUNC_WORDS = {
     'tatou': 'we/us',
     'taitasi': 'each',
     'faauta': 'behold',
-    'faapea': 'thus/so',
+    'faapea': 'saying/thus',
     'nei': 'these',
     'isi': 'other/some',
     'lenei': 'this',
@@ -283,7 +283,7 @@ EXTENDED_VOCAB = {
     'laveai': 'deliver',
     'togafiti': 'heal',
     'maliu': 'die',
-    'soifua': 'live',
+    'soifua': 'living/lives',
     'toe': 'again',
     'potopoto': 'gather',
     'faapotopoto': 'gather together',
@@ -320,7 +320,7 @@ EXTENDED_VOCAB = {
     "va\u02bbai": 'see',
     'tali': 'respond',
     # Additional verbs for scripture
-    'faapea': 'so',
+    'faapea': 'saying/thus',
     'manao': 'desire',
     'tigaina': 'afflicted',
     'faamalieina': 'satisfied',
@@ -367,6 +367,7 @@ EXTENDED_VOCAB = {
     'aa': 'roots',
     "a'a": 'roots',
     'taofimau': 'hold fast',
+    'afai': 'if/although',
     "fa'avalea": 'act foolishly',
     "fa'aputuina": 'gather together',
     "fa'aatoatoaina": 'complete/fulfill',
@@ -444,7 +445,7 @@ EXTENDED_VOCAB = {
     'tala': 'side',
     'tua': 'behind',
     'luma': 'before',
-    'totonu': 'inside',
+    'totonu': 'within',
     'fafo': 'outside',
 
     # Religious
@@ -520,13 +521,18 @@ EXTENDED_VOCAB = {
     'tausaga': 'year',
     'gafa': 'genealogy',
     'rapi': 'Rabbi',
-    "a'oa'o": 'teacher/master',
-    "a\u02bboa\u02bbo": 'teacher/master',
-    'aoao': 'teacher/master',
+    "a'oa'o": 'teach',
+    "a\u02bboa\u02bbo": 'teach',
+    'aoao': 'teach',
 
     # ============================================================
     # Biblical Proper Names (Samoan transliterations → English)
     # ============================================================
+    # False gods / pagan deities
+    'paala': 'Baal',
+    'asitarota': 'Ashtaroth',
+    'takona': 'Dagon',
+    'molike': 'Molech',
     # Genesis patriarchs & families
     'atamu': 'Adam',
     'eva': 'Eve',
@@ -1907,7 +1913,7 @@ EXTENDED_VOCAB = {
     # chose 'heart' where Hebrew has 'soul'. We keep loto='heart'
     # since that IS what the Samoan word means, but add soul-related
     # vocabulary the translators DID use:
-    'soifua': 'life/soul',  # closer to nephesh when used for living beings
+    'soifua': 'living/lives',  # "O lo'o soifua Ieova" = "As Jehovah lives"
 
     # Additional theological vocabulary
     'faamasinotonu': 'righteous judgment',  # combines mishpat + tsedeq
@@ -2246,6 +2252,9 @@ MODERN_SPELLING = {
     'ta': 'tā',                # struck/played
     'la': 'lā',                # sun
     'mamao': 'māmao',          # far/distant
+    'nuu': "nu'u",              # nation/village (glottal stop)
+    'paala': "Pa'ala",          # Baal (glottal stop)
+    'afai': "'āfai",            # if/although (leading glottal + macron)
 
     # ============================================================
     # Specific corrections from earlier sessions
@@ -3336,7 +3345,6 @@ WHOLE_PHRASES = {
     # Common Connectors / Grammar
     'ona o mea': 'because of the things',
     'ma amata': 'and began',
-    'e faapea': 'saying',
     'i nei mea': 'these things',
     'mea e tele': 'great things',
     'le tele o mea': 'many things',
@@ -3651,6 +3659,17 @@ WHOLE_PHRASES = {
     # Conjunction + copula patterns
     'a e mamao': 'but are far',
     'a e latalata': 'but are near',
+    # Verb + directional compounds
+    'atiina ae': 'lead astray',
+    "atiina a'e": 'lead astray',
+    'i totonu': 'within',
+    'i totonu o': 'in the midst of',
+    # Quotation/speech introducers
+    'e faapea': 'saying',
+    "e fa'apea": 'saying',
+    # Oath formula
+    'o loo soifua ieova': 'As Jehovah lives',
+    "o lo'o soifua ieova": 'As Jehovah lives',
     # "o e" = relative pronoun — context-sensitive who/whose:
     # Before TAM markers (ua/na/sa) = verbal relative → "who"
     # Otherwise (adj/noun predicate) = genitive relative → "whose"
@@ -3912,7 +3931,7 @@ WHOLE_PHRASES = {
     'na sau ai': 'whence it came',
     'e alu atu i ai': 'where it goes',
     'fanau mai': 'born of',
-    'e faapea': 'so it is',
+    # 'e faapea' moved to 'saying' — see earlier entry
     'e loto i ai': 'is fixed/settled therein',
     'e loto': 'is fixed/stationed',
     'lona agi': 'its sound',
